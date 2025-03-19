@@ -1,19 +1,28 @@
-using Server.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Server.Models;
 
-namespace Server.Data{
-    public class UserDBContext : DbContext{
-        protected readonly IConfiguration Configuration;
+namespace Server.Data
+{
+    public class UserDBContext : DbContext
+    {
+        private readonly IConfiguration _configuration;
 
-        public UserDBContext(IConfiguration configuration){
-            Configuration = configuration;
+        public UserDBContext(IConfiguration configuration)
+        {
+            _configuration = configuration;
         }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Database=Assignment;Username=postgres;Password=Ompan@78");
+            var connectionString = _configuration.GetConnectionString("PostgresConnection");
+            optionsBuilder.UseNpgsql(connectionString);
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Faculty> Faculties { get; set; }
         public DbSet<Assignment> Assignments { get; set; }
+        public DbSet<Submission> Submissions { get; set; }
+        public DbSet<Class> Classes { get; set; }
     }
 }

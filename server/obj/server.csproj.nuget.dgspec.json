@@ -1,25 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Coding\\Web-Dev\\.NET\\Assign_Submit\\server\\server.csproj": {}
+    "C:\\Users\\Dhaval\\OneDrive\\Desktop\\DataDack\\DataDock\\server\\server.csproj": {}
   },
   "projects": {
-    "C:\\Coding\\Web-Dev\\.NET\\Assign_Submit\\server\\server.csproj": {
+    "C:\\Users\\Dhaval\\OneDrive\\Desktop\\DataDack\\DataDock\\server\\server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Coding\\Web-Dev\\.NET\\Assign_Submit\\server\\server.csproj",
+        "projectUniqueName": "C:\\Users\\Dhaval\\OneDrive\\Desktop\\DataDack\\DataDock\\server\\server.csproj",
         "projectName": "server",
-        "projectPath": "C:\\Coding\\Web-Dev\\.NET\\Assign_Submit\\server\\server.csproj",
-        "packagesPath": "C:\\Users\\Om Panchal\\.nuget\\packages\\",
-        "outputPath": "C:\\Coding\\Web-Dev\\.NET\\Assign_Submit\\server\\obj\\",
+        "projectPath": "C:\\Users\\Dhaval\\OneDrive\\Desktop\\DataDack\\DataDock\\server\\server.csproj",
+        "packagesPath": "C:\\Users\\Dhaval\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Dhaval\\OneDrive\\Desktop\\DataDack\\DataDock\\server\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Om Panchal\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Dhaval\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -52,6 +59,10 @@
               "target": "Package",
               "version": "[1.10.4, )"
             },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[9.0.3, )"
+            },
             "Microsoft.AspNetCore.Cors": {
               "target": "Package",
               "version": "[2.3.0, )"
@@ -74,9 +85,17 @@
               "target": "Package",
               "version": "[9.0.2, )"
             },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.6.1, )"
+            },
             "MongoDB.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.2.2, )"
+            },
+            "Npgsql": {
+              "target": "Package",
+              "version": "[9.0.3, )"
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
@@ -89,6 +108,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[7.2.0, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.6.1, )"
             }
           },
           "imports": [
