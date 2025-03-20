@@ -7,45 +7,47 @@ import RemarkPage from "../sections/RemarkPage";
 import Chatpage from "../sections/Chatpage";
 import Signup from "../sections/SignUpPage";
 import Login from "../sections/LoginPage";
-import { useAuthStore } from "../store/useAuthStore";
+import SelectAffiliation from "../sections/SelectAffiliation";
+
 const Routers = () => {
-    const { user } = useAuthStore();
+    
     return (
         <div>
             <Router>
                 <Routes>
                     <Route
                         path="/home"
-                        element={user ? <Home /> : <Navigate to="/login" />}
+                        element={  <Home /> }
                     />
                     <Route
                         path="/submition"
                         element={
-                            user ? <Assignment /> : <Navigate to="/login" />
+                            <Assignment /> 
                         }
                     />
                     <Route
                         path="/calendar-view"
-                        element={user ? <Calendar /> : <Navigate to="/login" />}
+                        element={<Calendar /> }
                     />
                     <Route
                         path="/grades"
                         element={
-                            user ? <GradesPage /> : <Navigate to="/login" />
+                            <GradesPage /> 
                         }
                     />
                     <Route
                         path="/remarks"
                         element={
-                            user ? <RemarkPage /> : <Navigate to="/login" />
+                            <RemarkPage /> 
                         }
                     />
                     <Route
                         path="/chat"
-                        element={user ? <Chatpage /> : <Navigate to="/login" />}
+                        element={ <Chatpage />}
                     />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/select-affiliate" element={<SelectAffiliation/>} />
                 </Routes>
             </Router>
         </div>

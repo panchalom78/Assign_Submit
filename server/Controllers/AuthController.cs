@@ -62,7 +62,7 @@ namespace Server.Controllers
                     Expires = DateTime.UtcNow.AddDays(1)
                 });
 
-                return Ok(new { Message = "Login successful", Token = token });
+                return Ok(new { Message = "Login successful", });
             }
             catch (Exception ex)
             {
