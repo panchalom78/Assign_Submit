@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from 'axios'
-
+import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import { useNavigate } from "react-router";
 
 function Login() {
@@ -23,13 +23,18 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:5134/api/auth/login", formData);
+            const response = await axiosInstance.post("/auth/login", formData);
 
             console.log("Login successful:", response.data);
             navigate("/home");
         } catch (error) {
-            console.error("Login failed:", error.response?.data || error.message);
-            setError(error.response?.data?.error || "Invalid email or password");
+            console.error(
+                "Login failed:",
+                error.response?.data || error.message
+            );
+            setError(
+                error.response?.data?.error || "Invalid email or password"
+            );
         }
     };
 
@@ -41,7 +46,9 @@ function Login() {
             >
                 <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
 
-                {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+                {error && (
+                    <p className="text-red-500 text-center mb-4">{error}</p>
+                )}
 
                 <div className="mb-4">
                     <label className="block text-gray-700">Email</label>

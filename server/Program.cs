@@ -56,10 +56,6 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<UserDBContext>();
-<<<<<<< HEAD
-=======
-
->>>>>>> 26eb4fd8e5f6c9d0f365180858e4e75ed6dffb14
 }
 
 // ✅ Middleware Configuration

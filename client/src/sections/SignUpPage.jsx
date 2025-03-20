@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-import axios from 'axios'
-import Login from "./LoginPage";
 import { useNavigate } from "react-router";
-
-
+import axiosInstance from "../utils/axiosInstance";
 
 function Signup() {
     const [formData, setFormData] = useState({
@@ -14,7 +11,7 @@ function Signup() {
         prn: "",
     });
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -27,27 +24,34 @@ function Signup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Directly using the actual backend request format
-            const response = await axios.post("http://localhost:5134/api/auth/register", {
+            const response = await axiosInstance.post("/auth/register", {
                 fullName: formData.fullName,
                 email: formData.email,
                 password: formData.password,
                 role: formData.role,
-               
             });
 
             console.log("Signup successful:", response.data);
             alert("Signup Successful!");
-            navigate("/login");// Redirect user after successful signup
+            navigate("/login"); // Redirect user after successful signup
         } catch (error) {
-            console.error("Signup failed:", error.response?.data || error.message);
-            alert(error.response?.data?.error || "Signup failed. Please try again.");
+            console.error(
+                "Signup failed:",
+                error.response?.data || error.message
+            );
+            alert(
+                error.response?.data?.error ||
+                    "Signup failed. Please try again."
+            );
         }
     };
 
     return (
         <div className="flex justify-center items-center h-screen bg-gray-100">
-            <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
+            <form
+                onSubmit={handleSubmit}
+                className="bg-white p-6 rounded shadow-md w-full max-w-sm"
+            >
                 <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
 
                 <div className="mb-4">
@@ -100,8 +104,10 @@ function Signup() {
                     </select>
                 </div>
 
-               
-                <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+                <button
+                    type="submit"
+                    className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+                >
                     Sign Up
                 </button>
             </form>
