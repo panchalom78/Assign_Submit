@@ -9,6 +9,12 @@ namespace Server.Models
         public string? Role { get; set; }
         public int? FacultyId { get; set; }
         public Faculty? Faculty { get; set; }
-        public List<Submission>? Submissions { get; set; } // Add for reverse navigation
+        public int? ClassId { get; set; }
+        public Class? Class { get; set; }
+        public int? CourseId { get; set; }
+        public Course? Course { get; set; }
+        public int? CollegeId { get; set; } 
+        public College? College { get; set; } 
+        public List<Submission>? Submissions { get; set; }
     }
 }

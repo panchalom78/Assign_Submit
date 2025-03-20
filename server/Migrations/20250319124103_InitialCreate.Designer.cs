@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Server.Data;
@@ -11,9 +12,11 @@ using Server.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(UserDBContext))]
-    partial class UserDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250319124103_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,22 +86,6 @@ namespace server.Migrations
                     b.ToTable("Classes");
                 });
 
-            modelBuilder.Entity("Server.Models.College", b =>
-                {
-                    b.Property<int>("CollegeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CollegeId"));
-
-                    b.Property<string>("CollegeName")
-                        .HasColumnType("text");
-
-                    b.HasKey("CollegeId");
-
-                    b.ToTable("Colleges");
-                });
-
             modelBuilder.Entity("Server.Models.Course", b =>
                 {
                     b.Property<int>("CourseId")
@@ -128,9 +115,6 @@ namespace server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FacultyId"));
 
-                    b.Property<int?>("CollegeId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("CollegeName")
                         .HasColumnType("text");
 
@@ -138,8 +122,6 @@ namespace server.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("FacultyId");
-
-                    b.HasIndex("CollegeId");
 
                     b.ToTable("Faculties");
                 });
@@ -190,9 +172,6 @@ namespace server.Migrations
                     b.Property<int?>("ClassId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CollegeId")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("CourseId")
                         .HasColumnType("integer");
 
@@ -214,8 +193,6 @@ namespace server.Migrations
                     b.HasKey("UserId");
 
                     b.HasIndex("ClassId");
-
-                    b.HasIndex("CollegeId");
 
                     b.HasIndex("CourseId");
 
@@ -273,13 +250,6 @@ namespace server.Migrations
                     b.Navigation("Faculty");
                 });
 
-            modelBuilder.Entity("Server.Models.Faculty", b =>
-                {
-                    b.HasOne("Server.Models.College", null)
-                        .WithMany("Faculties")
-                        .HasForeignKey("CollegeId");
-                });
-
             modelBuilder.Entity("Server.Models.Submission", b =>
                 {
                     b.HasOne("Server.Models.Assignment", "Assignment")
@@ -305,10 +275,6 @@ namespace server.Migrations
                         .WithMany()
                         .HasForeignKey("ClassId");
 
-                    b.HasOne("Server.Models.College", "College")
-                        .WithMany("Users")
-                        .HasForeignKey("CollegeId");
-
                     b.HasOne("Server.Models.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId");
@@ -318,8 +284,6 @@ namespace server.Migrations
                         .HasForeignKey("FacultyId");
 
                     b.Navigation("Class");
-
-                    b.Navigation("College");
 
                     b.Navigation("Course");
 
@@ -334,13 +298,6 @@ namespace server.Migrations
             modelBuilder.Entity("Server.Models.Class", b =>
                 {
                     b.Navigation("Assignments");
-                });
-
-            modelBuilder.Entity("Server.Models.College", b =>
-                {
-                    b.Navigation("Faculties");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Server.Models.Course", b =>

@@ -24,5 +24,7 @@ namespace Server.Data
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<Submission> Submissions { get; set; }
         public DbSet<Class> Classes { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<College> Colleges { get; set; }
     }
 }

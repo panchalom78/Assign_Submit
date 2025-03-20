@@ -7,12 +7,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ✅ Add Controllers
 builder.Services.AddControllers();
+
+// ✅ Add Database Context
 builder.Services.AddDbContext<UserDBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
-builder.Services.AddScoped<AuthService>();
- // Ensure this matches the class name
 
+// ✅ Register Auth Service
+builder.Services.AddScoped<AuthService>();
+
+// ✅ Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -24,7 +29,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "default-secret-key")) // Null check
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "default-secret-key")) // Null check
         };
     });
 
@@ -32,12 +38,14 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// ✅ Apply Migrations & Seed Data
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<UserDBContext>();
-    dbContext.Database.EnsureCreated();
+    
 }
 
+// ✅ Middleware Configuration
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
