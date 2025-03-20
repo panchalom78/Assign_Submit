@@ -135,71 +135,71 @@ namespace Server.Services
             return await _context.Users.ToListAsync();
         }
 
-       public async Task SeedData()
-{
-    Console.WriteLine("🌱 Seeding data started...");
-
-    try
-    {
-        // ✅ Step 1: Clear all tables before inserting new data
-        await _context.Users.ExecuteDeleteAsync();
-        await _context.Classes.ExecuteDeleteAsync();
-        await _context.Courses.ExecuteDeleteAsync();
-        await _context.Faculties.ExecuteDeleteAsync();
-        await _context.Colleges.ExecuteDeleteAsync();
-        await _context.SaveChangesAsync();
-
-        Console.WriteLine("✅ All tables cleared. Now inserting fresh data...");
-
-        // ✅ Step 2: Insert Colleges
-        var college1 = new College { CollegeName = "MSU" };
-        var college2 = new College { CollegeName = "IIT Delhi" };
-        var college3 = new College { CollegeName = "IIT Bombay" };
-
-        _context.Colleges.AddRange(college1, college2, college3);
-        await _context.SaveChangesAsync();
-        Console.WriteLine("✅ Colleges seeded.");
-
-        // ✅ Step 3: Insert Faculties
-        var faculty1 = new Faculty { FacultyName = "Engineering", CollegeId = college1.CollegeId };
-        var faculty2 = new Faculty { FacultyName = "Science", CollegeId = college1.CollegeId };
-        var faculty3 = new Faculty { FacultyName = "Management", CollegeId = college2.CollegeId };
-
-        _context.Faculties.AddRange(faculty1, faculty2, faculty3);
-        await _context.SaveChangesAsync();
-        Console.WriteLine("✅ Faculties seeded.");
-
-        // ✅ Step 4: Insert Courses
-        var course1 = new Course { CourseName = "Computer Science", FacultyId = faculty1.FacultyId };
-        var course2 = new Course { CourseName = "Mechanical Engineering", FacultyId = faculty1.FacultyId };
-        var course3 = new Course { CourseName = "Physics", FacultyId = faculty2.FacultyId };
-        var course4 = new Course { CourseName = "Business Management", FacultyId = faculty3.FacultyId };
-
-        _context.Courses.AddRange(course1, course2, course3, course4);
-        await _context.SaveChangesAsync();
-        Console.WriteLine("✅ Courses seeded.");
-
-        // ✅ Step 5: Insert Classes
-        var class1 = new Class { ClassName = "CS101", CourseId = course1.CourseId };
-        var class2 = new Class { ClassName = "CS102", CourseId = course1.CourseId };
-        var class3 = new Class { ClassName = "ME101", CourseId = course2.CourseId };
-        var class4 = new Class { ClassName = "PHY101", CourseId = course3.CourseId };
-        var class5 = new Class { ClassName = "BIZ101", CourseId = course4.CourseId };
-
-        _context.Classes.AddRange(class1, class2, class3, class4, class5);
-        await _context.SaveChangesAsync();
-        Console.WriteLine("✅ Classes seeded.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"❌ Error occurred: {ex.Message}");
-        if (ex.InnerException != null)
+        public async Task SeedData()
         {
-            Console.WriteLine($"🔍 Inner Exception: {ex.InnerException.Message}");
+            Console.WriteLine("🌱 Seeding data started...");
+
+            try
+            {
+                // ✅ Step 1: Clear all tables before inserting new data
+                await _context.Users.ExecuteDeleteAsync();
+                await _context.Classes.ExecuteDeleteAsync();
+                await _context.Courses.ExecuteDeleteAsync();
+                await _context.Faculties.ExecuteDeleteAsync();
+                await _context.Colleges.ExecuteDeleteAsync();
+                await _context.SaveChangesAsync();
+
+                Console.WriteLine("✅ All tables cleared. Now inserting fresh data...");
+
+                // ✅ Step 2: Insert Colleges
+                var college1 = new College { CollegeName = "MSU" };
+                var college2 = new College { CollegeName = "IIT Delhi" };
+                var college3 = new College { CollegeName = "IIT Bombay" };
+
+                _context.Colleges.AddRange(college1, college2, college3);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("✅ Colleges seeded.");
+
+                // ✅ Step 3: Insert Faculties
+                var faculty1 = new Faculty { FacultyName = "Engineering", CollegeId = college1.CollegeId };
+                var faculty2 = new Faculty { FacultyName = "Science", CollegeId = college1.CollegeId };
+                var faculty3 = new Faculty { FacultyName = "Management", CollegeId = college2.CollegeId };
+
+                _context.Faculties.AddRange(faculty1, faculty2, faculty3);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("✅ Faculties seeded.");
+
+                // ✅ Step 4: Insert Courses
+                var course1 = new Course { CourseName = "Computer Science", FacultyId = faculty1.FacultyId };
+                var course2 = new Course { CourseName = "Mechanical Engineering", FacultyId = faculty1.FacultyId };
+                var course3 = new Course { CourseName = "Physics", FacultyId = faculty2.FacultyId };
+                var course4 = new Course { CourseName = "Business Management", FacultyId = faculty3.FacultyId };
+
+                _context.Courses.AddRange(course1, course2, course3, course4);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("✅ Courses seeded.");
+
+                // ✅ Step 5: Insert Classes
+                var class1 = new Class { ClassName = "CS101", CourseId = course1.CourseId };
+                var class2 = new Class { ClassName = "CS102", CourseId = course1.CourseId };
+                var class3 = new Class { ClassName = "ME101", CourseId = course2.CourseId };
+                var class4 = new Class { ClassName = "PHY101", CourseId = course3.CourseId };
+                var class5 = new Class { ClassName = "BIZ101", CourseId = course4.CourseId };
+
+                _context.Classes.AddRange(class1, class2, class3, class4, class5);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("✅ Classes seeded.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"🔍 Inner Exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
         }
-        throw;
-    }
-}
 
 
 

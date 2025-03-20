@@ -32,6 +32,7 @@ namespace Server.Controllers
                 }
 
                 var user = await _authService.Register(request.FullName, request.Email, request.Password, request.Role);
+
                 return Ok(new { Message = "User registered successfully", UserId = user.UserId });
             }
             catch (Exception ex)
@@ -62,7 +63,7 @@ namespace Server.Controllers
                     Expires = DateTime.UtcNow.AddDays(1)
                 });
 
-                return Ok(new { Message = "Login successful", Token = token });
+                return Ok(new { Message = "Login successful" });
             }
             catch (Exception ex)
             {

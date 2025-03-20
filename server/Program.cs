@@ -16,6 +16,7 @@ builder.Services.AddDbContext<UserDBContext>(options =>
 
 // ✅ Register Auth Service
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<AssignmentService>();
 
 // ✅ Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -42,7 +43,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<UserDBContext>();
-    
+
 }
 
 // ✅ Middleware Configuration
