@@ -215,5 +215,26 @@ namespace Server.Services
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
         }
+        
+                public async Task<List<College>> GetColleges()
+        {
+            return await _context.Colleges.ToListAsync();
+        }
+
+        public async Task<List<Faculty>> GetFaculties(int collegeId)
+        {
+            return await _context.Faculties.Where(f => f.CollegeId == collegeId).ToListAsync();
+        }
+
+        public async Task<List<Course>> GetCourses(int facultyId)
+        {
+            return await _context.Courses.Where(c => c.FacultyId == facultyId).ToListAsync();
+        }
+
+        public async Task<List<Class>> GetClasses(int courseId)
+        {
+            return await _context.Classes.Where(c => c.CourseId == courseId).ToListAsync();
+        }
     }
 }
+

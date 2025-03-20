@@ -9224,24 +9224,32 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Om Panchal\\.nuget\\packages\\": {}
+    "C:\\Users\\Dhaval\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Om Panchal\\OneDrive\\Desktop\\.net\\Assign_Submit\\server\\server.csproj",
+      "projectUniqueName": "C:\\Users\\Dhaval\\OneDrive\\Desktop\\DataDack\\DataDOck\\server\\server.csproj",
       "projectName": "server",
-      "projectPath": "C:\\Users\\Om Panchal\\OneDrive\\Desktop\\.net\\Assign_Submit\\server\\server.csproj",
-      "packagesPath": "C:\\Users\\Om Panchal\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Om Panchal\\OneDrive\\Desktop\\.net\\Assign_Submit\\server\\obj\\",
+      "projectPath": "C:\\Users\\Dhaval\\OneDrive\\Desktop\\DataDack\\DataDOck\\server\\server.csproj",
+      "packagesPath": "C:\\Users\\Dhaval\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Dhaval\\OneDrive\\Desktop\\DataDack\\DataDOck\\server\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Om Panchal\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Dhaval\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

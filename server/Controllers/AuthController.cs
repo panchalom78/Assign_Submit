@@ -63,11 +63,7 @@ namespace Server.Controllers
                     Expires = DateTime.UtcNow.AddDays(1)
                 });
 
-<<<<<<< HEAD
-                return Ok(new { Message = "Login successful", });
-=======
                 return Ok(new { Message = "Login successful" });
->>>>>>> 26eb4fd8e5f6c9d0f365180858e4e75ed6dffb14
             }
             catch (Exception ex)
             {
@@ -141,6 +137,60 @@ namespace Server.Controllers
             {
                 return NotFound(new { Error = ex.Message });
             }
+        }
+
+        [HttpGet("colleges")]
+
+        public async Task<IActionResult> GetColleges()
+        {
+
+            try
+            {
+                var colleges = await _authService.GetColleges();
+                return Ok(colleges);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { Error= ex.Message });
+            }
+
+
+        }
+
+
+        [HttpGet("faculties")]
+
+        public async Task<IActionResult> GetFaculties([FromQuery] int collegeId)
+        {
+            var faculties = await _authService.GetFaculties(collegeId);
+            return Ok(faculties);
+        }
+
+
+        [HttpGet("courses")]
+
+        public async Task<IActionResult> GetCourses([FromQuery] int facultyId)
+
+        {
+            try
+            {
+                var courses = await _authService.GetCourses(facultyId);
+                return Ok(courses);
+            }
+            catch (Exception ex)
+            {
+
+                return NotFound(new {Error = ex.Message});
+            }
+        }
+
+
+        [HttpGet("classes")]
+
+        public async Task<IActionResult> GetClasses([FromQuery] int courseId)
+        {
+            var classes = await _authService.GetClasses(courseId);
+            return Ok(classes);
         }
     }
 }
