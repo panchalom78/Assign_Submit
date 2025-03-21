@@ -1,44 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Book, GraduationCap, Calendar, Clock, User } from "lucide-react";
+import axiosInstance from "../utils/axiosInstance";
 
 function TeacherAssignments() {
-    // Mock data - replace with actual data from your backend
-    const assignments = [
-        {
-            id: "1",
-            title: "Introduction to React Hooks",
-            course: "Computer Science",
-            class: "Class A",
-            description:
-                "Create a simple application demonstrating the use of useState and useEffect hooks. Include examples of state management and side effects handling.",
-            dueDate: "2024-03-25T23:59:00",
-            teacher: "Dr. Sarah Johnson",
-            createdAt: "2024-03-15T10:30:00",
-        },
-        {
-            id: "2",
-            title: "Advanced Calculus Problem Set",
-            course: "Mathematics",
-            class: "Class B",
-            description:
-                "Complete problems 1-10 from Chapter 5 on multivariable calculus. Show all work and include detailed explanations for each step.",
-            dueDate: "2024-03-28T23:59:00",
-            teacher: "Prof. Michael Chen",
-            createdAt: "2024-03-16T14:20:00",
-        },
-        {
-            id: "3",
-            title: "Quantum Mechanics Research Paper",
-            course: "Physics",
-            class: "Class C",
-            description:
-                "Write a 2000-word research paper on the implications of quantum entanglement in quantum computing. Include at least 5 peer-reviewed sources.",
-            dueDate: "2024-04-01T23:59:00",
-            teacher: "Dr. Emily Brooks",
-            createdAt: "2024-03-17T09:15:00",
-        },
-    ];
+    const [assignments, setAssignments] = useState([]); // State to hold assignments
 
+    // Fetch assignments when component mounts
+    useEffect(() => {
+        const getAssignments = async () => {
+            try {
+                const response = await axiosInstance.get(
+                    "/assignment/get/teacher"
+                );
+                const fetchedAssignments = response.data.assignments.map(
+                    (src) => ({
+                        id: src.assignmentId.toString(),
+                        title: src.title,
+                        course: "Unknown Course", // Hardcoded; replace with actual logic if available
+                        class: `Class ${src.classId}`, // Inferred from classId
+                        description: src.description,
+                        dueDate: src.dueDate.replace(" ", "T"), // Convert to ISO 8601
+                        teacher: src.user.fullName,
+                        createdAt: src.submittedOn
+                            ? src.submittedOn.replace(" ", "T")
+                            : "2024-03-20T00:00:00", // Fallback to current date if null
+                    })
+                );
+                setAssignments(fetchedAssignments); // Update state with mapped data
+            } catch (error) {
+                console.error("Error fetching assignments:", error);
+                setAssignments([]); // Set empty array on error to avoid undefined issues
+            }
+        };
+
+        getAssignments(); // Call the async function
+    }, []); // Empty dependency array means it runs once on mount
+
+    // Format date for display
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleString("en-US", {
             year: "numeric",
@@ -49,6 +47,7 @@ function TeacherAssignments() {
         });
     };
 
+    // Calculate time remaining until due date
     const getTimeRemaining = (dueDate) => {
         const now = new Date();
         const due = new Date(dueDate);
@@ -77,76 +76,84 @@ function TeacherAssignments() {
                 </div>
 
                 <div className="space-y-6">
-                    {assignments.map((assignment) => (
-                        <div
-                            key={assignment.id}
-                            className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl"
-                        >
-                            <div className="flex justify-between items-start mb-4">
-                                <h2 className="text-2xl font-semibold text-gray-900">
-                                    {assignment.title}
-                                </h2>
-                                <span
-                                    className={`px-4 py-1 rounded-full text-sm font-medium ${
-                                        getTimeRemaining(assignment.dueDate) ===
-                                        "Past due"
-                                            ? "bg-red-100 text-red-800"
-                                            : "bg-green-100 text-green-800"
-                                    }`}
-                                >
-                                    {getTimeRemaining(assignment.dueDate)}
-                                </span>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div className="flex items-center text-gray-600">
-                                    <Book className="h-5 w-5 mr-2" />
-                                    <span className="font-medium">
-                                        {assignment.course}
+                    {assignments.length === 0 ? (
+                        <p className="text-gray-600 text-center">
+                            No assignments available.
+                        </p>
+                    ) : (
+                        assignments.map((assignment) => (
+                            <div
+                                key={assignment.id}
+                                className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl"
+                            >
+                                <div className="flex justify-between items-start mb-4">
+                                    <h2 className="text-2xl font-semibold text-gray-900">
+                                        {assignment.title}
+                                    </h2>
+                                    <span
+                                        className={`px-4 py-1 rounded-full text-sm font-medium ${
+                                            getTimeRemaining(
+                                                assignment.dueDate
+                                            ) === "Past due"
+                                                ? "bg-red-100 text-red-800"
+                                                : "bg-green-100 text-green-800"
+                                        }`}
+                                    >
+                                        {getTimeRemaining(assignment.dueDate)}
                                     </span>
                                 </div>
-                                <div className="flex items-center text-gray-600">
-                                    <GraduationCap className="h-5 w-5 mr-2" />
-                                    <span>{assignment.class}</span>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div className="flex items-center text-gray-600">
+                                        <Book className="h-5 w-5 mr-2" />
+                                        <span className="font-medium">
+                                            {assignment.course}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center text-gray-600">
+                                        <GraduationCap className="h-5 w-5 mr-2" />
+                                        <span>{assignment.class}</span>
+                                    </div>
+                                    <div className="flex items-center text-gray-600">
+                                        <User className="h-5 w-5 mr-2" />
+                                        <span>{assignment.teacher}</span>
+                                    </div>
+                                    <div className="flex items-center text-gray-600">
+                                        <Calendar className="h-5 w-5 mr-2" />
+                                        <span>
+                                            Due:{" "}
+                                            {formatDate(assignment.dueDate)}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center text-gray-600">
-                                    <User className="h-5 w-5 mr-2" />
-                                    <span>{assignment.teacher}</span>
-                                </div>
-                                <div className="flex items-center text-gray-600">
-                                    <Calendar className="h-5 w-5 mr-2" />
-                                    <span>
-                                        Due: {formatDate(assignment.dueDate)}
-                                    </span>
+
+                                <p className="text-gray-600 mb-4">
+                                    {assignment.description}
+                                </p>
+
+                                <div className="flex items-center justify-between border-t pt-4">
+                                    <div className="flex items-center text-gray-500">
+                                        <Clock className="h-4 w-4 mr-1" />
+                                        <span className="text-sm">
+                                            Created:{" "}
+                                            {formatDate(assignment.createdAt)}
+                                        </span>
+                                    </div>
+                                    <button
+                                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                        onClick={() =>
+                                            console.log(
+                                                "View details:",
+                                                assignment.id
+                                            )
+                                        }
+                                    >
+                                        View Details
+                                    </button>
                                 </div>
                             </div>
-
-                            <p className="text-gray-600 mb-4">
-                                {assignment.description}
-                            </p>
-
-                            <div className="flex items-center justify-between border-t pt-4">
-                                <div className="flex items-center text-gray-500">
-                                    <Clock className="h-4 w-4 mr-1" />
-                                    <span className="text-sm">
-                                        Created:{" "}
-                                        {formatDate(assignment.createdAt)}
-                                    </span>
-                                </div>
-                                <button
-                                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                    onClick={() =>
-                                        console.log(
-                                            "View details:",
-                                            assignment.id
-                                        )
-                                    }
-                                >
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             </div>
         </div>
