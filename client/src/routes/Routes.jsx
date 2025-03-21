@@ -8,46 +8,33 @@ import Chatpage from "../sections/Chatpage";
 import Signup from "../sections/SignUpPage";
 import Login from "../sections/LoginPage";
 import SelectAffiliation from "../sections/SelectAffiliation";
-
+import CreateAssignment from "../components/CreateAssignment";
+import TeacherAssignments from "../sections/TeacherAssignments";
 const Routers = () => {
-    
     return (
         <div>
             <Router>
                 <Routes>
-                    <Route
-                        path="/home"
-                        element={  <Home /> }
-                    />
-                    <Route
-                        path="/submition"
-                        element={
-                            <Assignment /> 
-                        }
-                    />
-                    <Route
-                        path="/calendar-view"
-                        element={<Calendar /> }
-                    />
-                    <Route
-                        path="/grades"
-                        element={
-                            <GradesPage /> 
-                        }
-                    />
-                    <Route
-                        path="/remarks"
-                        element={
-                            <RemarkPage /> 
-                        }
-                    />
-                    <Route
-                        path="/chat"
-                        element={ <Chatpage />}
-                    />
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/submition" element={<Assignment />} />
+                    <Route path="/calendar-view" element={<Calendar />} />
+                    <Route path="/grades" element={<GradesPage />} />
+                    <Route path="/remarks" element={<RemarkPage />} />
+                    <Route path="/chat" element={<Chatpage />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/select-affiliate" element={<SelectAffiliation/>} />
+                    <Route
+                        path="/select-affiliate"
+                        element={<SelectAffiliation />}
+                    />
+                    <Route
+                        path="/create-assignment"
+                        element={<CreateAssignment />}
+                    />
+                    <Route
+                        path="/teacher-assignments"
+                        element={<TeacherAssignments />}
+                    />
                 </Routes>
             </Router>
         </div>

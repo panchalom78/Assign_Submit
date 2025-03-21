@@ -17,6 +17,7 @@ builder.Services.AddDbContext<UserDBContext>(options =>
 // ✅ Register Auth Service
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AssignmentService>();
+builder.Services.AddScoped<SubmissionService>();
 
 // ✅ Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -90,6 +91,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<UserDBContext>();
+<<<<<<< HEAD
     try
     {
         // Apply any pending migrations
@@ -100,6 +102,8 @@ using (var scope = app.Services.CreateScope())
     {
         Console.WriteLine($"Error applying migrations: {ex.Message}");
     }
+=======
+>>>>>>> 8e8dbccb811dfcff487ed8b5660fb9b33b6038a9
 }
 
 // ✅ Middleware Configuration
@@ -124,4 +128,37 @@ app.UseExceptionHandler(errorApp =>
 
 app.MapControllers();
 
+<<<<<<< HEAD
 app.Run();
+=======
+app.Run();
+
+// string email = "panchalom787@gmail.com";
+// string password = "Ompan@78";
+// string filePath = "test.pdf";
+// string targetFolder = "MyFolder"; // Optional, set to null for root
+
+// string fileId = await MegaUploader.UploadPdfToMegaAsync(email, password, filePath, targetFolder);
+// if (fileId != null)
+// {
+//     Console.WriteLine($"File uploaded successfully! File ID: {fileId}");
+// }
+// else
+// {
+//     Console.WriteLine("Upload failed.");
+// }
+
+// var date = new DateTime();
+// string fileId2 = "QGtV1A5B"; // Replace with the file ID from the upload
+// string destinationPath = $"C:/Downloads/assignment.pdf"; // Local path to save the file
+
+// bool success = await MegaUploader.DownloadFileFromMegaAsync(email, password, fileId2, destinationPath);
+// if (success)
+// {
+//     Console.WriteLine("Download completed successfully.");
+// }
+// else
+// {
+//     Console.WriteLine("Download failed.");
+// }
+>>>>>>> 8e8dbccb811dfcff487ed8b5660fb9b33b6038a9
