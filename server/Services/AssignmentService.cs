@@ -93,5 +93,20 @@ namespace Server.Services
                 throw new Exception("Failed to get assignments: " + ex.Message);
             }
         }
+
+        public async Task<List<Submission>> GetSubmissionsByAssignmentId(int assignmentId)
+        {
+            try
+            {
+                var submissions = await _context.Submissions.Where(s => s.AssignmentId == assignmentId).ToListAsync();
+                return submissions;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to get submissions: " + ex.Message);
+            }
+        }
+
+
     }
 }

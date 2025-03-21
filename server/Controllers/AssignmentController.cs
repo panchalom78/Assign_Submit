@@ -67,6 +67,30 @@ namespace Server.Controllers
             }
         }
 
+        [HttpGet("submission/{assignmentId}")]
+        public async Task<IActionResult> GetSubmissionsByAssignmentId([FromRoute] int assignmentId)
+        {
+            try
+            {
+                var cookie = Request.Cookies["jwt"];
+                if (cookie == null)
+                {
+                    return Unauthorized(new { Error = "Token is required" });
+                }
+                var decodedToken = TokenService.DecodeToken(cookie);
+                if (decodedToken == null || decodedToken.Role != "teacher")
+                {
+                    return Unauthorized(new { Error = "You are not authorized to get submissions" });
+                }
+                var submissions = await _assignmentService.GetSubmissionsByAssignmentId(assignmentId);
+                return Ok(submissions);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = $"Failed to get submissions: {ex.Message}" });
+            }
+        }
+
         [HttpGet("get/student")]
         public async Task<IActionResult> GetAllAssignmentsByStudentId()
         {

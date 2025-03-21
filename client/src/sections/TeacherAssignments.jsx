@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Book, GraduationCap, Calendar, Clock, User } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
+import { useNavigate } from "react-router";
 
 function TeacherAssignments() {
     const [assignments, setAssignments] = useState([]); // State to hold assignments
+    const navigate = useNavigate();
 
     // Fetch assignments when component mounts
     useEffect(() => {
@@ -142,9 +144,8 @@ function TeacherAssignments() {
                                     <button
                                         className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                         onClick={() =>
-                                            console.log(
-                                                "View details:",
-                                                assignment.id
+                                            navigate(
+                                                `/assignment-details/${assignment.id}`
                                             )
                                         }
                                     >

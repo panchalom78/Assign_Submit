@@ -10,6 +10,7 @@ import Login from "../sections/LoginPage";
 import SelectAffiliation from "../sections/SelectAffiliation";
 import CreateAssignment from "../components/CreateAssignment";
 import TeacherAssignments from "../sections/TeacherAssignments";
+import AssignmentDetails from "../sections/AssignmentDetails";
 const Routers = () => {
     return (
         <div>
@@ -34,6 +35,10 @@ const Routers = () => {
                     <Route
                         path="/teacher-assignments"
                         element={<TeacherAssignments />}
+                    />
+                    <Route
+                        path="/assignment-details/:assignmentId"
+                        element={<AssignmentDetails />}
                     />
                 </Routes>
             </Router>

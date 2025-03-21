@@ -7,6 +7,7 @@ import {
     ClipboardList,
 } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
+import { useNavigate } from "react-router";
 
 function CreateAssignment() {
     const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ function CreateAssignment() {
         dueDate: "",
     });
 
+    const navigate = useNavigate();
     const courses = [
         "Computer Science",
         "Mathematics",
@@ -36,6 +38,7 @@ function CreateAssignment() {
             };
             console.log("Submitted:", formData);
             const response = await axiosInstance.post("/assignment", data);
+            navigate("/teacher-assignments");
             // Handle form submission here
             console.log(response.data);
         } catch (error) {
