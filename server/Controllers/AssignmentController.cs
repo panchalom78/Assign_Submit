@@ -91,6 +91,7 @@ namespace Server.Controllers
             }
         }
 
+
         [HttpGet("get/student")]
         public async Task<IActionResult> GetAllAssignmentsByStudentId()
         {
@@ -102,7 +103,7 @@ namespace Server.Controllers
                     return Unauthorized(new { Error = "Token is required" });
                 }
                 var decodedToken = TokenService.DecodeToken(cookie);
-                if (decodedToken == null || decodedToken.Role != "student")
+                if (decodedToken == null || decodedToken.Role != "Student")
                 {
                     return Unauthorized(new { Error = "You are not authorized to get all assignments" });
                 }
@@ -138,5 +139,57 @@ namespace Server.Controllers
                 return BadRequest(new { Error = $"Failed to get assignments: {ex.Message}" });
             }
         }
+
+        [HttpGet("courses")]
+        public async Task<IActionResult> GetTeacherCourses()
+        {
+            try
+            {
+                var cookie = Request.Cookies["jwt"];
+                if (cookie == null)
+                {
+                    return Unauthorized(new { Error = "Token is required" });
+                }
+                var decodedToken = TokenService.DecodeToken(cookie);
+                if (decodedToken == null || decodedToken.Role != "teacher")
+                {
+                    return Unauthorized(new { Error = "You are not authorized to get courses" });
+                }
+                var courses = await _assignmentService.GetCoursesByTeacherId(decodedToken.UserId);
+                return Ok(new { courses });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = $"Failed to get courses: {ex.Message}" });
+            }
+        }
+
+        [HttpGet("classes/{courseId}")]
+        public async Task<IActionResult> GetClassesByCourseId([FromRoute] int courseId)
+        {
+            try
+            {
+                var cookie = Request.Cookies["jwt"];
+                if (cookie == null)
+                {
+                    return Unauthorized(new { Error = "Token is required" });
+                }
+                var decodedToken = TokenService.DecodeToken(cookie);
+                if (decodedToken == null || decodedToken.Role != "teacher")
+                {
+                    return Unauthorized(new { Error = "You are not authorized to get classes" });
+                }
+                var classes = await _assignmentService.GetClassesByCourseId(courseId);
+                return Ok(new { classes });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = $"Failed to get classes: {ex.Message}" });
+            }
+        }
+
+
     }
 }
+
+

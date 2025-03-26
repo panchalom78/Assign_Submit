@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import axiosInstance from "../utils/axiosInstance";
 import { useNavigate } from "react-router";
+import { useAuthStore } from "../store/useAuthStore";
 
 function Login() {
     const [formData, setFormData] = useState({
@@ -9,9 +9,9 @@ function Login() {
         password: "",
     });
 
-    const [error, setError] = useState(null); // Track login errors
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
-
+    const { setUser } = useAuthStore();
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -23,10 +23,16 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post("/auth/login", formData);
-
+            const response = await axios.post(
+                "http://localhost:5134/api/auth/login",
+                formData,
+                {
+                    withCredentials: true, // Ensure the cookie is set by the backend
+                }
+            );
+            setUser(response.data.user);
             console.log("Login successful:", response.data);
-            navigate("/home");
+            navigate("/");
         } catch (error) {
             console.error(
                 "Login failed:",

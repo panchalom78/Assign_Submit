@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     FaUpload,
     FaClock,
@@ -14,54 +14,33 @@ const AssignmentSubmission = () => {
     const [file, setFile] = useState(null);
     const [showFeedback, setShowFeedback] = useState(false);
     const [feedback, setFeedback] = useState("");
+    const [pendingAssignments, setPendingAssignments] = useState([]);
+    const [submittedAssignments, setSubmittedAssignments] = useState([]);
 
-    const assignments = [
-        {
-            id: 1,
-            title: "Algebra Fundamentals",
-            subject: "Mathematics",
-            deadline: "2024-03-25",
-            status: "Pending",
-            progress: 60,
-            description:
-                "Complete chapter 3 exercises and submit PDF solutions",
-        },
-        {
-            id: 2,
-            title: "Chemical Reactions Lab",
-            subject: "Chemistry",
-            deadline: "2024-03-28",
-            status: "Deadline Near",
-            progress: 30,
-            description: "Submit lab report with experimental observations",
-        },
-    ];
+    // Fetch assignments when component mounts
+    useEffect(() => {
+        const fetchAssignments = async () => {
+            try {
+                const response = await axiosInstance.get(
+                    "/student/assignments"
+                );
+                const assignments = response.data.assignments;
 
-    const submissionHistory = [
-        {
-            id: 1,
-            title: "Trigonometry Problems",
-            subject: "Mathematics",
-            submittedOn: "2024-03-10",
-            status: "Graded",
-            feedback: "Great work! Keep it up.",
-            file: "trigonometry.pdf",
-        },
-        {
-            id: 2,
-            title: "Organic Chemistry Quiz",
-            subject: "Chemistry",
-            submittedOn: "2024-03-15",
-            status: "Submitted",
-            feedback: "Pending review.",
-            file: "organic_chemistry.pdf",
-        },
-    ];
+                // Separate pending and submitted assignments
+                const pending = assignments.filter((a) => !a.isSubmitted);
+                const submitted = assignments.filter((a) => a.isSubmitted);
+
+                setPendingAssignments(pending);
+                setSubmittedAssignments(submitted);
+            } catch (error) {
+                console.error("Error fetching assignments:", error);
+            }
+        };
+
+        fetchAssignments();
+    }, []);
 
     const handleSubmit = async (assignmentId) => {
-        console.log("Submitting assignment:", assignmentId);
-        console.log("File:", file);
-
         if (!file) {
             console.error("No file selected.");
             return;
@@ -70,10 +49,6 @@ const AssignmentSubmission = () => {
         const formData = new FormData();
         formData.append("assignmentId", assignmentId);
         formData.append("file", file);
-
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
 
         try {
             const response = await axiosInstance.post(
@@ -84,6 +59,15 @@ const AssignmentSubmission = () => {
                 }
             );
             console.log("Submission successful:", response.data);
+
+            // Refresh assignments after successful submission
+            const assignmentsResponse = await axiosInstance.get(
+                "/student/assignments"
+            );
+            const assignments = assignmentsResponse.data.assignments;
+            setPendingAssignments(assignments.filter((a) => !a.isSubmitted));
+            setSubmittedAssignments(assignments.filter((a) => a.isSubmitted));
+
             setSelectedAssignment(null);
             setFile(null);
         } catch (error) {
@@ -99,7 +83,14 @@ const AssignmentSubmission = () => {
         setShowFeedback(true);
     };
 
-    // Rest of your JSX remains unchanged
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-8">
             <div className="max-w-6xl mx-auto">
@@ -120,9 +111,9 @@ const AssignmentSubmission = () => {
                         Pending Assignments
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {assignments.map((assignment) => (
+                        {pendingAssignments.map((assignment) => (
                             <div
-                                key={assignment.id}
+                                key={assignment.assignmentId}
                                 className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
                                 onClick={() =>
                                     setSelectedAssignment(assignment)
@@ -130,14 +121,8 @@ const AssignmentSubmission = () => {
                             >
                                 <div className="p-6">
                                     <div className="flex justify-between items-start mb-4">
-                                        <span
-                                            className={`px-3 py-1 rounded-full text-sm ${
-                                                assignment.status === "Pending"
-                                                    ? "bg-yellow-100 text-yellow-600"
-                                                    : "bg-red-100 text-red-600"
-                                            }`}
-                                        >
-                                            {assignment.status}
+                                        <span className="px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-600">
+                                            Pending
                                         </span>
                                         <FaClock className="text-gray-400" />
                                     </div>
@@ -145,26 +130,17 @@ const AssignmentSubmission = () => {
                                     <h3 className="text-xl font-semibold mb-2 text-gray-800">
                                         {assignment.title}
                                     </h3>
-                                    <p className="text-gray-600 mb-4">
-                                        {assignment.subject}
+                                    <p className="text-gray-600 mb-4 line-clamp-2">
+                                        {assignment.description}
                                     </p>
 
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center text-purple-600">
                                             <FaCalendarCheck className="mr-2" />
                                             <span className="text-sm">
-                                                {assignment.deadline}
+                                                Due:{" "}
+                                                {formatDate(assignment.dueDate)}
                                             </span>
-                                        </div>
-                                        <div className="w-1/3">
-                                            <div className="h-2 bg-gray-200 rounded-full">
-                                                <div
-                                                    className="h-2 bg-purple-500 rounded-full transition-all duration-500"
-                                                    style={{
-                                                        width: `${assignment.progress}%`,
-                                                    }}
-                                                ></div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -179,9 +155,9 @@ const AssignmentSubmission = () => {
                         Submission History
                     </h2>
                     <div className="bg-white rounded-xl shadow-lg p-6">
-                        {submissionHistory.map((submission) => (
+                        {submittedAssignments.map((submission) => (
                             <div
-                                key={submission.id}
+                                key={submission.assignmentId}
                                 className="border-b border-gray-200 py-4 last:border-b-0"
                             >
                                 <div className="flex justify-between items-center">
@@ -190,33 +166,40 @@ const AssignmentSubmission = () => {
                                             {submission.title}
                                         </h3>
                                         <p className="text-gray-600">
-                                            {submission.subject}
+                                            {submission.description}
                                         </p>
                                     </div>
                                     <div className="flex items-center space-x-4">
-                                        <span
-                                            className={`px-3 py-1 rounded-full text-sm ${
-                                                submission.status === "Graded"
-                                                    ? "bg-green-100 text-green-600"
-                                                    : "bg-blue-100 text-blue-600"
-                                            }`}
-                                        >
-                                            {submission.status}
+                                        <span className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-600">
+                                            {submission.submission?.marks
+                                                ? "Graded"
+                                                : "Submitted"}
                                         </span>
-                                        <button
-                                            onClick={() =>
-                                                handleViewFeedback(
-                                                    submission.feedback
-                                                )
-                                            }
-                                            className="text-purple-600 hover:text-purple-800"
-                                        >
-                                            View Feedback
-                                        </button>
+                                        {submission.submission?.feedback && (
+                                            <button
+                                                onClick={() =>
+                                                    handleViewFeedback(
+                                                        submission.submission
+                                                            .feedback
+                                                    )
+                                                }
+                                                className="text-purple-600 hover:text-purple-800"
+                                            >
+                                                View Feedback
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="mt-2 text-sm text-gray-500">
-                                    Submitted on: {submission.submittedOn}
+                                    Submitted on:{" "}
+                                    {formatDate(
+                                        submission.submission?.submissionDate
+                                    )}
+                                    {submission.submission?.marks && (
+                                        <span className="ml-4 font-semibold text-purple-600">
+                                            Marks: {submission.submission.marks}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -245,17 +228,18 @@ const AssignmentSubmission = () => {
                                 </p>
                                 <div className="flex items-center text-sm text-gray-500 mb-4">
                                     <FaCalendarCheck className="mr-2" />
-                                    Deadline: {selectedAssignment.deadline}
+                                    Deadline:{" "}
+                                    {formatDate(selectedAssignment.dueDate)}
                                 </div>
                             </div>
 
                             <div
                                 className={`border-2 border-dashed rounded-xl p-8 text-center mb-6 
-                  ${
-                      file
-                          ? "border-purple-500 bg-purple-50"
-                          : "border-gray-300 hover:border-purple-300"
-                  }`}
+                                ${
+                                    file
+                                        ? "border-purple-500 bg-purple-50"
+                                        : "border-gray-300 hover:border-purple-300"
+                                }`}
                                 onDragOver={(e) => e.preventDefault()}
                                 onDrop={(e) => {
                                     e.preventDefault();
@@ -296,7 +280,9 @@ const AssignmentSubmission = () => {
 
                             <button
                                 onClick={() =>
-                                    handleSubmit(selectedAssignment.id)
+                                    handleSubmit(
+                                        selectedAssignment.assignmentId
+                                    )
                                 }
                                 className="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 rounded-lg font-semibold transition-colors"
                                 disabled={!file}

@@ -22,10 +22,10 @@ const Menu = () => {
     const navigate = useNavigate();
 
     const handleHome = () => {
-        navigate("/home");
+        navigate("/");
     };
     const handleAssignment = () => {
-        navigate("/submition");
+        navigate("/create-assignment");
     };
     const handleCalendar = () => {
         navigate("/calendar-view");

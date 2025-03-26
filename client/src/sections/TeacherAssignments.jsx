@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Book, GraduationCap, Calendar, Clock, User } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 function TeacherAssignments() {
     const [assignments, setAssignments] = useState([]); // State to hold assignments
@@ -68,13 +68,22 @@ function TeacherAssignments() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                        Assignments Dashboard
-                    </h1>
-                    <p className="text-lg text-gray-600">
-                        View all assignments created by teachers
-                    </p>
+                <div className="w-full flex items-center">
+                    <div className="text-center mb-8 flex-1">
+                        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                            Assignments Dashboard
+                        </h1>
+                        <p className="text-lg text-gray-600">
+                            View all assignments created by teachers
+                        </p>
+                    </div>
+                    <div className="flex justify-center items-center p-5 h-full justify-self-end">
+                        <button className="btn p-4 bg-blue-500 rounded-lg cursor-pointer">
+                            <Link to="/create-assignments">
+                                Create Assignment
+                            </Link>
+                        </button>
+                    </div>
                 </div>
 
                 <div className="space-y-6">

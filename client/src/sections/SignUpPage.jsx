@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import axiosInstance from "../utils/axiosInstance";
+import { useAuthStore } from "../store/useAuthStore";
 
 function Signup() {
     const [formData, setFormData] = useState({
         fullName: "",
         email: "",
         password: "",
-        role: "Student",
+        role: "student",
         prn: "",
     });
-
+    const { setUser } = useAuthStore();
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -24,16 +25,21 @@ function Signup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post("/auth/register", {
-                fullName: formData.fullName,
-                email: formData.email,
-                password: formData.password,
-                role: formData.role,
-            });
+            const response = await axiosInstance.post(
+                "/auth/register",
+                {
+                    fullName: formData.fullName,
+                    email: formData.email,
+                    password: formData.password,
+                    role: formData.role,
+                },
+                { withCredentials: true }
+            );
 
             console.log("Signup successful:", response.data);
             alert("Signup Successful!");
-            navigate("/login"); // Redirect user after successful signup
+            setUser(response.data.user);
+            navigate("/select-affiliate"); // Redirect user after successful signup
         } catch (error) {
             console.error(
                 "Signup failed:",
@@ -99,8 +105,8 @@ function Signup() {
                         className="w-full px-3 py-2 border rounded"
                         required
                     >
-                        <option value="Student">Student</option>
-                        <option value="Teacher">Teacher</option>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
                     </select>
                 </div>
 

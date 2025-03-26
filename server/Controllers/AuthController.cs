@@ -31,9 +31,20 @@ namespace Server.Controllers
                     return BadRequest(new { Error = "All fields (fullName, email, password, role) are required" });
                 }
 
-                var user = await _authService.Register(request.FullName, request.Email, request.Password, request.Role);
+                var data = await _authService.Register(request.FullName, request.Email, request.Password, request.Role);
 
-                return Ok(new { Message = "User registered successfully", UserId = user.UserId });
+                Response.Cookies.Append("jwt", data.Token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false, // Set to true in production (HTTPS)
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddDays(1)
+                });
+
+                var user = new UserData(UserId: data.user.UserId, FullName: data.user.FullName, Role: data.user.Role);
+
+                return Ok(new { Message = "User registered successfully", user });
+                // return Ok(new { Message = "User registered successfully", UserId = user.UserId });
             }
             catch (Exception ex)
             {
@@ -52,18 +63,19 @@ namespace Server.Controllers
                     return BadRequest(new { Error = "Email and password are required" });
                 }
 
-                var token = await _authService.Login(request.Email, request.Password);
+                var data = await _authService.Login(request.Email, request.Password);
 
                 // Set JWT in HttpOnly cookie
-                Response.Cookies.Append("jwt", token, new CookieOptions
+                Response.Cookies.Append("jwt", data.Token, new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = false, // Set to true in production (HTTPS)
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.UtcNow.AddDays(1)
                 });
+                var user = new UserData(UserId: data.user.UserId, FullName: data.user.FullName, Role: data.user.Role);
 
-                return Ok(new { Message = "Login successful" });
+                return Ok(new { Message = "Login successful", user });
             }
             catch (Exception ex)
             {
@@ -84,8 +96,9 @@ namespace Server.Controllers
                     return Unauthorized(new { Error = "User ID not found in token" });
                 }
 
-                await _authService.UpdateUserAffiliation(userId, request);
-                return Ok(new { Message = "Affiliation updated successfully" });
+                var data = await _authService.UpdateUserAffiliation(userId, request);
+                var user = new UserData(UserId: data.user.UserId, FullName: data.user.FullName, Role: data.user.Role);
+                return Ok(new { Message = "Affiliation updated successfully", user });
             }
             catch (Exception ex)
             {
@@ -136,6 +149,80 @@ namespace Server.Controllers
             catch (Exception ex)
             {
                 return NotFound(new { Error = ex.Message });
+            }
+        }
+
+        [HttpGet("colleges")]
+
+        public async Task<IActionResult> GetColleges()
+        {
+
+            try
+            {
+                var colleges = await _authService.GetColleges();
+                return Ok(colleges);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { Error = ex.Message });
+            }
+
+
+        }
+
+
+        [HttpGet("faculties")]
+
+        public async Task<IActionResult> GetFaculties([FromQuery] int collegeId)
+        {
+            var faculties = await _authService.GetFaculties(collegeId);
+            return Ok(faculties);
+        }
+
+
+        [HttpGet("courses")]
+
+        public async Task<IActionResult> GetCourses([FromQuery] int facultyId)
+
+        {
+            try
+            {
+                var courses = await _authService.GetCourses(facultyId);
+                return Ok(courses);
+            }
+            catch (Exception ex)
+            {
+
+                return NotFound(new { Error = ex.Message });
+            }
+        }
+
+
+        [HttpGet("classes")]
+
+        public async Task<IActionResult> GetClasses([FromQuery] int courseId)
+        {
+            var classes = await _authService.GetClasses(courseId);
+            return Ok(classes);
+        }
+
+        [HttpGet("verify-token")]
+        public async Task<IActionResult> VerifyToken()
+        {
+            var token = Request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized(new { Error = "Token not found" });
+            }
+            try
+            {
+                var data = await _authService.VerifyToken(token);
+                var user = new UserData(UserId: data.user.UserId, FullName: data.user.FullName, Role: data.user.Role);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { Error = ex.Message });
             }
         }
     }

@@ -11,13 +11,28 @@ import SelectAffiliation from "../sections/SelectAffiliation";
 import CreateAssignment from "../components/CreateAssignment";
 import TeacherAssignments from "../sections/TeacherAssignments";
 import AssignmentDetails from "../sections/AssignmentDetails";
+import { useAuthStore } from "../store/useAuthStore";
 const Routers = () => {
+    const { user } = useAuthStore();
     return (
         <div>
             <Router>
                 <Routes>
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/submition" element={<Assignment />} />
+                    <Route
+                        path="/"
+                        element={
+                            user ? (
+                                user.role == "student" ? (
+                                    <Home />
+                                ) : (
+                                    <TeacherAssignments />
+                                )
+                            ) : (
+                                <Navigate to="/login" />
+                            )
+                        }
+                    />
+                    <Route path="/create-assignment" element={<Assignment />} />
                     <Route path="/calendar-view" element={<Calendar />} />
                     <Route path="/grades" element={<GradesPage />} />
                     <Route path="/remarks" element={<RemarkPage />} />
@@ -29,7 +44,7 @@ const Routers = () => {
                         element={<SelectAffiliation />}
                     />
                     <Route
-                        path="/create-assignment"
+                        path="/create-assignments"
                         element={<CreateAssignment />}
                     />
                     <Route

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Book,
     GraduationCap,
@@ -16,17 +16,49 @@ function CreateAssignment() {
         description: "",
         dueDate: "",
     });
+    const [courses, setCourses] = useState([]); // State for courses from API
+    const [classes, setClasses] = useState([]); // State for classes from API
+    const [selectedCourse, setSelectedCourse] = useState(""); // Track selected course
 
     const navigate = useNavigate();
-    const courses = [
-        "Computer Science",
-        "Mathematics",
-        "Physics",
-        "Chemistry",
-        "Biology",
-    ];
 
-    const classes = ["Class A", "Class B", "Class C", "Class D", "Class E"];
+    // Fetch courses when component mounts
+    useEffect(() => {
+        const getCourses = async () => {
+            try {
+                const response = await axiosInstance.get("/assignment/courses");
+                setCourses(response.data.courses);
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+                setCourses([]);
+            }
+        };
+
+        getCourses();
+    }, []);
+
+    // Fetch classes when a course is selected
+    useEffect(() => {
+        const getClasses = async () => {
+            if (!selectedCourse) {
+                setClasses([]);
+                return;
+            }
+            try {
+                const response = await axiosInstance.get(
+                    `/assignment/classes/${selectedCourse}`
+                );
+                setClasses(response.data.classes);
+                // Reset classId when course changes
+                setFormData((prev) => ({ ...prev, classId: "" }));
+            } catch (error) {
+                console.error("Error fetching classes:", error);
+                setClasses([]);
+            }
+        };
+
+        getClasses();
+    }, [selectedCourse]);
 
     const handleSubmit = async (e) => {
         try {
@@ -36,10 +68,8 @@ function CreateAssignment() {
                 submittedOn: new Date().toISOString(),
                 dueDate: new Date(formData.dueDate).toISOString(),
             };
-            console.log("Submitted:", formData);
             const response = await axiosInstance.post("/assignment", data);
             navigate("/teacher-assignments");
-            // Handle form submission here
             console.log(response.data);
         } catch (error) {
             console.log(error);
@@ -48,6 +78,9 @@ function CreateAssignment() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name === "course") {
+            setSelectedCourse(value);
+        }
         setFormData((prev) => ({
             ...prev,
             [name]: value,
@@ -74,15 +107,18 @@ function CreateAssignment() {
                                 </label>
                                 <select
                                     name="course"
-                                    value={formData.course}
+                                    value={selectedCourse}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                                     required
                                 >
                                     <option value="">Select Course</option>
-                                    {courses.map((course, index) => (
-                                        <option key={course} value={index + 1}>
-                                            {course}
+                                    {courses.map((course) => (
+                                        <option
+                                            key={course.courseId}
+                                            value={course.courseId}
+                                        >
+                                            {course.courseName}
                                         </option>
                                     ))}
                                 </select>
@@ -99,11 +135,15 @@ function CreateAssignment() {
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                                     required
+                                    disabled={!selectedCourse}
                                 >
                                     <option value="">Select Class</option>
-                                    {classes.map((cls, index) => (
-                                        <option key={cls} value={index + 1}>
-                                            {cls}
+                                    {classes.map((cls) => (
+                                        <option
+                                            key={cls.classId}
+                                            value={cls.classId}
+                                        >
+                                            {cls.className}
                                         </option>
                                     ))}
                                 </select>

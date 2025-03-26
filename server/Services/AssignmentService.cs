@@ -107,6 +107,62 @@ namespace Server.Services
             }
         }
 
+        public class CourseDTO
+        {
+            public int CourseId { get; set; }
+            public string? CourseName { get; set; }
+        }
+
+        public async Task<List<CourseDTO>> GetCoursesByTeacherId(int teacherId)
+        {
+            try
+            {
+                var teacher = await _context.Users
+                    .Include(u => u.Faculty)
+                    .ThenInclude(f => f.Courses)
+                    .FirstOrDefaultAsync(u => u.UserId == teacherId)
+                    ?? throw new Exception("Teacher not found");
+
+                if (teacher.Faculty?.Courses == null)
+                {
+                    throw new Exception("No courses found for this teacher");
+                }
+
+                return teacher.Faculty.Courses
+                    .Select(c => new CourseDTO
+                    {
+                        CourseId = c.CourseId,
+                        CourseName = c.CourseName
+                    })
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to get courses: " + ex.Message);
+            }
+        }
+
+        public async Task<List<Class>> GetClassesByCourseId(int courseId)
+        {
+            try
+            {
+                var classes = await _context.Classes
+                    .Where(c => c.CourseId == courseId)
+                    .ToListAsync();
+
+                if (!classes.Any())
+                {
+                    throw new Exception("No classes found for this course");
+                }
+
+                return classes;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to get classes: " + ex.Message);
+            }
+        }
+
 
     }
 }

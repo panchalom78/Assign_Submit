@@ -18,7 +18,7 @@ namespace Server.Services
             _context = context;
             _configuration = configuration;
         }
-        public async Task UpdateUserAffiliation(int userId, SelectAffiliationRequest request)
+        public async Task<dynamic> UpdateUserAffiliation(int userId, SelectAffiliationRequest request)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
@@ -38,7 +38,7 @@ namespace Server.Services
                 throw new Exception("Faculty not found or doesn’t belong to the selected college");
             }
 
-            if (request.Role == "Student")
+            if (request.Role == "student")
             {
                 if (request.CourseId == null || request.ClassId == null)
                 {
@@ -62,7 +62,7 @@ namespace Server.Services
                 user.CourseId = request.CourseId.Value;
                 user.ClassId = request.ClassId.Value;
             }
-            else if (request.Role == "Teacher")
+            else if (request.Role == "teacher")
             {
                 user.CollegeId = request.CollegeId;
                 user.FacultyId = request.FacultyId;
@@ -75,9 +75,10 @@ namespace Server.Services
             }
 
             await _context.SaveChangesAsync();
+            return new { Message = "Affiliation updated successfully", user };
         }
 
-        public async Task<User> Register(string fullName, string email, string password, string role)
+        public async Task<dynamic> Register(string fullName, string email, string password, string role)
         {
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (existingUser != null)
@@ -95,10 +96,11 @@ namespace Server.Services
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            return user;
+            var token = GenerateJwtToken(user);
+            return new { Message = "User registered successfully", user, Token = token };
         }
 
-        public async Task<string> Login(string email, string password)
+        public async Task<dynamic> Login(string email, string password)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
@@ -106,7 +108,8 @@ namespace Server.Services
                 throw new Exception("Invalid credentials");
             }
 
-            return GenerateJwtToken(user);
+            var token = GenerateJwtToken(user);
+            return new { Message = "Login successful", user, Token = token };
         }
 
         private string GenerateJwtToken(User user)
@@ -215,5 +218,35 @@ namespace Server.Services
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<College>> GetColleges()
+        {
+            return await _context.Colleges.ToListAsync();
+        }
+
+        public async Task<List<Faculty>> GetFaculties(int collegeId)
+        {
+            return await _context.Faculties.Where(f => f.CollegeId == collegeId).ToListAsync();
+        }
+
+        public async Task<List<Course>> GetCourses(int facultyId)
+        {
+            return await _context.Courses.Where(c => c.FacultyId == facultyId).ToListAsync();
+        }
+
+        public async Task<List<Class>> GetClasses(int courseId)
+        {
+            return await _context.Classes.Where(c => c.CourseId == courseId).ToListAsync();
+        }
+
+        public async Task<dynamic> VerifyToken(string token)
+        {
+            var deCodedToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            var userId = deCodedToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var user = await _context.Users.FindAsync(int.Parse(userId));
+            return new { Message = "Token verified successfully", user };
+        }
+
     }
 }
+
