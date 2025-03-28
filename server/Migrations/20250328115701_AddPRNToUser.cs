@@ -7,11 +7,24 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AddPRNToUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Colleges",
+                columns: table => new
+                {
+                    CollegeId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CollegeName = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Colleges", x => x.CollegeId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Faculties",
                 columns: table => new
@@ -19,11 +32,17 @@ namespace server.Migrations
                     FacultyId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FacultyName = table.Column<string>(type: "text", nullable: true),
-                    CollegeName = table.Column<string>(type: "text", nullable: true)
+                    CollegeName = table.Column<string>(type: "text", nullable: true),
+                    CollegeId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Faculties", x => x.FacultyId);
+                    table.ForeignKey(
+                        name: "FK_Faculties_Colleges_CollegeId",
+                        column: x => x.CollegeId,
+                        principalTable: "Colleges",
+                        principalColumn: "CollegeId");
                 });
 
             migrationBuilder.CreateTable(
@@ -85,7 +104,9 @@ namespace server.Migrations
                     Role = table.Column<string>(type: "text", nullable: true),
                     FacultyId = table.Column<int>(type: "integer", nullable: true),
                     ClassId = table.Column<int>(type: "integer", nullable: true),
-                    CourseId = table.Column<int>(type: "integer", nullable: true)
+                    CourseId = table.Column<int>(type: "integer", nullable: true),
+                    CollegeId = table.Column<int>(type: "integer", nullable: true),
+                    Prn = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -95,6 +116,11 @@ namespace server.Migrations
                         column: x => x.ClassId,
                         principalTable: "Classes",
                         principalColumn: "ClassId");
+                    table.ForeignKey(
+                        name: "FK_Users_Colleges_CollegeId",
+                        column: x => x.CollegeId,
+                        principalTable: "Colleges",
+                        principalColumn: "CollegeId");
                     table.ForeignKey(
                         name: "FK_Users_Courses_CourseId",
                         column: x => x.CourseId,
@@ -115,9 +141,9 @@ namespace server.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    DueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DueDate = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    SubmittedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    SubmittedOn = table.Column<string>(type: "text", nullable: true),
                     ClassId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -134,6 +160,26 @@ namespace server.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChatGroups",
+                columns: table => new
+                {
+                    ChatGroupId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AssignmentId = table.Column<int>(type: "integer", nullable: false),
+                    ExpiryDate = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatGroups", x => x.ChatGroupId);
+                    table.ForeignKey(
+                        name: "FK_ChatGroups_Assignments_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignments",
+                        principalColumn: "AssignmentId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -167,6 +213,34 @@ namespace server.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ChatMessages",
+                columns: table => new
+                {
+                    ChatMessageId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ChatGroupId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false),
+                    SentAt = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatMessages", x => x.ChatMessageId);
+                    table.ForeignKey(
+                        name: "FK_ChatMessages_ChatGroups_ChatGroupId",
+                        column: x => x.ChatGroupId,
+                        principalTable: "ChatGroups",
+                        principalColumn: "ChatGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChatMessages_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Assignments_ClassId",
                 table: "Assignments",
@@ -175,6 +249,21 @@ namespace server.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Assignments_UserId",
                 table: "Assignments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChatGroups_AssignmentId",
+                table: "ChatGroups",
+                column: "AssignmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChatMessages_ChatGroupId",
+                table: "ChatMessages",
+                column: "ChatGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChatMessages_UserId",
+                table: "ChatMessages",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -193,6 +282,11 @@ namespace server.Migrations
                 column: "FacultyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Faculties_CollegeId",
+                table: "Faculties",
+                column: "CollegeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Submissions_AssignmentId",
                 table: "Submissions",
                 column: "AssignmentId");
@@ -206,6 +300,11 @@ namespace server.Migrations
                 name: "IX_Users_ClassId",
                 table: "Users",
                 column: "ClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_CollegeId",
+                table: "Users",
+                column: "CollegeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_CourseId",
@@ -222,7 +321,13 @@ namespace server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ChatMessages");
+
+            migrationBuilder.DropTable(
                 name: "Submissions");
+
+            migrationBuilder.DropTable(
+                name: "ChatGroups");
 
             migrationBuilder.DropTable(
                 name: "Assignments");
@@ -238,6 +343,9 @@ namespace server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Faculties");
+
+            migrationBuilder.DropTable(
+                name: "Colleges");
         }
     }
 }

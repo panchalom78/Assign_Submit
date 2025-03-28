@@ -26,6 +26,8 @@ namespace Server.Services
                 throw new Exception("User not found");
             }
 
+
+
             var college = await _context.Colleges.FindAsync(request.CollegeId);
             if (college == null)
             {
@@ -45,6 +47,17 @@ namespace Server.Services
                     throw new Exception("Students must select a Course and a Class.");
                 }
 
+                if (request.Prn != null && request.Prn.Length != 10)
+                {
+                    throw new Exception("PRN must be exactly 10 digits");
+                }
+
+                var existingStudent = await _context.Users.FirstOrDefaultAsync(u => u.Prn == request.Prn);
+                if (existingStudent != null)
+                {
+                    throw new Exception("Student with this PRN already exists");
+                }
+
                 var course = await _context.Courses.FirstOrDefaultAsync(c => c.CourseId == request.CourseId && c.FacultyId == request.FacultyId);
                 if (course == null)
                 {
@@ -61,6 +74,7 @@ namespace Server.Services
                 user.FacultyId = request.FacultyId;
                 user.CourseId = request.CourseId.Value;
                 user.ClassId = request.ClassId.Value;
+                user.Prn = request.Prn;
             }
             else if (request.Role == "teacher")
             {
@@ -183,11 +197,11 @@ namespace Server.Services
                 Console.WriteLine("✅ Courses seeded.");
 
                 // ✅ Step 5: Insert Classes
-                var class1 = new Class { ClassName = "CS101", CourseId = course1.CourseId };
-                var class2 = new Class { ClassName = "CS102", CourseId = course1.CourseId };
-                var class3 = new Class { ClassName = "ME101", CourseId = course2.CourseId };
-                var class4 = new Class { ClassName = "PHY101", CourseId = course3.CourseId };
-                var class5 = new Class { ClassName = "BIZ101", CourseId = course4.CourseId };
+                var class1 = new Class { ClassName = "CS101", CourseId = course1.CourseId, FacultyId = faculty1.FacultyId };
+                var class2 = new Class { ClassName = "CS102", CourseId = course1.CourseId, FacultyId = faculty1.FacultyId };
+                var class3 = new Class { ClassName = "ME101", CourseId = course2.CourseId, FacultyId = faculty1.FacultyId };
+                var class4 = new Class { ClassName = "PHY101", CourseId = course3.CourseId, FacultyId = faculty2.FacultyId };
+                var class5 = new Class { ClassName = "BIZ101", CourseId = course4.CourseId, FacultyId = faculty3.FacultyId };
 
                 _context.Classes.AddRange(class1, class2, class3, class4, class5);
                 await _context.SaveChangesAsync();

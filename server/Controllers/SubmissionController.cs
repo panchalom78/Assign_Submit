@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Services;
 using Server.Token;
+using Server.DTOs;
 using System.Threading.Tasks;
 
 namespace Server.Controllers
@@ -69,7 +70,7 @@ namespace Server.Controllers
                     return Unauthorized(new { Error = "Token is required" });
                 }
                 var decodedToken = TokenService.DecodeToken(cookie);
-                if (decodedToken == null || decodedToken.Role != "student")
+                if (decodedToken == null || decodedToken.Role != "teacher")
                 {
                     return Unauthorized(new { Error = "You are not authorized to download this file" });
                 }
@@ -87,6 +88,32 @@ namespace Server.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("grade/{submissionId}")]
+        public async Task<IActionResult> GradeSubmission(int submissionId, [FromBody] GradeSubmissionRequest request)
+        {
+            try
+            {
+                var cookie = Request.Cookies["jwt"];
+                if (cookie == null)
+                {
+                    return Unauthorized(new { Error = "Token is required" });
+                }
+
+                var decodedToken = TokenService.DecodeToken(cookie);
+                if (decodedToken == null || decodedToken.Role != "teacher")
+                {
+                    return Unauthorized(new { Error = "You are not authorized to grade submissions" });
+                }
+
+                var updatedSubmission = await _submissionService.GradeSubmission(submissionId, request.Marks, request.Feedback);
+                return Ok(updatedSubmission);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = $"Failed to grade submission: {ex.Message}" });
             }
         }
     }

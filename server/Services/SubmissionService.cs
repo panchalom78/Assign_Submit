@@ -5,6 +5,7 @@ using Server.Models;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Server.DTOs;
 namespace Server.Services
 {
     public class SubmissionService
@@ -137,5 +138,44 @@ namespace Server.Services
                 }
             }
         }
+
+        public async Task<SubmissionResponseDTO> GradeSubmission(int submissionId, int? marks, string? feedback)
+        {
+            try
+            {
+                var submission = await _context.Submissions
+                    .Include(s => s.Student)
+                    .FirstOrDefaultAsync(s => s.SubmissionId == submissionId);
+
+                if (submission == null)
+                {
+                    throw new Exception("Submission not found");
+                }
+
+                // Update submission with grades
+                submission.Marks = marks;
+                submission.Feedback = feedback;
+
+                await _context.SaveChangesAsync();
+
+                // Return updated submission
+                return new SubmissionResponseDTO
+                {
+                    SubmissionId = submission.SubmissionId,
+                    StudentId = submission.StudentId,
+                    AssignmentId = submission.AssignmentId,
+                    SubmissionDate = submission.SubmissionDate,
+                    FilePath = submission.FilePath,
+                    Marks = submission.Marks,
+                    Feedback = submission.Feedback,
+                    StudentName = submission.Student?.FullName
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to grade submission: {ex.Message}");
+            }
+        }
+
     }
 }

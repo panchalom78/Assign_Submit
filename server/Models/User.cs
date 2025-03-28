@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Server.Models
 {
     public class User
@@ -13,8 +15,13 @@ namespace Server.Models
         public Class? Class { get; set; }
         public int? CourseId { get; set; }
         public Course? Course { get; set; }
-        public int? CollegeId { get; set; } 
-        public College? College { get; set; } 
+        public int? CollegeId { get; set; }
+        public College? College { get; set; }
         public List<Submission>? Submissions { get; set; }
+
+
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "PRN must be exactly 10 digits")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "PRN must contain exactly 10 digits")]
+        public string? Prn { get; set; }
     }
 }

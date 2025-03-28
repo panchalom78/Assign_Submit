@@ -12,8 +12,8 @@ using Server.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(UserDBContext))]
-    [Migration("20250319124103_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250328115701_AddPRNToUser")]
+    partial class AddPRNToUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,11 +39,11 @@ namespace server.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("DueDate")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime>("SubmittedOn")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("SubmittedOn")
+                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -58,6 +58,59 @@ namespace server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Assignments");
+                });
+
+            modelBuilder.Entity("Server.Models.ChatGroup", b =>
+                {
+                    b.Property<int>("ChatGroupId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ChatGroupId"));
+
+                    b.Property<int>("AssignmentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ExpiryDate")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ChatGroupId");
+
+                    b.HasIndex("AssignmentId");
+
+                    b.ToTable("ChatGroups");
+                });
+
+            modelBuilder.Entity("Server.Models.ChatMessage", b =>
+                {
+                    b.Property<int>("ChatMessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ChatMessageId"));
+
+                    b.Property<int>("ChatGroupId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SentAt")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ChatMessageId");
+
+                    b.HasIndex("ChatGroupId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ChatMessages");
                 });
 
             modelBuilder.Entity("Server.Models.Class", b =>
@@ -84,6 +137,22 @@ namespace server.Migrations
                     b.HasIndex("FacultyId");
 
                     b.ToTable("Classes");
+                });
+
+            modelBuilder.Entity("Server.Models.College", b =>
+                {
+                    b.Property<int>("CollegeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CollegeId"));
+
+                    b.Property<string>("CollegeName")
+                        .HasColumnType("text");
+
+                    b.HasKey("CollegeId");
+
+                    b.ToTable("Colleges");
                 });
 
             modelBuilder.Entity("Server.Models.Course", b =>
@@ -115,6 +184,9 @@ namespace server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FacultyId"));
 
+                    b.Property<int?>("CollegeId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("CollegeName")
                         .HasColumnType("text");
 
@@ -122,6 +194,8 @@ namespace server.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("FacultyId");
+
+                    b.HasIndex("CollegeId");
 
                     b.ToTable("Faculties");
                 });
@@ -172,6 +246,9 @@ namespace server.Migrations
                     b.Property<int?>("ClassId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("CollegeId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("CourseId")
                         .HasColumnType("integer");
 
@@ -187,12 +264,19 @@ namespace server.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("text");
 
+                    b.Property<string>("Prn")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
                     b.Property<string>("Role")
                         .HasColumnType("text");
 
                     b.HasKey("UserId");
 
                     b.HasIndex("ClassId");
+
+                    b.HasIndex("CollegeId");
 
                     b.HasIndex("CourseId");
 
@@ -216,6 +300,36 @@ namespace server.Migrations
                         .IsRequired();
 
                     b.Navigation("Class");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Server.Models.ChatGroup", b =>
+                {
+                    b.HasOne("Server.Models.Assignment", "Assignment")
+                        .WithMany()
+                        .HasForeignKey("AssignmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assignment");
+                });
+
+            modelBuilder.Entity("Server.Models.ChatMessage", b =>
+                {
+                    b.HasOne("Server.Models.ChatGroup", "ChatGroup")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChatGroup");
 
                     b.Navigation("User");
                 });
@@ -250,6 +364,13 @@ namespace server.Migrations
                     b.Navigation("Faculty");
                 });
 
+            modelBuilder.Entity("Server.Models.Faculty", b =>
+                {
+                    b.HasOne("Server.Models.College", null)
+                        .WithMany("Faculties")
+                        .HasForeignKey("CollegeId");
+                });
+
             modelBuilder.Entity("Server.Models.Submission", b =>
                 {
                     b.HasOne("Server.Models.Assignment", "Assignment")
@@ -275,6 +396,10 @@ namespace server.Migrations
                         .WithMany()
                         .HasForeignKey("ClassId");
 
+                    b.HasOne("Server.Models.College", "College")
+                        .WithMany("Users")
+                        .HasForeignKey("CollegeId");
+
                     b.HasOne("Server.Models.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId");
@@ -284,6 +409,8 @@ namespace server.Migrations
                         .HasForeignKey("FacultyId");
 
                     b.Navigation("Class");
+
+                    b.Navigation("College");
 
                     b.Navigation("Course");
 
@@ -295,9 +422,21 @@ namespace server.Migrations
                     b.Navigation("Submissions");
                 });
 
+            modelBuilder.Entity("Server.Models.ChatGroup", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("Server.Models.Class", b =>
                 {
                     b.Navigation("Assignments");
+                });
+
+            modelBuilder.Entity("Server.Models.College", b =>
+                {
+                    b.Navigation("Faculties");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Server.Models.Course", b =>

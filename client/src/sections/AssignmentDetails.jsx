@@ -9,12 +9,14 @@ import {
     FaChalkboardTeacher,
 } from "react-icons/fa";
 import axiosInstance from "../utils/axiosInstance";
+import SubmissionGrading from "../components/SubmissionGrading";
 
 const TeacherAssignmentDetails = () => {
     const { assignmentId } = useParams(); // Get assignment ID from URL
     const [assignment, setAssignment] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedSubmission, setSelectedSubmission] = useState(null);
 
     // Fetch assignment details when component mounts
     useEffect(() => {
@@ -38,7 +40,7 @@ const TeacherAssignmentDetails = () => {
                     dueDate: data.dueDate || "Not specified",
                     teacher: data.user?.fullName || "Unknown Teacher",
                     submittedOn: data.submittedOn || "Not submitted",
-                    className: data.class?.name || `Class ${data.classId}`, // Assuming Class has a Name property
+                    className: data.class?.className || `Class ${data.classId}`, // Assuming Class has a Name property
                     submissions:
                         submissions.map((s) => ({
                             submissionId: s.submissionId,
@@ -75,11 +77,33 @@ const TeacherAssignmentDetails = () => {
         });
     };
 
+    const handleGradingComplete = (updatedSubmission) => {
+        try {
+            setAssignment((prev) => ({
+                ...prev,
+                submissions: prev.submissions.map((submission) =>
+                    submission.submissionId === updatedSubmission.submissionId
+                        ? {
+                              ...submission,
+                              marks: updatedSubmission.marks,
+                              feedback: updatedSubmission.feedback,
+                          }
+                        : submission
+                ),
+            }));
+            // Close the grading modal
+            setSelectedSubmission(null);
+        } catch (error) {
+            console.error("Error updating submission:", error);
+            alert("Failed to update submission display");
+        }
+    };
+
     // Handle file download
     const handleDownload = async (submissionId) => {
         try {
             const response = await axiosInstance.get(
-                `/api/submission/download/${submissionId}`,
+                `/submission/download/${submissionId}`,
                 {
                     responseType: "blob",
                 }
@@ -207,14 +231,15 @@ const TeacherAssignmentDetails = () => {
                                                 </div>
                                                 <button
                                                     onClick={() =>
-                                                        handleDownload(
-                                                            submission.submissionId
+                                                        setSelectedSubmission(
+                                                            submission
                                                         )
                                                     }
                                                     className="flex items-center px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors"
                                                 >
-                                                    <FaDownload className="mr-2" />
-                                                    Download
+                                                    {submission.marks !== null
+                                                        ? "Update Grade"
+                                                        : "Grade Submission"}
                                                 </button>
                                             </div>
                                         )
@@ -222,6 +247,14 @@ const TeacherAssignmentDetails = () => {
                                 </div>
                             )}
                         </div>
+                        {/* Grading Modal */}
+                        {selectedSubmission && (
+                            <SubmissionGrading
+                                submission={selectedSubmission}
+                                onClose={() => setSelectedSubmission(null)}
+                                onGradingComplete={handleGradingComplete}
+                            />
+                        )}
                     </div>
                 )}
             </div>

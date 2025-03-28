@@ -22,6 +22,7 @@ namespace Server.Models
         public int FacultyId { get; set; }
         public int? CourseId { get; set; } // Nullable for Teachers
         public int? ClassId { get; set; } // Nullable for Teachers
+        public string? Prn { get; set; }
     }
 
     public record UserData

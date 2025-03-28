@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Book, GraduationCap, Calendar, Clock, User } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
 import { Link, useNavigate } from "react-router";
-
+import TeacherNavbar from "../components/TeacherNavbar";
+import TeacherMenu from "../components/TeacherMenu";
 function TeacherAssignments() {
     const [assignments, setAssignments] = useState([]); // State to hold assignments
     const navigate = useNavigate();
@@ -18,8 +19,8 @@ function TeacherAssignments() {
                     (src) => ({
                         id: src.assignmentId.toString(),
                         title: src.title,
-                        course: "Unknown Course", // Hardcoded; replace with actual logic if available
-                        class: `Class ${src.classId}`, // Inferred from classId
+                        course: `${src.class.course.courseName}`, // Hardcoded; replace with actual logic if available
+                        class: `${src.class.className}`, // Inferred from classId
                         description: src.description,
                         dueDate: src.dueDate.replace(" ", "T"), // Convert to ISO 8601
                         teacher: src.user.fullName,
@@ -66,107 +67,140 @@ function TeacherAssignments() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-                <div className="w-full flex items-center">
-                    <div className="text-center mb-8 flex-1">
-                        <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                            Assignments Dashboard
-                        </h1>
-                        <p className="text-lg text-gray-600">
-                            View all assignments created by teachers
-                        </p>
-                    </div>
-                    <div className="flex justify-center items-center p-5 h-full justify-self-end">
-                        <button className="btn p-4 bg-blue-500 rounded-lg cursor-pointer">
-                            <Link to="/create-assignments">
-                                Create Assignment
-                            </Link>
-                        </button>
-                    </div>
-                </div>
-
-                <div className="space-y-6">
-                    {assignments.length === 0 ? (
-                        <p className="text-gray-600 text-center">
-                            No assignments available.
-                        </p>
-                    ) : (
-                        assignments.map((assignment) => (
-                            <div
-                                key={assignment.id}
-                                className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl"
-                            >
-                                <div className="flex justify-between items-start mb-4">
-                                    <h2 className="text-2xl font-semibold text-gray-900">
-                                        {assignment.title}
-                                    </h2>
-                                    <span
-                                        className={`px-4 py-1 rounded-full text-sm font-medium ${
-                                            getTimeRemaining(
-                                                assignment.dueDate
-                                            ) === "Past due"
-                                                ? "bg-red-100 text-red-800"
-                                                : "bg-green-100 text-green-800"
-                                        }`}
+        <>
+            {/* <TeacherNavbar /> */}
+            <div className="min-h-screen bg-gray-50">
+                <TeacherNavbar />
+                <div className="flex">
+                    <TeacherMenu />
+                    <div className="flex-1 p-8 justify-self-end md:ml-64">
+                        <div className="max-w-6xl mx-auto">
+                            {/* Header Section */}
+                            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <h1 className="text-3xl font-bold text-gray-800">
+                                            Assignments Dashboard
+                                        </h1>
+                                        <p className="text-gray-600 mt-1">
+                                            Manage and track your created
+                                            assignments
+                                        </p>
+                                    </div>
+                                    <Link
+                                        to="/create-assignments"
+                                        className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center gap-2 shadow-sm"
                                     >
-                                        {getTimeRemaining(assignment.dueDate)}
-                                    </span>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                    <div className="flex items-center text-gray-600">
-                                        <Book className="h-5 w-5 mr-2" />
-                                        <span className="font-medium">
-                                            {assignment.course}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center text-gray-600">
-                                        <GraduationCap className="h-5 w-5 mr-2" />
-                                        <span>{assignment.class}</span>
-                                    </div>
-                                    <div className="flex items-center text-gray-600">
-                                        <User className="h-5 w-5 mr-2" />
-                                        <span>{assignment.teacher}</span>
-                                    </div>
-                                    <div className="flex items-center text-gray-600">
-                                        <Calendar className="h-5 w-5 mr-2" />
-                                        <span>
-                                            Due:{" "}
-                                            {formatDate(assignment.dueDate)}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <p className="text-gray-600 mb-4">
-                                    {assignment.description}
-                                </p>
-
-                                <div className="flex items-center justify-between border-t pt-4">
-                                    <div className="flex items-center text-gray-500">
-                                        <Clock className="h-4 w-4 mr-1" />
-                                        <span className="text-sm">
-                                            Created:{" "}
-                                            {formatDate(assignment.createdAt)}
-                                        </span>
-                                    </div>
-                                    <button
-                                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                        onClick={() =>
-                                            navigate(
-                                                `/assignment-details/${assignment.id}`
-                                            )
-                                        }
-                                    >
-                                        View Details
-                                    </button>
+                                        <span className="hidden sm:inline">
+                                            Create New
+                                        </span>{" "}
+                                        Assignment
+                                    </Link>
                                 </div>
                             </div>
-                        ))
-                    )}
+
+                            {/* Assignments Grid */}
+                            <div className="grid gap-6">
+                                {assignments.length === 0 ? (
+                                    <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+                                        <p className="text-gray-600 text-lg">
+                                            No assignments available.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    assignments.map((assignment) => (
+                                        <div
+                                            key={assignment.id}
+                                            className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
+                                        >
+                                            <div className="p-6">
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <h2 className="text-xl font-semibold text-gray-800 hover:text-indigo-600 transition-colors duration-200">
+                                                        {assignment.title}
+                                                    </h2>
+                                                    <span
+                                                        className={`px-4 py-1 rounded-full text-sm font-medium ${
+                                                            getTimeRemaining(
+                                                                assignment.dueDate
+                                                            ) === "Past due"
+                                                                ? "bg-red-100 text-red-800"
+                                                                : "bg-green-100 text-green-800"
+                                                        }`}
+                                                    >
+                                                        {getTimeRemaining(
+                                                            assignment.dueDate
+                                                        )}
+                                                    </span>
+                                                </div>
+
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                                    <div className="flex items-center text-gray-600 bg-gray-50 rounded-md p-2">
+                                                        <Book className="h-5 w-5 mr-2 text-indigo-500" />
+                                                        <span>
+                                                            {assignment.course}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center text-gray-600 bg-gray-50 rounded-md p-2">
+                                                        <GraduationCap className="h-5 w-5 mr-2 text-indigo-500" />
+                                                        <span>
+                                                            {assignment.class}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center text-gray-600 bg-gray-50 rounded-md p-2">
+                                                        <User className="h-5 w-5 mr-2 text-indigo-500" />
+                                                        <span>
+                                                            {assignment.teacher}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center text-gray-600 bg-gray-50 rounded-md p-2">
+                                                        <Calendar className="h-5 w-5 mr-2 text-indigo-500" />
+                                                        <span>
+                                                            Due:{" "}
+                                                            {formatDate(
+                                                                assignment.dueDate
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <p className="text-gray-600 mb-4 line-clamp-2">
+                                                    {assignment.description}
+                                                </p>
+
+                                                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                    <div className="flex items-center text-gray-500">
+                                                        <Clock className="h-4 w-4 mr-1 text-indigo-500" />
+                                                        <span className="text-sm">
+                                                            Created:{" "}
+                                                            {formatDate(
+                                                                assignment.createdAt
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                    <button
+                                                        onClick={() =>
+                                                            navigate(
+                                                                `/assignment-details/${assignment.id}`
+                                                            )
+                                                        }
+                                                        className="px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors duration-200 flex items-center gap-2"
+                                                    >
+                                                        View Details
+                                                        <span className="text-xl">
+                                                            →
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

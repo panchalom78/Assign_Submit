@@ -26,5 +26,7 @@ namespace Server.Data
         public DbSet<Class> Classes { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<College> Colleges { get; set; }
+        public DbSet<ChatGroup> ChatGroups { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
     }
 }

@@ -12,6 +12,7 @@ const AffiliationForm = () => {
     const [selectedFaculty, setSelectedFaculty] = useState(null);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedClass, setSelectedClass] = useState(null);
+    const [prn, setPrn] = useState("");
     // const [role, setRole] = useState("Student");
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -82,6 +83,7 @@ const AffiliationForm = () => {
             facultyId: selectedFaculty.value,
             courseId: role === "student" ? selectedCourse?.value : null,
             classId: role === "student" ? selectedClass?.value : null,
+            prn: role === "student" ? prn : null,
         };
 
         console.log("🔍 Sending affiliation data:", affiliationData);
@@ -218,6 +220,16 @@ const AffiliationForm = () => {
                                     value={selectedClass}
                                     className="react-select-container"
                                     classNamePrefix="react-select"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    PRN:
+                                </label>
+                                <input
+                                    type="text"
+                                    value={prn}
+                                    onChange={(e) => setPrn(e.target.value)}
                                 />
                             </div>
                         </>

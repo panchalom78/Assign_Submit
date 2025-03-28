@@ -39,6 +39,7 @@ const Routers = () => {
                     <Route path="/chat" element={<Chatpage />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/login" element={<Login />} />
                     <Route
                         path="/select-affiliate"
                         element={<SelectAffiliation />}
