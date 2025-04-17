@@ -12,6 +12,7 @@ import CreateAssignment from "../components/CreateAssignment";
 import TeacherAssignments from "../sections/TeacherAssignments";
 import AssignmentDetails from "../sections/AssignmentDetails";
 import { useAuthStore } from "../store/useAuthStore";
+import ProfileSection from "../components/ProfileCard";
 const Routers = () => {
     const { user } = useAuthStore();
     return (
@@ -56,6 +57,7 @@ const Routers = () => {
                         path="/assignment-details/:assignmentId"
                         element={<AssignmentDetails />}
                     />
+                    <Route path="/profile" element={<ProfileSection />} />
                 </Routes>
             </Router>
         </div>

@@ -36,9 +36,10 @@ namespace Server.Controllers
                 Response.Cookies.Append("jwt", data.Token, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = false, // Set to true in production (HTTPS)
-                    SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.UtcNow.AddDays(1)
+                    Secure = true, // Enable in production
+                    SameSite = SameSiteMode.Lax, // More permissive for mobile browsers
+                    Expires = DateTime.UtcNow.AddDays(1),
+                    Path = "/" // Ensure cookie is available across all paths
                 });
 
                 var user = new UserData(UserId: data.user.UserId, FullName: data.user.FullName, Role: data.user.Role);
@@ -69,9 +70,10 @@ namespace Server.Controllers
                 Response.Cookies.Append("jwt", data.Token, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = false, // Set to true in production (HTTPS)
-                    SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.UtcNow.AddDays(1)
+                    Secure = true, // Enable in production
+                    SameSite = SameSiteMode.Lax, // More permissive for mobile browsers
+                    Expires = DateTime.UtcNow.AddDays(1),
+                    Path = "/" // Ensure cookie is available across all paths
                 });
                 var user = new UserData(UserId: data.user.UserId, FullName: data.user.FullName, Role: data.user.Role);
 
