@@ -1,270 +1,4 @@
-// import React, { useState, useEffect } from "react";
-// import { useParams } from "react-router";
-// import {
-//     FaBook,
-//     FaCalendarCheck,
-//     FaDownload,
-//     FaUser,
-//     FaFilePdf,
-//     FaChalkboardTeacher,
-// } from "react-icons/fa";
-// import axiosInstance from "../utils/axiosInstance";
-// import SubmissionGrading from "../components/SubmissionGrading";
-
-// const TeacherAssignmentDetails = () => {
-//     const { assignmentId } = useParams(); // Get assignment ID from URL
-//     const [assignment, setAssignment] = useState(null);
-//     const [isLoading, setIsLoading] = useState(true);
-//     const [error, setError] = useState(null);
-//     const [selectedSubmission, setSelectedSubmission] = useState(null);
-
-//     // Fetch assignment details when component mounts
-//     useEffect(() => {
-//         const getSubmissions = async () => {
-//             const response = await axiosInstance.get(
-//                 `/assignment/submission/${assignmentId}`
-//             );
-//             return response.data;
-//         };
-//         const fetchAssignmentDetails = async () => {
-//             try {
-//                 const response = await axiosInstance.get(
-//                     `/assignment/${assignmentId}`
-//                 );
-//                 const submissions = await getSubmissions();
-//                 const data = response.data;
-//                 const fetchedAssignment = {
-//                     id: data.assignmentId.toString(),
-//                     title: data.title || "Untitled",
-//                     description: data.description || "No description provided",
-//                     dueDate: data.dueDate || "Not specified",
-//                     teacher: data.user?.fullName || "Unknown Teacher",
-//                     submittedOn: data.submittedOn || "Not submitted",
-//                     className: data.class?.className || `Class ${data.classId}`, // Assuming Class has a Name property
-//                     submissions:
-//                         submissions.map((s) => ({
-//                             submissionId: s.submissionId,
-//                             studentId: s.studentId,
-//                             submissionDate: s.submissionDate,
-//                             filePath: s.filePath,
-//                             marks: s.marks,
-//                             feedback: s.feedback,
-//                         })) || [],
-//                 };
-//                 setAssignment(fetchedAssignment);
-//             } catch (err) {
-//                 setError(
-//                     "Failed to load assignment: " +
-//                         (err.response?.data?.message || err.message)
-//                 );
-//             } finally {
-//                 setIsLoading(false);
-//             }
-//         };
-
-//         fetchAssignmentDetails();
-//     }, [assignmentId]);
-
-//     // Format date for display
-//     const formatDate = (dateString) => {
-//         if (!dateString) return "Not specified";
-//         return new Date(dateString).toLocaleString("en-US", {
-//             year: "numeric",
-//             month: "long",
-//             day: "numeric",
-//             hour: "2-digit",
-//             minute: "2-digit",
-//         });
-//     };
-
-//     const handleGradingComplete = (updatedSubmission) => {
-//         try {
-//             setAssignment((prev) => ({
-//                 ...prev,
-//                 submissions: prev.submissions.map((submission) =>
-//                     submission.submissionId === updatedSubmission.submissionId
-//                         ? {
-//                               ...submission,
-//                               marks: updatedSubmission.marks,
-//                               feedback: updatedSubmission.feedback,
-//                           }
-//                         : submission
-//                 ),
-//             }));
-//             // Close the grading modal
-//             setSelectedSubmission(null);
-//         } catch (error) {
-//             console.error("Error updating submission:", error);
-//             alert("Failed to update submission display");
-//         }
-//     };
-
-//     // Handle file download
-//     const handleDownload = async (submissionId) => {
-//         try {
-//             const response = await axiosInstance.get(
-//                 `/submission/download/${submissionId}`,
-//                 {
-//                     responseType: "blob",
-//                 }
-//             );
-//             const url = window.URL.createObjectURL(new Blob([response.data]));
-//             const link = document.createElement("a");
-//             link.href = url;
-//             link.setAttribute("download", `submission_${submissionId}.pdf`);
-//             document.body.appendChild(link);
-//             link.click();
-//             link.remove();
-//             window.URL.revokeObjectURL(url);
-//         } catch (error) {
-//             console.error(
-//                 "Download failed:",
-//                 error.response?.data || error.message
-//             );
-//             alert("Failed to download submission.");
-//         }
-//     };
-
-//     return (
-//         <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
-//             <div className="max-w-4xl mx-auto">
-//                 {/* Header */}
-//                 <div className="text-center mb-12">
-//                     <h1 className="text-4xl font-bold text-purple-700 mb-2">
-//                         <FaBook className="inline-block mr-2" />
-//                         Assignment Details
-//                     </h1>
-//                     <p className="text-lg text-gray-600">
-//                         View assignment details and student submissions
-//                     </p>
-//                 </div>
-
-//                 {/* Loading/Error State */}
-//                 {isLoading ? (
-//                     <p className="text-center text-gray-600">
-//                         Loading assignment details...
-//                     </p>
-//                 ) : error ? (
-//                     <p className="text-center text-red-600">{error}</p>
-//                 ) : !assignment ? (
-//                     <p className="text-center text-gray-600">
-//                         Assignment not found.
-//                     </p>
-//                 ) : (
-//                     <div className="bg-white rounded-xl shadow-lg p-8">
-//                         {/* Assignment Details */}
-//                         <div className="mb-8">
-//                             <h2 className="text-3xl font-semibold text-gray-900 mb-4">
-//                                 {assignment.title}
-//                             </h2>
-//                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-//                                 <div className="flex items-center text-gray-600">
-//                                     <FaUser className="h-5 w-5 mr-2" />
-//                                     <span>Teacher: {assignment.teacher}</span>
-//                                 </div>
-//                                 <div className="flex items-center text-gray-600">
-//                                     <FaChalkboardTeacher className="h-5 w-5 mr-2" />
-//                                     <span>Class: {assignment.className}</span>
-//                                 </div>
-//                                 <div className="flex items-center text-gray-600">
-//                                     <FaCalendarCheck className="h-5 w-5 mr-2" />
-//                                     <span>
-//                                         Due: {formatDate(assignment.dueDate)}
-//                                     </span>
-//                                 </div>
-//                                 <div className="flex items-center text-gray-600">
-//                                     <FaCalendarCheck className="h-5 w-5 mr-2" />
-//                                     <span>
-//                                         Submitted On:{" "}
-//                                         {formatDate(assignment.submittedOn)}
-//                                     </span>
-//                                 </div>
-//                             </div>
-//                             <p className="text-gray-700 text-lg">
-//                                 {assignment.description}
-//                             </p>
-//                         </div>
-
-//                         {/* Submissions Section */}
-//                         <div className="border-t pt-6">
-//                             <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-//                                 Submissions ({assignment.submissions.length})
-//                             </h3>
-//                             {assignment.submissions.length === 0 ? (
-//                                 <p className="text-gray-600">
-//                                     No submissions yet.
-//                                 </p>
-//                             ) : (
-//                                 <div className="space-y-4">
-//                                     {assignment.submissions.map(
-//                                         (submission) => (
-//                                             <div
-//                                                 key={submission.submissionId}
-//                                                 className="flex justify-between items-center bg-gray-50 p-4 rounded-lg"
-//                                             >
-//                                                 <div>
-//                                                     <p className="text-gray-800 font-medium">
-//                                                         Student ID:{" "}
-//                                                         {submission.studentId}
-//                                                     </p>
-//                                                     <p className="text-gray-600 text-sm">
-//                                                         Submitted:{" "}
-//                                                         {formatDate(
-//                                                             submission.submissionDate
-//                                                         )}
-//                                                     </p>
-//                                                     {submission.marks !==
-//                                                         null && (
-//                                                         <p className="text-gray-600 text-sm">
-//                                                             Marks:{" "}
-//                                                             {submission.marks}
-//                                                         </p>
-//                                                     )}
-//                                                     {submission.feedback && (
-//                                                         <p className="text-gray-600 text-sm">
-//                                                             Feedback:{" "}
-//                                                             {
-//                                                                 submission.feedback
-//                                                             }
-//                                                         </p>
-//                                                     )}
-//                                                 </div>
-//                                                 <button
-//                                                     onClick={() =>
-//                                                         setSelectedSubmission(
-//                                                             submission
-//                                                         )
-//                                                     }
-//                                                     className="flex items-center px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors"
-//                                                 >
-//                                                     {submission.marks !== null
-//                                                         ? "Update Grade"
-//                                                         : "Grade Submission"}
-//                                                 </button>
-//                                             </div>
-//                                         )
-//                                     )}
-//                                 </div>
-//                             )}
-//                         </div>
-//                         {/* Grading Modal */}
-//                         {selectedSubmission && (
-//                             <SubmissionGrading
-//                                 submission={selectedSubmission}
-//                                 onClose={() => setSelectedSubmission(null)}
-//                                 onGradingComplete={handleGradingComplete}
-//                             />
-//                         )}
-//                     </div>
-//                 )}
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default TeacherAssignmentDetails;
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useNavigate } from "react";
 import { useParams, Link } from "react-router";
 import {
     ArrowLeft,
@@ -277,6 +11,11 @@ import {
     User,
     BookOpen,
     Users,
+    AlertCircle,
+    Clock,
+    AlertTriangle,
+    ThumbsUp,
+    RefreshCw
 } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
@@ -293,7 +32,30 @@ const TeacherAssignmentDetails = () => {
         feedback: "",
         totalMarks: "10",
     });
+    const [remarkData, setRemarkData] = useState({
+        submissionId: null,
+        message: "",
+        resubmissionRequired: false,
+        resubmissionDeadline: "",
+    });
     const [showGradeModal, setShowGradeModal] = useState(false);
+    const [showRemarkModal, setShowRemarkModal] = useState(false);
+
+    // Status color mapping
+    const statusColors = {
+        "Graded": "bg-emerald-100 text-emerald-800",
+        "Remark Added": "bg-blue-100 text-blue-800",
+        "Needs Resubmission": "bg-amber-100 text-amber-800",
+        "Pending": "bg-gray-100 text-gray-800"
+    };
+
+    // Status icons
+    const statusIcons = {
+        "Graded": <ThumbsUp className="w-4 h-4" />,
+        "Remark Added": <AlertCircle className="w-4 h-4" />,
+        "Needs Resubmission": <AlertTriangle className="w-4 h-4" />,
+        "Pending": <Clock className="w-4 h-4" />
+    };
 
     useEffect(() => {
         const getSubmissions = async () => {
@@ -330,10 +92,8 @@ const TeacherAssignmentDetails = () => {
                             marks: s.marks,
                             feedback: s.feedback,
                             graded: s.marks !== undefined && s.marks !== null,
-                            status:
-                                s.marks !== undefined && s.marks !== null
-                                    ? "Graded"
-                                    : "Pending",
+                            status: getSubmissionStatus(s),
+                            remarks: s.remarks || []
                         })) || [],
                 };
 
@@ -341,7 +101,7 @@ const TeacherAssignmentDetails = () => {
             } catch (err) {
                 setError(
                     "Failed to load assignment: " +
-                        (err.response?.data?.message || err.message)
+                    (err.response?.data?.message || err.message)
                 );
                 toast.error("Failed to load assignment details");
             } finally {
@@ -351,6 +111,19 @@ const TeacherAssignmentDetails = () => {
 
         fetchAssignmentDetails();
     }, [assignmentId]);
+
+    const getSubmissionStatus = (submission) => {
+        if (submission.marks !== undefined && submission.marks !== null) {
+            return "Graded";
+        }
+        if (submission.resubmissionRequired === true) {
+            return "Needs Resubmission";
+        }
+        if (submission.remarks && submission.remarks.length > 0) {
+            return "Remark Added";
+        }
+        return "Pending";
+    };
 
     const formatDate = (dateString) => {
         if (!dateString) return "Not specified";
@@ -371,6 +144,16 @@ const TeacherAssignmentDetails = () => {
             totalMarks: "10",
         });
         setShowGradeModal(true);
+    };
+
+    const handleRemarkClick = (submission) => {
+        setRemarkData({
+            submissionId: submission.submissionId,
+            message: "",
+            resubmissionRequired: false,
+            resubmissionDeadline: "",
+        });
+        setShowRemarkModal(true);
     };
 
     const handleGradeSubmit = async (e) => {
@@ -395,11 +178,10 @@ const TeacherAssignmentDetails = () => {
             }
 
             const response = await axiosInstance.post(
-                `/Grade/assign/${submissionId}`,
+                `/submission/grade/${submissionId}`,
                 {
                     marks: numericMarks,
-                    feedback,
-                    totalMarks: numericTotalMarks,
+                    feedback: feedback
                 }
             );
 
@@ -407,23 +189,17 @@ const TeacherAssignmentDetails = () => {
                 toast.success("Grade submitted successfully");
                 setShowGradeModal(false);
                 // Refresh the assignment data
-                const updatedResponse = await axiosInstance.get(
-                    `/assignment/${assignmentId}`
-                );
                 const updatedSubmissions = await axiosInstance.get(
                     `/assignment/submission/${assignmentId}`
                 );
-                setAssignment({
-                    ...updatedResponse.data,
-                    submissions: updatedSubmissions.data.map((s) => ({
+                setAssignment(prev => ({
+                    ...prev,
+                    submissions: updatedSubmissions.data.map(s => ({
                         ...s,
                         graded: s.marks !== undefined && s.marks !== null,
-                        status:
-                            s.marks !== undefined && s.marks !== null
-                                ? "Graded"
-                                : "Pending",
+                        status: getSubmissionStatus(s),
                     })),
-                });
+                }));
             }
         } catch (error) {
             const errorMessage =
@@ -431,6 +207,61 @@ const TeacherAssignmentDetails = () => {
                 error.message ||
                 "Failed to submit grade";
             toast.error(errorMessage);
+        }
+    };
+
+    const handleRemarkSubmit = async (e) => {
+        
+        e.preventDefault();
+        try {
+            const { submissionId, message, resubmissionRequired, resubmissionDeadline } = remarkData;
+            console.log(remarkData);
+            
+            if (!message.trim()) {
+                throw new Error("Remark message is required");
+            }
+
+            if (resubmissionRequired && !resubmissionDeadline) {
+                throw new Error("Please set a deadline for resubmission");
+            }
+
+            const userIdResponse = await axiosInstance.get("/auth/get-user-id");
+            const userId = userIdResponse.data.userId;
+
+            const payload = {
+                submissionId,
+                message: message.trim(),
+                resubmissionRequired,
+                resubmissionDeadline: resubmissionRequired
+                    ? new Date(resubmissionDeadline).toISOString()
+                    : null
+            };
+
+            const response = await axiosInstance.post(`/remark/create?userId=${userId}`, payload);
+            console.log(response);
+            
+            if (response.data) {
+                toast.success("Remark submitted successfully");
+                setShowRemarkModal(false);
+
+                // Refresh data with proper status
+                const updatedSubmissions = await axiosInstance.get(
+                    `/assignment/submission/${assignmentId}`
+                );
+                console.log(updatedSubmissions);
+
+                setAssignment(prev => ({
+                    ...prev,
+                    submissions: updatedSubmissions.data.map(s => ({
+                        ...s,
+                        status: getSubmissionStatus(s),
+                        remarks: s.remarks || []
+                    })),
+                }));
+            }
+        } catch (error) {
+            console.error("Error submitting remark:", error);
+            toast.error(error.response?.data?.message || "Failed to submit remark");
         }
     };
 
@@ -451,248 +282,387 @@ const TeacherAssignmentDetails = () => {
             link.remove();
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error(
-                "Download failed:",
-                error.response?.data || error.message
-            );
+            console.error("Download failed:", error.response?.data || error.message);
             toast.error("Failed to download submission.");
         }
     };
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading assignment details...</p>
+                </div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <div className="text-red-600">Error: {error}</div>
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="max-w-md p-6 bg-white rounded-lg shadow-md">
+                    <div className="text-red-500 mb-4">
+                        <AlertCircle className="w-10 h-10 mx-auto" />
+                    </div>
+                    <h2 className="text-xl font-bold text-center text-gray-800 mb-2">Error Loading Assignment</h2>
+                    <p className="text-gray-600 text-center mb-4">{error}</p>
+                    <Link
+                        to="/assignments"
+                        className="flex items-center justify-center text-indigo-600 hover:underline"
+                    >
+                        <ArrowLeft className="w-5 h-5 mr-2" /> Back to Assignments
+                    </Link>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/50 py-8 px-4 sm:px-6 lg:px-8">
-            <Link
-                to="/assignments"
-                className="flex items-center mb-4 text-blue-600 hover:underline"
-            >
-                <ArrowLeft className="w-5 h-5 mr-2" /> Back to Assignments
-            </Link>
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+                <Link
+                    to="/assignments"
+                    className="inline-flex items-center mb-6 text-indigo-600 hover:text-indigo-800 transition-colors"
+                >
+                    <ArrowLeft className="w-5 h-5 mr-2" />
+                    <span className="font-medium"
+                    onClick={() => navigate('/login')}>Back to Assignments</span>
+                </Link>
 
-            <div className="bg-white shadow rounded-lg p-6 mb-8">
-                <h1 className="text-2xl font-bold mb-4">{assignment.title}</h1>
+                {/* Assignment Header Card */}
+                <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                    <div className="p-6">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <h1 className="text-2xl font-bold text-gray-900 mb-2">{assignment.title}</h1>
+                                <div className="flex items-center text-sm text-gray-500 mb-4">
+                                    <User className="w-4 h-4 mr-1.5" />
+                                    <span>Created by {assignment.teacher}</span>
+                                </div>
+                            </div>
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                                {assignment.className}
+                            </span>
+                        </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="flex items-center text-gray-600">
-                        <User className="h-5 w-5 mr-2" />
-                        <span>Teacher: {assignment.teacher}</span>
-                    </div>
-                    <div className="flex items-center text-gray-600">
-                        <Users className="h-5 w-5 mr-2" />
-                        <span>Class: {assignment.className}</span>
-                    </div>
-                    <div className="flex items-center text-gray-600">
-                        <Calendar className="h-5 w-5 mr-2" />
-                        <span>Due: {formatDate(assignment.dueDate)}</span>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                                <div className="flex items-center">
+                                    <Calendar className="w-5 h-5 text-gray-400 mr-2" />
+                                    <div>
+                                        <p className="text-xs text-gray-500">Due Date</p>
+                                        <p className="font-medium">{formatDate(assignment.dueDate)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                                <div className="flex items-center">
+                                    <FileText className="w-5 h-5 text-gray-400 mr-2" />
+                                    <div>
+                                        <p className="text-xs text-gray-500">Submissions</p>
+                                        <p className="font-medium">{assignment.submissions.length} students</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                                <div className="flex items-center">
+                                    <RefreshCw className="w-5 h-5 text-gray-400 mr-2" />
+                                    <div>
+                                        <p className="text-xs text-gray-500">Last Updated</p>
+                                        <p className="font-medium">{formatDate(assignment.submittedOn)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="border-t border-gray-200 pt-4">
+                            <h3 className="flex items-center text-lg font-semibold text-gray-900 mb-3">
+                                <BookOpen className="w-5 h-5 text-gray-400 mr-2" />
+                                Description
+                            </h3>
+                            <div className="prose prose-sm max-w-none text-gray-700">
+                                {assignment.description.split('\n').map((paragraph, i) => (
+                                    <p key={i}>{paragraph}</p>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-2 flex items-center">
-                        <BookOpen className="h-5 w-5 mr-2" />
-                        Description
-                    </h3>
-                    <p className="text-gray-700 whitespace-pre-line">
-                        {assignment.description}
-                    </p>
+                {/* Submissions Section */}
+                <div className="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div className="px-6 py-5 border-b border-gray-200">
+                        <h2 className="text-xl font-bold text-gray-900">
+                            Student Submissions <span className="text-gray-500">({assignment.submissions.length})</span>
+                        </h2>
+                    </div>
+
+                    {assignment.submissions.length === 0 ? (
+                        <div className="p-8 text-center">
+                            <div className="mx-auto h-24 w-24 text-gray-400">
+                                <FileText className="w-full h-full" />
+                            </div>
+                            <h3 className="mt-4 text-lg font-medium text-gray-900">No submissions yet</h3>
+                            <p className="mt-1 text-gray-500">Students haven't submitted their work for this assignment.</p>
+                        </div>
+                    ) : (
+                        <div className="divide-y divide-gray-200">
+                            {assignment.submissions.map((submission) => (
+                                <div key={submission.submissionId} className="p-6 hover:bg-gray-50 transition-colors">
+                                    <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                                        {/* Student Info */}
+                                        <div className="mb-4 md:mb-0">
+                                            <div className="flex items-center">
+                                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                                    <span className="text-indigo-800 font-medium">
+                                                        {submission.studentName?.charAt(0) || 'S'}
+                                                    </span>
+                                                </div>
+                                                <div className="ml-4">
+                                                    <h3 className="text-lg font-medium text-gray-900">
+                                                        {submission.studentName || `Student ${submission.studentId}`}
+                                                    </h3>
+                                                    <p className="text-sm text-gray-500">
+                                                        {submission.email || 'No email provided'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Submission Details */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <p className="text-sm text-gray-500">Submitted</p>
+                                                <p className="font-medium">{formatDate(submission.submissionDate)}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm text-gray-500">Status</p>
+                                                <div className="flex items-center">
+                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[submission.status]}`}>
+                                                        {statusIcons[submission.status]}
+                                                        <span className="ml-1.5">{submission.status}</span>
+                                                    </span>
+                                                    {submission.graded && (
+                                                        <span className="ml-2 text-sm font-medium text-gray-900">
+                                                            ({submission.marks}/{gradingData.totalMarks})
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div className="mt-4 md:mt-0 flex space-x-3">
+                                            <button
+                                                onClick={() => handleDownload(submission.submissionId)}
+                                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                            >
+                                                <Download className="w-4 h-4 mr-2" />
+                                                Download
+                                            </button>
+                                            <button
+                                                onClick={() => handleGradeClick(submission)}
+                                                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white ${submission.graded ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
+                                            >
+                                                {submission.graded ? (
+                                                    <>
+                                                        <Edit className="w-4 h-4 mr-2" />
+                                                        Regrade
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <CheckCircle className="w-4 h-4 mr-2" />
+                                                        Grade
+                                                    </>
+                                                )}
+                                            </button>
+                                            <button
+                                                onClick={() => handleRemarkClick(submission)}
+                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                            >
+                                                <AlertCircle className="w-4 h-4 mr-2" />
+                                                Remark
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {submission.feedback && (
+                                        <div className="mt-4 pt-4 border-t border-gray-200">
+                                            <h4 className="text-sm font-medium text-gray-500 mb-1">Feedback</h4>
+                                            <p className="text-gray-700">{submission.feedback}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 
-            <h2 className="text-xl font-bold mb-6">
-                Student Submissions ({assignment.submissions.length})
-            </h2>
-
-            {assignment.submissions.length === 0 ? (
-                <div className="text-center text-gray-500">
-                    No submissions yet.
-                </div>
-            ) : (
-                <div className="grid gap-6">
-                    {assignment.submissions.map((submission) => (
-                        <div
-                            key={submission.submissionId}
-                            className="bg-white shadow rounded-lg p-4 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center"
-                        >
-                            <div>
-                                <h3 className="text-lg font-semibold">
-                                    {submission.studentName}
-                                </h3>
-                                <p className="text-sm text-gray-500 mb-1">
-                                    {submission.email}
-                                </p>
-                                <p className="text-sm text-gray-500 mb-1">
-                                    Submitted:{" "}
-                                    {formatDate(submission.submissionDate)}
-                                </p>
-                                <div className="flex items-center gap-1">
-                                    <p
-                                        className={`text-sm font-semibold ${
-                                            submission.status === "Graded"
-                                                ? "text-green-600"
-                                                : "text-yellow-600"
-                                        }`}
-                                    >
-                                        Status: {submission.status}
-                                    </p>
-                                    {submission.graded && (
-                                        <span className="text-sm text-blue-600 ml-2">
-                                            ({submission.marks}/
-                                            {gradingData.totalMarks})
-                                        </span>
-                                    )}
-                                </div>
-                                {submission.feedback && (
-                                    <p className="text-sm text-gray-600 mt-1">
-                                        Feedback: {submission.feedback}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="flex gap-3 mt-4 sm:mt-0">
-                                <button
-                                    onClick={() =>
-                                        handleDownload(submission.submissionId)
-                                    }
-                                    className="flex items-center gap-1 text-blue-600 hover:underline"
-                                >
-                                    <Download className="w-4 h-4" />
-                                    Download
-                                </button>
-
-                                <button
-                                    onClick={() => handleGradeClick(submission)}
-                                    className="flex items-center gap-1 text-green-600 hover:underline"
-                                >
-                                    {submission.graded ? (
-                                        <>
-                                            <Edit className="w-4 h-4" />
-                                            Update Grade
-                                        </>
-                                    ) : (
-                                        <>
-                                            <CheckCircle className="w-4 h-4" />
-                                            Grade
-                                        </>
-                                    )}
-                                </button>
-                            </div>
+            {/* Grade Modal */}
+            {showGradeModal && (
+                <div className="fixed inset-0 z-50 overflow-y-auto">
+                    <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
                         </div>
-                    ))}
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                            <form onSubmit={handleGradeSubmit}>
+                                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                    <div className="sm:flex sm:items-start">
+                                        <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                                            <CheckCircle className="h-6 w-6 text-indigo-600" />
+                                        </div>
+                                        <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                            <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                                {gradingData.marks ? 'Update Grade' : 'Assign Grade'}
+                                            </h3>
+                                            <div className="mt-4 space-y-4">
+                                                <div>
+                                                    <label htmlFor="marks" className="block text-sm font-medium text-gray-700">Marks</label>
+                                                    <input
+                                                        type="number"
+                                                        id="marks"
+                                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                        value={gradingData.marks}
+                                                        onChange={(e) => setGradingData({ ...gradingData, marks: e.target.value })}
+                                                        min="0"
+                                                        step="0.01"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label htmlFor="totalMarks" className="block text-sm font-medium text-gray-700">Total Marks</label>
+                                                    <input
+                                                        type="number"
+                                                        id="totalMarks"
+                                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                        value={gradingData.totalMarks}
+                                                        onChange={(e) => setGradingData({ ...gradingData, totalMarks: e.target.value })}
+                                                        min="1"
+                                                        step="1"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label htmlFor="feedback" className="block text-sm font-medium text-gray-700">Feedback</label>
+                                                    <textarea
+                                                        id="feedback"
+                                                        rows={3}
+                                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                        value={gradingData.feedback}
+                                                        onChange={(e) => setGradingData({ ...gradingData, feedback: e.target.value })}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                    <button
+                                        type="submit"
+                                        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                    >
+                                        Submit Grade
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowGradeModal(false)}
+                                        className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             )}
 
-            {/* Grade Modal */}
-            {showGradeModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-                    <form
-                        onSubmit={handleGradeSubmit}
-                        className="bg-white p-6 rounded-lg w-[90%] max-w-md shadow-lg"
-                    >
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">
-                                Assign Grade
-                            </h3>
-                            <button
-                                type="button"
-                                onClick={() => setShowGradeModal(false)}
-                                className="text-gray-500 hover:text-gray-700"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
+            {/* Remark Modal */}
+            {showRemarkModal && (
+                <div className="fixed inset-0 z-50 overflow-y-auto">
+                    <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
                         </div>
-
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Marks
-                            </label>
-                            <input
-                                type="number"
-                                placeholder="Marks"
-                                value={gradingData.marks}
-                                onChange={(e) =>
-                                    setGradingData({
-                                        ...gradingData,
-                                        marks: e.target.value,
-                                    })
-                                }
-                                className="w-full px-3 py-2 border rounded"
-                                required
-                                min="0"
-                                step="0.01"
-                            />
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                            <form onSubmit={handleRemarkSubmit}>
+                                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                    <div className="sm:flex sm:items-start">
+                                        <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                            <AlertCircle className="h-6 w-6 text-red-600" />
+                                        </div>
+                                        <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                            <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                                Add Remark
+                                            </h3>
+                                            <div className="mt-4 space-y-4">
+                                                <div>
+                                                    <label htmlFor="remarkMessage" className="block text-sm font-medium text-gray-700">Message</label>
+                                                    <textarea
+                                                        id="remarkMessage"
+                                                        rows={3}
+                                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                        value={remarkData.message}
+                                                        onChange={(e) => setRemarkData({ ...remarkData, message: e.target.value })}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="flex items-start">
+                                                    <div className="flex items-center h-5">
+                                                        <input
+                                                            id="resubmissionRequired"
+                                                            name="resubmissionRequired"
+                                                            type="checkbox"
+                                                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                                                            checked={remarkData.resubmissionRequired}
+                                                            onChange={(e) => setRemarkData({ ...remarkData, resubmissionRequired: e.target.checked })}
+                                                        />
+                                                    </div>
+                                                    <div className="ml-3 text-sm">
+                                                        <label htmlFor="resubmissionRequired" className="font-medium text-gray-700">Require Resubmission</label>
+                                                    </div>
+                                                </div>
+                                                {remarkData.resubmissionRequired && (
+                                                    <div>
+                                                        <label htmlFor="resubmissionDeadline" className="block text-sm font-medium text-gray-700">Resubmission Deadline</label>
+                                                        <input
+                                                            type="datetime-local"
+                                                            id="resubmissionDeadline"
+                                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                            value={remarkData.resubmissionDeadline}
+                                                            onChange={(e) => setRemarkData({ ...remarkData, resubmissionDeadline: e.target.value })}
+                                                            required={remarkData.resubmissionRequired}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                    <button
+                                        type="submit"
+                                        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                    >
+                                        Submit Remark
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowRemarkModal(false)}
+                                        className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Total Marks
-                            </label>
-                            <input
-                                type="number"
-                                placeholder="Total Marks"
-                                value={gradingData.totalMarks}
-                                onChange={(e) =>
-                                    setGradingData({
-                                        ...gradingData,
-                                        totalMarks: e.target.value,
-                                    })
-                                }
-                                className="w-full px-3 py-2 border rounded"
-                                required
-                                min="1"
-                                step="1"
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Feedback
-                            </label>
-                            <textarea
-                                placeholder="Feedback"
-                                value={gradingData.feedback}
-                                onChange={(e) =>
-                                    setGradingData({
-                                        ...gradingData,
-                                        feedback: e.target.value,
-                                    })
-                                }
-                                className="w-full px-3 py-2 border rounded"
-                                required
-                                rows="3"
-                            ></textarea>
-                        </div>
-
-                        <div className="flex justify-end gap-2">
-                            <button
-                                type="button"
-                                onClick={() => setShowGradeModal(false)}
-                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                            >
-                                Submit
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             )}
         </div>

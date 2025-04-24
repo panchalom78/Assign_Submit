@@ -27,6 +27,7 @@ function CreateAssignment() {
         const getCourses = async () => {
             try {
                 const response = await axiosInstance.get("/assignment/courses");
+                console.log(response)
                 setCourses(response.data.courses);
             } catch (error) {
                 console.error("Error fetching courses:", error);

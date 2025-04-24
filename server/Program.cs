@@ -20,6 +20,7 @@ builder.Services.AddScoped<AssignmentService>();
 builder.Services.AddScoped<SubmissionService>();
 builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<ChatService>();
+builder.Services.AddScoped<RemarkService>();
 
 // ✅ Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

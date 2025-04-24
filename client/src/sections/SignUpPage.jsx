@@ -9,7 +9,8 @@ function Signup() {
         email: "",
         password: "",
         role: "student",
-        prn: "",
+        prn:""
+
     });
     const { setUser } = useAuthStore();
     const navigate = useNavigate();

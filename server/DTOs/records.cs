@@ -1,4 +1,5 @@
-namespace Server.DTOs
+using Server.Models;
+namespace Server.DTOs 
 {
     public record CreateAssignmentRequest(int AssignmentId, string Title, string Description, string DueDate, string SubmittedOn, int ClassId);
     public class StudentAssignmentDTO
@@ -44,26 +45,50 @@ namespace Server.DTOs
     {
         public int ChatGroupId { get; set; }
         public int AssignmentId { get; set; }
-        public string AssignmentTitle { get; set; }
-        public string ExpiryDate { get; set; }
+        public string? AssignmentTitle { get; set; }
+        public string? ExpiryDate { get; set; }
         public bool IsActive { get; set; }
-        public List<ChatMessageDTO> RecentMessages { get; set; }
+        public List<ChatMessageDTO>? RecentMessages { get; set; }
     }
 
     public class ChatMessageDTO
     {
         public int ChatMessageId { get; set; }
         public int UserId { get; set; }
-        public string UserName { get; set; }
-        public string Message { get; set; }
-        public string SentAt { get; set; }
-        public string Role { get; set; }
+        public string? UserName { get; set; }
+        public string? Message { get; set; }
+        public string? SentAt { get; set; }
+        public string? Role { get; set; }
     }
 
     public class SendMessageRequest
     {
         public int ChatGroupId { get; set; }
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 
+    public class CreateRemarkRequest
+    {
+        public int SubmissionId { get; set; }
+        public string? Message { get; set; }
+        public bool ResubmissionRequired { get; set; }
+        public DateTime? ResubmissionDeadline { get; set; }
+        public int UserId { get; set; }
+    }
+
+    public class RemarkDTO
+    {
+        public int Id { get; set; }
+        public int SubmissionId { get; set; }
+        public int UserId { get; set; }
+        public string? Message { get; set; }
+        public bool ResubmissionRequired { get; set; }
+        public DateTime? ResubmissionDeadline { get; set; }
+        public string? UserName { get; set; }
+    }
+    public class SubmissionWithRemarkDTO
+    {
+        public Submission Submission { get; set; }
+        public int RemarkCount { get; set; }
+    }
 }

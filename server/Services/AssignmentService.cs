@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using Server.DTOs;
+using System.Collections.Generic;
 namespace Server.Services
 {
     public class AssignmentService
@@ -172,18 +173,33 @@ namespace Server.Services
                 throw new Exception("Failed to get assignments: " + ex.Message);
             }
         }
-        public async Task<List<Submission>> GetSubmissionsByAssignmentId(int assignmentId)
-        {
-            try
-            {
-                var submissions = await _context.Submissions.Where(s => s.AssignmentId == assignmentId).ToListAsync();
-                return submissions;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to get submissions: " + ex.Message);
-            }
-        }
+      public async Task<List<Submission>> GetSubmissionsByAssignmentId(int assignmentId)
+{
+    try
+    {
+        var submissions = await _context.Submissions
+            .Where(s => s.AssignmentId == assignmentId)
+            .ToListAsync();
+
+        var submissionIds = submissions.Select(s => s.SubmissionId).ToList();
+
+        // var remarks = await _context.Remarks
+        //     .Where(r => submissionIds.Contains(r.SubmissionId))
+        //     .ToListAsync();
+
+        // var submissionWithRemark = submissions.Select(s => new SubmissionWithRemarkDTO
+        // {
+        //     Submission = s,
+        //     RemarkCount = remarks.Count(r => r.SubmissionId == s.SubmissionId)
+        // }).ToList();
+
+        return submissions;
+    }
+    catch (Exception ex)
+    {
+        throw new Exception("Failed to get submissions: " + ex.Message);
+    }
+}
 
         public class CourseDTO
         {

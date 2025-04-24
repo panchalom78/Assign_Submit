@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Server.Data;
@@ -11,9 +12,11 @@ using Server.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(UserDBContext))]
-    partial class UserDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250417132341_newadd")]
+    partial class newadd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -197,39 +200,6 @@ namespace server.Migrations
                     b.ToTable("Faculties");
                 });
 
-            modelBuilder.Entity("Server.Models.Remark", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ResubmissionDeadline")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("ResubmissionRequired")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("SubmissionId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubmissionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Remarks");
-                });
-
             modelBuilder.Entity("Server.Models.Submission", b =>
                 {
                     b.Property<int>("SubmissionId")
@@ -398,25 +368,6 @@ namespace server.Migrations
                     b.HasOne("Server.Models.College", null)
                         .WithMany("Faculties")
                         .HasForeignKey("CollegeId");
-                });
-
-            modelBuilder.Entity("Server.Models.Remark", b =>
-                {
-                    b.HasOne("Server.Models.Submission", "Submission")
-                        .WithMany()
-                        .HasForeignKey("SubmissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Submission");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Server.Models.Submission", b =>

@@ -227,5 +227,16 @@ namespace Server.Controllers
                 return Unauthorized(new { Error = ex.Message });
             }
         }
+        [HttpGet("get-user-id")]
+        [Authorize]
+        public async Task<IActionResult> GetUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new { Error = "User ID not found in token" });  
+            }
+            return Ok(new { UserId = userId });
+        }
     }
 }
