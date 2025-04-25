@@ -177,5 +177,113 @@ namespace Server.Services
             }
         }
 
+        public async Task<Submission> ResubmitAssignmentAsync(int remarkId, int studentId, IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                throw new ArgumentException("No file uploaded.");
+            }
+
+            if (!file.ContentType.Equals("application/pdf"))
+            {
+                throw new ArgumentException("Only PDF files are allowed.");
+            }
+
+            // Get the remark and related submission
+            var remark = await _context.Remarks
+                .Include(r => r.Submission)
+                .FirstOrDefaultAsync(r => r.Id == remarkId);
+
+            if (remark == null)
+            {
+                throw new ArgumentException("Remark not found.");
+            }
+
+            if (!remark.ResubmissionRequired)
+            {
+                throw new ArgumentException("This submission does not require resubmission.");
+            }
+
+            if (remark.ResubmissionDeadline.HasValue && DateTime.UtcNow > remark.ResubmissionDeadline.Value)
+            {
+                throw new ArgumentException("Resubmission deadline has passed.");
+            }
+
+            var oldSubmission = remark.Submission;
+            if (oldSubmission == null)
+            {
+                throw new ArgumentException("Original submission not found.");
+            }
+
+            if (oldSubmission.StudentId != studentId)
+            {
+                throw new ArgumentException("You are not authorized to resubmit this assignment.");
+            }
+
+            // Save new file to MEGA
+            string filePath;
+            try
+            {
+                // Save locally first
+                filePath = Path.Combine(Path.GetTempPath(), file.FileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                // Upload to MEGA
+                string megaEmail = "panchalom787@gmail.com";
+                string megaPassword = "Ompan@78";
+                string megaFileId = await MegaUploader.UploadPdfToMegaAsync(megaEmail, megaPassword, filePath);
+                if (megaFileId == null)
+                {
+                    throw new Exception("Failed to upload file to MEGA.");
+                }
+
+                // Delete old file from MEGA if it exists
+                if (!string.IsNullOrEmpty(oldSubmission.FilePath))
+                {
+                    try
+                    {
+                        var client = new MegaApiClient();
+                        await client.LoginAsync(megaEmail, megaPassword);
+                        var nodes = await client.GetNodesAsync();
+                        var oldFileNode = nodes.FirstOrDefault(n => n.Id == oldSubmission.FilePath);
+                        if (oldFileNode != null)
+                        {
+                            await client.DeleteAsync(oldFileNode);
+                        }
+                        await client.LogoutAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Warning: Failed to delete old file: {ex.Message}");
+                    }
+                }
+
+                // Update submission
+                oldSubmission.FilePath = megaFileId;
+                oldSubmission.SubmissionDate = DateTime.UtcNow;
+                oldSubmission.Marks = null;
+                oldSubmission.Feedback = null;
+
+                // Delete the remark
+                _context.Remarks.Remove(remark);
+
+                await _context.SaveChangesAsync();
+
+                // Clean up temp file
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+
+                return oldSubmission;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"File upload failed: {ex.Message}");
+            }
+        }
     }
 }

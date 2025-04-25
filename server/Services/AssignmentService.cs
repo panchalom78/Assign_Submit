@@ -173,33 +173,58 @@ namespace Server.Services
                 throw new Exception("Failed to get assignments: " + ex.Message);
             }
         }
-      public async Task<List<Submission>> GetSubmissionsByAssignmentId(int assignmentId)
-{
-    try
-    {
-        var submissions = await _context.Submissions
+        public async Task<List<Submission>> GetSubmissionsByAssignmentId(int assignmentId)
+        {
+            try
+            {
+                var submissions = await _context.Submissions
+            .Include(s => s.Student)
+            .Include(s => s.Remarks)
             .Where(s => s.AssignmentId == assignmentId)
+            .Select(s => new Submission
+            {
+                SubmissionId = s.SubmissionId,
+                FilePath = s.FilePath,
+                SubmissionDate = s.SubmissionDate,
+                Marks = s.Marks,
+                Feedback = s.Feedback,
+                AssignmentId = s.AssignmentId,
+                StudentId = s.StudentId,
+                Student = new User
+                {
+                    UserId = s.Student.UserId,
+                    FullName = s.Student.FullName,
+                    Email = s.Student.Email
+                },
+                Remarks = s.Remarks.Select(r => new Remark
+                {
+                    Id = r.Id,
+                    Message = r.Message,
+                    ResubmissionRequired = r.ResubmissionRequired,
+                    ResubmissionDeadline = r.ResubmissionDeadline,
+                    UserId = r.UserId
+                }).ToList()
+            })
             .ToListAsync();
 
-        var submissionIds = submissions.Select(s => s.SubmissionId).ToList();
 
-        // var remarks = await _context.Remarks
-        //     .Where(r => submissionIds.Contains(r.SubmissionId))
-        //     .ToListAsync();
+                // var remarks = await _context.Remarks
+                //     .Where(r => submissionIds.Contains(r.SubmissionId))
+                //     .ToListAsync();
 
-        // var submissionWithRemark = submissions.Select(s => new SubmissionWithRemarkDTO
-        // {
-        //     Submission = s,
-        //     RemarkCount = remarks.Count(r => r.SubmissionId == s.SubmissionId)
-        // }).ToList();
+                // var submissionWithRemark = submissions.Select(s => new SubmissionWithRemarkDTO
+                // {
+                //     Submission = s,
+                //     RemarkCount = remarks.Count(r => r.SubmissionId == s.SubmissionId)
+                // }).ToList();
 
-        return submissions;
-    }
-    catch (Exception ex)
-    {
-        throw new Exception("Failed to get submissions: " + ex.Message);
-    }
-}
+                return submissions;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to get submissions: " + ex.Message);
+            }
+        }
 
         public class CourseDTO
         {
@@ -257,6 +282,42 @@ namespace Server.Services
             }
         }
 
+        public async Task<List<object>> GetCalendarAssignments(int userId)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+
+                var assignments = await _context.Assignments
+                    .Include(a => a.Class)
+                        .ThenInclude(c => c.Course)
+                    .Include(a => a.Submissions)
+                    .Where(a => user.Role == "student" ? a.ClassId == user.ClassId : a.UserId == userId)
+                    .Select(a => new
+                    {
+                        id = a.AssignmentId,
+                        title = a.Title,
+                        subject = a.Class.Course.CourseName,
+                        deadline = a.DueDate,
+                        status = a.Submissions.Any(s => s.StudentId == userId)
+                            ? (a.Submissions.First(s => s.StudentId == userId).Marks != null
+                                ? "Graded"
+                                : "Submitted")
+                            : "Pending"
+                    })
+                    .ToListAsync();
+
+                return assignments.Cast<object>().ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to get calendar assignments: " + ex.Message);
+            }
+        }
 
     }
 }

@@ -11,5 +11,6 @@ namespace Server.Models
         public Assignment? Assignment { get; set; }   // Nullable
         public int StudentId { get; set; }
         public User? Student { get; set; }            // Nullable
+        public List<Remark>? Remarks { get; set; }    // Navigation property for remarks
     }
 }

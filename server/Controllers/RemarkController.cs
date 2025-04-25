@@ -7,7 +7,7 @@ using Server.DTOs;
 
 namespace Server.Controllers
 {
-    
+
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -20,12 +20,26 @@ namespace Server.Controllers
             _remarkService = remarkService;
         }
 
-        [HttpPost("create")]
-        public IActionResult CreateRemark([FromBody] CreateRemarkRequest request,int userId)
+        [HttpGet]
+        public IActionResult GetRemarks()
         {
             try
             {
-                var remark = _remarkService.CreateRemark(request,userId);
+                var remarks = _remarkService.GetRemarks();
+                return Ok(remarks);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("create")]
+        public IActionResult CreateRemark([FromBody] CreateRemarkRequest request, int userId)
+        {
+            try
+            {
+                var remark = _remarkService.CreateRemark(request, userId);
                 return Ok(remark);
             }
             catch (Exception ex)

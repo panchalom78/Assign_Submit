@@ -68,31 +68,31 @@ namespace Server.Controllers
         }
 
         [HttpGet("submission/{assignmentId}")]
-public async Task<IActionResult> GetSubmissionsByAssignmentId([FromRoute] int assignmentId)
+        public async Task<IActionResult> GetSubmissionsByAssignmentId([FromRoute] int assignmentId)
 
-{
-    try
-    {
-        var cookie = Request.Cookies["jwt"];
-        if (cookie == null)
         {
-            return Unauthorized(new { Error = "Token is required" });
-        }
+            try
+            {
+                var cookie = Request.Cookies["jwt"];
+                if (cookie == null)
+                {
+                    return Unauthorized(new { Error = "Token is required" });
+                }
 
-        var decodedToken = TokenService.DecodeToken(cookie);
-        if (decodedToken == null || decodedToken.Role != "teacher")
-        {
-            return Unauthorized(new { Error = "You are not authorized to get submissions" });
-        }
+                var decodedToken = TokenService.DecodeToken(cookie);
+                if (decodedToken == null || decodedToken.Role != "teacher")
+                {
+                    return Unauthorized(new { Error = "You are not authorized to get submissions" });
+                }
 
-        var submissions = await _assignmentService.GetSubmissionsByAssignmentId(assignmentId);
-        return Ok(submissions); // submissions should be List<SubmissionWithRemarkDTO>
-    }
-    catch (Exception ex)
-    {
-        return BadRequest(new { Error = $"Failed to get submissions: {ex.Message}" });
-    }
-}
+                var submissions = await _assignmentService.GetSubmissionsByAssignmentId(assignmentId);
+                return Ok(submissions); // submissions should be List<SubmissionWithRemarkDTO>
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = $"Failed to get submissions: {ex.Message}" });
+            }
+        }
 
 
 
@@ -192,6 +192,30 @@ public async Task<IActionResult> GetSubmissionsByAssignmentId([FromRoute] int as
             }
         }
 
+        [HttpGet("calendar")]
+        public async Task<IActionResult> GetCalendarAssignments()
+        {
+            try
+            {
+                var cookie = Request.Cookies["jwt"];
+                if (cookie == null)
+                {
+                    return Unauthorized(new { Error = "Token is required" });
+                }
+                var decodedToken = TokenService.DecodeToken(cookie);
+                if (decodedToken == null)
+                {
+                    return Unauthorized(new { Error = "Invalid token" });
+                }
+
+                var assignments = await _assignmentService.GetCalendarAssignments(decodedToken.UserId);
+                return Ok(new { assignments });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = $"Failed to get calendar assignments: {ex.Message}" });
+            }
+        }
 
     }
 }

@@ -9,7 +9,7 @@ using Server.DTOs;
 
 namespace Server.Services
 {
-    public class RemarkService 
+    public class RemarkService
     {
         private readonly UserDBContext _context;
 
@@ -18,15 +18,36 @@ namespace Server.Services
             _context = context;
         }
 
+        public List<RemarkDTO> GetRemarks()
+        {
+            var remarks = _context.Remarks
+                .Include(r => r.Submission)
+                .Include(r => r.User)
+                .Select(r => new RemarkDTO
+                {
+                    Id = r.Id,
+                    SubmissionId = r.SubmissionId,
+                    UserId = r.UserId,
+                    Message = r.Message,
+                    ResubmissionRequired = r.ResubmissionRequired,
+                    ResubmissionDeadline = r.ResubmissionDeadline,
+                    UserName = r.User.FullName,
+                    AssignmentTitle = r.Submission.Assignment.Title
+                })
+                .ToList();
+
+            return remarks;
+        }
+
         public RemarkDTO CreateRemark(CreateRemarkRequest request, int userId)
-        
+
         {
             var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
             if (user == null)
-            {   
+            {
                 throw new Exception("User not found");
-            }   
-            
+            }
+
             var remark = new Remark
             {
                 SubmissionId = request.SubmissionId,

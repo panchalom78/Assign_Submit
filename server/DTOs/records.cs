@@ -1,5 +1,5 @@
 using Server.Models;
-namespace Server.DTOs 
+namespace Server.DTOs
 {
     public record CreateAssignmentRequest(int AssignmentId, string Title, string Description, string DueDate, string SubmittedOn, int ClassId);
     public class StudentAssignmentDTO
@@ -85,6 +85,12 @@ namespace Server.DTOs
         public bool ResubmissionRequired { get; set; }
         public DateTime? ResubmissionDeadline { get; set; }
         public string? UserName { get; set; }
+        public string? AssignmentTitle { get; set; }
+        public string? Subject { get; set; }
+        public string Status => ResubmissionRequired ? "Resubmit" : "Approved";
+        public string? TeacherName { get; set; }
+        public string? Feedback { get; set; }
+        public DateTime? SubmissionDate { get; set; }
     }
     public class SubmissionWithRemarkDTO
     {
