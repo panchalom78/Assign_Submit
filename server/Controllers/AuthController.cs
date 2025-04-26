@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Services;
 using System.Security.Claims;
+using Server.DTOs;
+
 
 namespace Server.Controllers
 {
@@ -238,5 +240,71 @@ namespace Server.Controllers
             }
             return Ok(new { UserId = userId });
         }
+        [HttpGet("profile")]
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            var token = Request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized(new { Error = "Token not found" }); 
+            }
+            try
+            {
+                var data = await _authService.Profile(token);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { Error = ex.Message });    
+
+            }
+
+        }
+        [HttpGet("college-name")]
+        public async Task<IActionResult> CollegeName( int collegeId)
+        {
+            var data = await _authService.CollegeName(collegeId);
+            return Ok(data);
+        }
+        [HttpGet("faculty-name")]
+        public async Task<IActionResult> FacultyName( int facultyId)
+        {
+            var data = await _authService.FacultyName(facultyId);
+            return Ok(data);
+        }
+        [HttpGet("course-name")]
+        public async Task<IActionResult> CourseName( int courseId)
+        {
+            var data = await _authService.CourseName(courseId);
+            return Ok(data);
+        }
+        [HttpGet("class-name")]
+        public async Task<IActionResult> ClassName(int classId)
+        {
+            var data = await _authService.ClassName(classId);
+            return Ok(data);
+        }
+        [HttpPut("update-profile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request )
+        {
+            var token = Request.Cookies["jwt"];
+            Console.WriteLine(token);
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized(new { Error = "Token not found" });
+           }
+            var data = await _authService.UpdateProfile(token, request);
+            return Ok(data);
+        }
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            Response.Cookies.Delete("jwt");
+            return Ok(new { Message = "Logged out successfully" });
+        }
+    
     }
 }

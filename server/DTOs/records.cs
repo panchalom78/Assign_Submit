@@ -91,4 +91,16 @@ namespace Server.DTOs
         public Submission Submission { get; set; }
         public int RemarkCount { get; set; }
     }
+    public class UpdateProfileRequest
+    {
+        public string? FullName { get; set; }
+        public string? Email { get; set; }
+        public string? Password { get; set; }
+        public int? CollegeId { get; set; }
+        public int? FacultyId { get; set; }
+        public int? CourseId { get; set; }
+        public int? ClassId { get; set; }
+        public string? Prn { get; set; }
+    }
+    
 }

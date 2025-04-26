@@ -12,7 +12,7 @@ import CreateAssignment from "../components/CreateAssignment";
 import TeacherAssignments from "../sections/TeacherAssignments";
 import AssignmentDetails from "../sections/AssignmentDetails";
 import { useAuthStore } from "../store/useAuthStore";
-import ProfileSection from "../components/ProfileCard";
+import ProfileSection from "../sections/profile";
 const Routers = () => {
     const { user } = useAuthStore();
     return (

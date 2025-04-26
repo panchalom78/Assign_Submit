@@ -13,6 +13,8 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router";
 
+
+
 const TeacherMenu = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -38,6 +40,9 @@ const TeacherMenu = () => {
     };
     const handleChat = () => {
         navigate("/chat");
+    };
+    const handleProfile = () => {
+        navigate("/profile");
     };
     return (
         <div className="fixed top-0 left-0 z-40">
@@ -93,12 +98,13 @@ const TeacherMenu = () => {
                     >
                         <FaComments /> Chat
                     </li>
-                    <li className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer">
+                    <li className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
+                    onClick={handleProfile}
+                    >
+
                         <FaUser /> Profile
                     </li>
-                    <li className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer">
-                        <FaBell /> Notifications
-                    </li>
+                   
                 </ul>
             </div>
         </div>
