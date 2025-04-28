@@ -12,7 +12,7 @@ const profile = () => {
     <div className="flex flex-wrap  items-start gap-4 px-4">
         <Menu />
     </div>
-    <div className="md:ml-70 h-auto w-auto">
+    <div className="md:ml-70 h-auto w-auto bg-black">
         <ProfileCard />
     </div>
 </div>

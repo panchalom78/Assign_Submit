@@ -314,12 +314,12 @@ const ProfileSection = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
                     <div className="text-center sm:text-left">
-                        <h1 className="text-3xl font-extrabold text-gray-900">My Profile</h1>
-                        <p className="mt-2 text-sm text-gray-600">
+                        <h1 className="text-3xl font-extrabold text-[#FB773C]">Profile</h1>
+                        <p className="mt-2 text-sm text-gray-200">
                             View and manage your profile information
                         </p>
                     </div>
@@ -331,24 +331,24 @@ const ProfileSection = () => {
                             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                             aria-label="Settings"
                         >
-                            <Settings className="h-6 w-6 text-gray-600" />
+                            <Settings className="h-6 w-6 text-[#FB773C]" />
                         </button>
 
                         {showSettings && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                            <div className="absolute right-0 mt-2 w-48 bg-[#1F1F1F] text-white rounded-md shadow-lg py-1 z-10">
                                 <button
                                     onClick={() => {
                                         setEditMode(!editMode);
                                         setShowSettings(false);
                                     }}
-                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                    className="flex items-center px-4 py-2 text-sm text-white hover:bg-[#FB773C] w-full text-left"
                                 >
                                     <Edit className="h-4 w-4 mr-2" />
                                     {editMode ? "View Mode" : "Edit Profile"}
                                 </button>
                                 <button
                                     onClick={handleLogout}
-                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                    className="flex items-center px-4 py-2 text-sm text-white hover:bg-[#FB773C] w-full text-left"
                                 >
                                     <LogOut className="h-4 w-4 mr-2"
                                    
@@ -360,7 +360,7 @@ const ProfileSection = () => {
                     </div>
                 </div>
 
-                <div className="bg-white shadow-xl rounded-lg overflow-hidden">
+                <div className="bg-[#FAF9F6] shadow-xl rounded-lg overflow-hidden">
                     <form onSubmit={handleSubmit}>
                         <div className="p-6 sm:p-8">
                             <div className="flex flex-col md:flex-row gap-8">
@@ -400,12 +400,12 @@ const ProfileSection = () => {
                                 </div>
 
                                 {/* Profile Information Section */}
-                                <div className="flex-grow">
+                                <div className="flex-grow ">
                                     <div className="space-y-6">
                                         {/* Personal Information */}
-                                        <div className="border-b border-gray-200 pb-6">
-                                            <h2 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                                                <User className="mr-2 h-5 w-5 text-purple-600" />
+                                        <div className="border-b  border-gray-200 pb-6">
+                                            <h2 className="text-lg font-medium text-black mb-4 flex items-center">
+                                                <User className="mr-2 h-5 w-5 text-[#FB773C]" />
                                                 Personal Information
                                             </h2>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -441,8 +441,8 @@ const ProfileSection = () => {
 
                                         {/* Academic Information */}
                                         <div className="pb-6">
-                                            <h2 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                                                <CheckCircle className="mr-2 h-5 w-5 text-purple-600" />
+                                            <h2 className="text-lg font-medium text-black mb-4 flex items-center">
+                                                <CheckCircle className="mr-2 h-5 w-5 text-[#FB773C]" />
                                                 Academic Information
                                             </h2>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
