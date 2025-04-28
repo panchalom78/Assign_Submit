@@ -13,11 +13,7 @@ import TeacherAssignments from "../sections/TeacherAssignments";
 import AssignmentDetails from "../sections/AssignmentDetails";
 import { useAuthStore } from "../store/useAuthStore";
 import ProfileSection from "../sections/profile";
-<<<<<<< HEAD
-import TeacherHome from "../sections/TeacherHome";
-=======
 import HomePage from "../sections/HomePage";
->>>>>>> c18d26fa9df57126d48fa6e39608f3a683dc77d2
 const Routers = () => {
     const { user } = useAuthStore();
     return (
