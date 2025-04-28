@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import axiosInstance from "../utils/axiosInstance";
 import { useAuthStore } from "../store/useAuthStore";
+import { motion } from "framer-motion";
+import { FiUser, FiMail, FiLock, FiArrowRight, FiLoader, FiBook, FiAward } from "react-icons/fi";
 
 function Signup() {
     const [formData, setFormData] = useState({
@@ -9,9 +11,11 @@ function Signup() {
         email: "",
         password: "",
         role: "student",
-        prn:""
-
+        prn: ""
     });
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
     const { setUser } = useAuthStore();
     const navigate = useNavigate();
 
@@ -25,6 +29,9 @@ function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError(null);
+        
         try {
             const response = await axiosInstance.post(
                 "/auth/register",
@@ -33,91 +40,245 @@ function Signup() {
                     email: formData.email,
                     password: formData.password,
                     role: formData.role,
+                    prn: formData.prn
                 },
                 { withCredentials: true }
             );
 
             console.log("Signup successful:", response.data);
-            alert("Signup Successful!");
             setUser(response.data.user);
-            navigate("/select-affiliate"); // Redirect user after successful signup
+            navigate("/select-affiliate");
         } catch (error) {
-            console.error(
-                "Signup failed:",
-                error.response?.data || error.message
-            );
-            alert(
-                error.response?.data?.error ||
-                    "Signup failed. Please try again."
-            );
+            console.error("Signup failed:", error.response?.data || error.message);
+            setError(error.response?.data?.error || "Signup failed. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
+    // Animation variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.3
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.5,
+                ease: "easeOut"
+            }
+        }
+    };
+
+    const buttonHover = {
+        scale: 1.02,
+        boxShadow: "0 5px 15px rgba(235, 54, 120, 0.4)"
+    };
+
+    const buttonTap = {
+        scale: 0.98
+    };
+
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-100">
-            <form
-                onSubmit={handleSubmit}
-                className="bg-white p-6 rounded shadow-md w-full max-w-sm"
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
+            <motion.div 
+                initial="hidden"
+                animate="visible"
+                variants={containerVariants}
+                className="w-full max-w-md"
             >
-                <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
+                <div className="bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl overflow-hidden border border-[#EB3678]/20">
+                    {/* Header with gradient */}
+                    <div className="bg-gradient-to-r from-[#EB3678] to-[#FB773C] p-6 text-center">
+                        <motion.h2 
+                            variants={itemVariants}
+                            className="text-3xl font-bold text-white"
+                        >
+                            Join AssignMate
+                        </motion.h2>
+                        <motion.p 
+                            variants={itemVariants}
+                            className="text-white/80 mt-2"
+                        >
+                            Create your account to get started
+                        </motion.p>
+                    </div>
+                    
+                    <form onSubmit={handleSubmit} className="p-8 space-y-4">
+                        {error && (
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="bg-red-900/20 text-red-300 border border-red-500/30 p-3 rounded-lg flex items-center"
+                            >
+                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                {error}
+                            </motion.div>
+                        )}
+                        
+                        <motion.div variants={itemVariants}>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <FiUser className="h-5 w-5 text-gray-500" />
+                                </div>
+                                <input
+                                    type="text"
+                                    name="fullName"
+                                    value={formData.fullName}
+                                    onChange={handleChange}
+                                    className="w-full pl-10 pr-3 py-3 bg-gray-700/50 border border-gray-600/30 rounded-lg focus:ring-2 focus:ring-[#EB3678] focus:border-[#EB3678] text-white placeholder-gray-400 transition"
+                                    placeholder="John Doe"
+                                    required
+                                />
+                            </div>
+                        </motion.div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-700">Full Name</label>
-                    <input
-                        type="text"
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded"
-                        required
-                    />
-                </div>
+                        <motion.div variants={itemVariants}>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <FiMail className="h-5 w-5 text-gray-500" />
+                                </div>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className="w-full pl-10 pr-3 py-3 bg-gray-700/50 border border-gray-600/30 rounded-lg focus:ring-2 focus:ring-[#EB3678] focus:border-[#EB3678] text-white placeholder-gray-400 transition"
+                                    placeholder="your@email.com"
+                                    required
+                                />
+                            </div>
+                        </motion.div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-700">Email</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded"
-                        required
-                    />
-                </div>
+                        <motion.div variants={itemVariants}>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <FiLock className="h-5 w-5 text-gray-500" />
+                                </div>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    className="w-full pl-10 pr-3 py-3 bg-gray-700/50 border border-gray-600/30 rounded-lg focus:ring-2 focus:ring-[#EB3678] focus:border-[#EB3678] text-white placeholder-gray-400 transition"
+                                    placeholder="••••••••"
+                                    required
+                                />
+                            </div>
+                        </motion.div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-700">Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded"
-                        required
-                    />
-                </div>
+                        <motion.div variants={itemVariants}>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Role</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    {formData.role === "student" ? (
+                                        <FiBook className="h-5 w-5 text-gray-500" />
+                                    ) : (
+                                        <FiAward className="h-5 w-5 text-gray-500" />
+                                    )}
+                                </div>
+                                <select
+                                    name="role"
+                                    value={formData.role}
+                                    onChange={handleChange}
+                                    className="w-full pl-10 pr-3 py-3 bg-gray-700/50 border border-gray-600/30 rounded-lg focus:ring-2 focus:ring-[#EB3678] focus:border-[#EB3678] text-white appearance-none"
+                                    required
+                                >
+                                    <option value="student" className="bg-gray-800 hover:bg-gray-700">Student</option>
+                                    <option value="teacher" className="bg-gray-800 hover:bg-gray-700">Teacher</option>
+                                </select>
+                            </div>
+                        </motion.div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-700">Role</label>
-                    <select
-                        name="role"
-                        value={formData.role}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded"
-                        required
+                        {formData.role === "student" && (
+                            <motion.div 
+                                variants={itemVariants}
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ 
+                                    opacity: 1, 
+                                    height: "auto",
+                                    transition: { duration: 0.3 }
+                                }}
+                            >
+                                <label className="block text-sm font-medium text-gray-300 mb-1">PRN Number</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        name="prn"
+                                        value={formData.prn}
+                                        onChange={handleChange}
+                                        className="w-full pl-10 pr-3 py-3 bg-gray-700/50 border border-gray-600/30 rounded-lg focus:ring-2 focus:ring-[#EB3678] focus:border-[#EB3678] text-white placeholder-gray-400 transition"
+                                        placeholder="Enter your PRN"
+                                        required={formData.role === "student"}
+                                    />
+                                </div>
+                            </motion.div>
+                        )}
+
+                        <motion.button
+                            variants={itemVariants}
+                            whileHover={buttonHover}
+                            whileTap={buttonTap}
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full flex justify-center items-center py-3 px-4 mt-6 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-[#EB3678] to-[#FB773C] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EB3678] transition-all"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <FiLoader className="animate-spin h-5 w-5 mr-2" />
+                                    Creating Account...
+                                </>
+                            ) : (
+                                <>
+                                    Sign Up <FiArrowRight className="ml-2" />
+                                </>
+                            )}
+                        </motion.button>
+                    </form>
+                    
+                    <motion.div 
+                        variants={itemVariants}
+                        className="px-8 pb-6 text-center"
                     >
-                        <option value="student">Student</option>
-                        <option value="teacher">Teacher</option>
-                    </select>
+                        <p className="text-sm text-gray-400">
+                            Already have an account?{' '}
+                            <button 
+                                onClick={() => navigate('/login')}
+                                className="font-medium text-[#FB773C] hover:text-[#EB3678]"
+                            >
+                                Sign in
+                            </button>
+                        </p>
+                    </motion.div>
                 </div>
-
-                <button
-                    type="submit"
-                    className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+                
+                <motion.div 
+                    variants={itemVariants}
+                    className="mt-6 text-center text-sm text-gray-400"
                 >
-                    Sign Up
-                </button>
-            </form>
+                    <p>© {new Date().getFullYear()} AssignMate. All rights reserved.</p>
+                </motion.div>
+            </motion.div>
         </div>
     );
 }

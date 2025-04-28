@@ -1,0 +1,82 @@
+/* home.css */
+/* Typing cursor animation */
+@keyframes blink-cursor {
+    from, to { opacity: 1 }
+    50% { opacity: 0 }
+  }
+  
+  .typing-cursor {
+    animation: blink-cursor 0.7s step-end infinite;
+    color: #ffffff;
+    margin-left: 2px;
+    font-size: 20px;
+  }
+  
+  /* Other animations remain the same */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+    60% { opacity: 1; transform: scale(1.05) translateY(0); }
+    100% { transform: scale(1) translateY(0); }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+  
+  .animate-bounceIn {
+    animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+  
+  /* Uiverse button styles */
+  .uiverse-btn {
+    width: 180px;
+    padding: 0;
+    border: none;
+    transform: rotate(5deg);
+    transform-origin: center;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding-bottom: 3px;
+    border-radius: 8px;
+    box-shadow: 0 4px 0 #494a4b;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: linear-gradient(to right, #EB3678, #FB773C);
+  }
+  
+  .uiverse-span {
+    background: #f1f5f8;
+    display: block;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    border: 2px solid #494a4b;
+    color: #EB3678;
+    font-weight: 700;
+    background: white;
+  }
+  
+  .uiverse-btn:active {
+    transform: translateY(5px) rotate(5deg);
+    padding-bottom: 0px;
+    outline: 0;
+  }
+  
+  .uiverse-btn:hover {
+    transform: rotate(0deg) scale(1.05);
+    box-shadow: 0 6px 0 #494a4b;
+  }
+  .react-select-container {
+    width: 370px; /* Adjust width */
+  }
+  
+  .react-select__control {
+    height: 45px; /* Adjust height */
+    min-height: 45px; /* Important for react-select */
+  }
+  

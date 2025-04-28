@@ -24,7 +24,7 @@ const TeacherMenu = () => {
     const navigate = useNavigate();
 
     const handleHome = () => {
-        navigate("/");
+        navigate("/dashboard");
     };
     const handleAssignment = () => {
         navigate("/create-assignment");

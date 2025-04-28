@@ -1,27 +1,38 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import AssignmentSubmission from '../components/Submition';
 import Navbar from '../components/Navbar';
 import Menu from '../components/Menu';
 
 const Assignment = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       {/* Navbar */}
       <Navbar />
 
       {/* Main Layout */}
-      <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto p-4 gap-6">
+      <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto px-4 py-6 gap-6">
         {/* Sidebar Menu (Sticky on Desktop) */}
-        <div className="w-full md:w-64 lg:w-72">
-          <div className="sticky top-20">
+        <div className="w-full md:w-64">
+          <motion.div 
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="sticky top-24"
+          >
             <Menu />
-          </div>
+          </motion.div>
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1">
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="flex-1"
+        >
           <AssignmentSubmission />
-        </div>
+        </motion.div>
       </div>
     </div>
   );

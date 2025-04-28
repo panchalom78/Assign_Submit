@@ -6,7 +6,7 @@ import Menu from '../components/Menu';
 const RemarkPage= () => {
    
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       {/* Navbar */}
       <Navbar />
 

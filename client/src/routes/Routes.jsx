@@ -13,14 +13,15 @@ import TeacherAssignments from "../sections/TeacherAssignments";
 import AssignmentDetails from "../sections/AssignmentDetails";
 import { useAuthStore } from "../store/useAuthStore";
 import ProfileSection from "../sections/profile";
+import HomePage from "../sections/HomePage";
 const Routers = () => {
     const { user } = useAuthStore();
     return (
         <div>
             <Router>
                 <Routes>
-                    <Route
-                        path="/"
+                    {/* <Route
+                        path="/login"
                         element={
                             user ? (
                                 user.role == "student" ? (
@@ -32,7 +33,8 @@ const Routers = () => {
                                 <Navigate to="/login" />
                             )
                         }
-                    />
+                    /> */}
+                    <Route path="/" element={<HomePage />} />
                     <Route path="/create-assignment" element={<Assignment />} />
                     <Route path="/calendar-view" element={<Calendar />} />
                     <Route path="/grades" element={<GradesPage />} />
@@ -40,7 +42,7 @@ const Routers = () => {
                     <Route path="/chat" element={<Chatpage />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/dashboard" element={<Home />} />
                     <Route
                         path="/select-affiliate"
                         element={<SelectAffiliation />}
