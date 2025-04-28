@@ -13,6 +13,7 @@ import TeacherAssignments from "../sections/TeacherAssignments";
 import AssignmentDetails from "../sections/AssignmentDetails";
 import { useAuthStore } from "../store/useAuthStore";
 import ProfileSection from "../sections/profile";
+import TeacherHome from "../sections/TeacherHome";
 const Routers = () => {
     const { user } = useAuthStore();
     return (
@@ -26,7 +27,7 @@ const Routers = () => {
                                 user.role == "student" ? (
                                     <Home />
                                 ) : (
-                                    <TeacherAssignments />
+                                    <TeacherHome />
                                 )
                             ) : (
                                 <Navigate to="/login" />

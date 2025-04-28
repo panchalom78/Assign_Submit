@@ -4,6 +4,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { Link, useNavigate } from "react-router";
 import TeacherNavbar from "../components/TeacherNavbar";
 import TeacherMenu from "../components/TeacherMenu";
+import SideMenu from "../components/SideMenu";
 function TeacherAssignments() {
     const [assignments, setAssignments] = useState([]); // State to hold assignments
     const navigate = useNavigate();
@@ -72,7 +73,7 @@ function TeacherAssignments() {
             <div className="min-h-screen bg-gray-50">
                 <TeacherNavbar />
                 <div className="flex">
-                    <TeacherMenu />
+                    <SideMenu />
                     <div className="flex-1 p-8 justify-self-end md:ml-64">
                         <div className="max-w-6xl mx-auto">
                             {/* Header Section */}

@@ -13,8 +13,6 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router";
 
-
-
 const TeacherMenu = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -27,7 +25,7 @@ const TeacherMenu = () => {
         navigate("/");
     };
     const handleAssignment = () => {
-        navigate("/create-assignment");
+        navigate("/teacher-assignments");
     };
     const handleCalendar = () => {
         navigate("/calendar-view");
@@ -35,8 +33,8 @@ const TeacherMenu = () => {
     const handleRemarks = () => {
         navigate("/remarks");
     };
-    const handleGrades = () => {
-        navigate("/grades");
+    const handleNewAssignment = () => {
+        navigate("/create-assignments");
     };
     const handleChat = () => {
         navigate("/chat");
@@ -75,16 +73,11 @@ const TeacherMenu = () => {
                     </li>
                     <li
                         className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
-                        onClick={handleGrades}
+                        onClick={handleNewAssignment}
                     >
-                        <FaStar /> Grades
+                        <FaStar /> New Assignment
                     </li>
-                    <li
-                        className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
-                        onClick={handleRemarks}
-                    >
-                        <FaTasks /> Remark
-                    </li>
+
                     <li
                         className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
                         onClick={handleCalendar}
@@ -98,13 +91,12 @@ const TeacherMenu = () => {
                     >
                         <FaComments /> Chat
                     </li>
-                    <li className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
-                    onClick={handleProfile}
+                    <li
+                        className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
+                        onClick={handleProfile}
                     >
-
                         <FaUser /> Profile
                     </li>
-                   
                 </ul>
             </div>
         </div>

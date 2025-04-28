@@ -4,6 +4,7 @@ import Menu from "../components/Menu";
 import CalendarView from "../components/CelenderView";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
+import SideMenu from "../components/SideMenu";
 
 const Calendar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage menu visibility
@@ -38,7 +39,7 @@ const Calendar = () => {
                 {/* Sidebar Menu (Sticky on Desktop) */}
                 <div className="w-full md:w-64 lg:w-72">
                     <div className="sticky top-20 z-10">
-                        <Menu />
+                        <SideMenu />
                     </div>
                 </div>
 

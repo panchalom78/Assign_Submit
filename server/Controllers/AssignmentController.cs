@@ -217,6 +217,30 @@ namespace Server.Controllers
             }
         }
 
+        [HttpGet("get/teacher/dashboard")]
+        public async Task<IActionResult> GetTeacherDashboardAssignments()
+        {
+            try
+            {
+                var cookie = Request.Cookies["jwt"];
+                if (cookie == null)
+                {
+                    return Unauthorized(new { Error = "Token is required" });
+                }
+                var decodedToken = TokenService.DecodeToken(cookie);
+                if (decodedToken == null || decodedToken.Role != "teacher")
+                {
+                    return Unauthorized(new { Error = "You are not authorized to get assignments" });
+                }
+                var assignments = await _assignmentService.GetTeacherDashboardAssignments(decodedToken.UserId);
+                return Ok(new { assignments });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = $"Failed to get assignments: {ex.Message}" });
+            }
+        }
+
     }
 }
 
