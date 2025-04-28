@@ -15,8 +15,8 @@ const CalendarView = ({ assignments }) => {
   }));
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl shadow-2xl p-4 md:p-6 ">
-      <h2 className="text-xl md:text-2xl font-bold text-purple-600 mb-4 md:mb-6 text-center">
+    <div className="bg-[#1F1F1F] text-white rounded-2xl shadow-2xl p-4 md:p-6 border border-gray-700">
+      <h2 className="text-xl md:text-2xl font-bold text-[#FB773C] mb-4 md:mb-6 text-center">
         Assignment Calendar
       </h2>
       <FullCalendar

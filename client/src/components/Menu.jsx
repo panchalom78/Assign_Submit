@@ -9,20 +9,19 @@ import {
     FaStar,
     FaClipboardList,
     FaCalendar,
-    FaBell,
 } from "react-icons/fa";
 import { useNavigate } from "react-router";
 
 const Menu = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const navigate = useNavigate();
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
-    const navigate = useNavigate();
 
     const handleHome = () => {
-        navigate("/");
+        navigate("/dashboard");
     };
     const handleAssignment = () => {
         navigate("/create-assignment");
@@ -42,66 +41,66 @@ const Menu = () => {
     const handleProfile = () => {
         navigate("/profile");
     };
+
     return (
         <div className="fixed top-0 left-0 z-40">
             {/* Toggle Button for Mobile */}
             <button
                 onClick={toggleMenu}
-                className="fixed top-4 left-4 p-3 bg-gray-800 text-white rounded-lg md:hidden z-50"
+                className="fixed top-4 left-4 p-3 bg-gradient-to-r from-[#EB3678] to-[#FB773C] text-white rounded-lg md:hidden z-50 hover:shadow-lg transition-all"
             >
                 {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
 
             {/* Menu */}
             <div
-                className={`fixed inset-y-0 left-0 h-screen w-64 bg-gray-900 text-white p-6 transform transition-transform duration-300 ease-in-out ${
+                className={`fixed inset-y-0 left-0 h-screen w-64 bg-gray-900/95 backdrop-blur-md text-white p-6 transform transition-transform duration-300 ease-in-out ${
                     isMenuOpen ? "translate-x-0" : "-translate-x-full"
-                } md:translate-x-0 md:relative md:w-64`}
+                } md:translate-x-0 md:relative md:w-64 border-r border-[#EB3678]/20`}
             >
-                <ul className="flex flex-col gap-6">
+                <ul className="flex flex-col gap-2">
                     <li
-                        className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
+                        className="flex items-center gap-3 hover:bg-[#EB3678]/10 p-3 rounded-lg transition duration-300 cursor-pointer hover:text-[#FB773C] border-l-4 border-transparent hover:border-[#FB773C]"
                         onClick={handleHome}
                     >
-                        <FaTachometerAlt /> Dashboard
+                        <FaTachometerAlt className="text-[#FB773C]" /> Dashboard
                     </li>
                     <li
-                        className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
+                        className="flex items-center gap-3 hover:bg-[#EB3678]/10 p-3 rounded-lg transition duration-300 cursor-pointer hover:text-[#FB773C] border-l-4 border-transparent hover:border-[#FB773C]"
                         onClick={handleAssignment}
                     >
-                        <FaClipboardList /> Assignment
+                        <FaClipboardList className="text-[#FB773C]" /> Assignment
                     </li>
                     <li
-                        className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
+                        className="flex items-center gap-3 hover:bg-[#EB3678]/10 p-3 rounded-lg transition duration-300 cursor-pointer hover:text-[#FB773C] border-l-4 border-transparent hover:border-[#FB773C]"
                         onClick={handleGrades}
                     >
-                        <FaStar /> Grades
+                        <FaStar className="text-[#FB773C]" /> Grades
                     </li>
                     <li
-                        className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
+                        className="flex items-center gap-3 hover:bg-[#EB3678]/10 p-3 rounded-lg transition duration-300 cursor-pointer hover:text-[#FB773C] border-l-4 border-transparent hover:border-[#FB773C]"
                         onClick={handleRemarks}
                     >
-                        <FaTasks /> Remark
+                        <FaTasks className="text-[#FB773C]" /> Remark
                     </li>
                     <li
-                        className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
+                        className="flex items-center gap-3 hover:bg-[#EB3678]/10 p-3 rounded-lg transition duration-300 cursor-pointer hover:text-[#FB773C] border-l-4 border-transparent hover:border-[#FB773C]"
                         onClick={handleCalendar}
                     >
-                        <FaCalendar /> Calender View
+                        <FaCalendar className="text-[#FB773C]" /> Calendar View
                     </li>
-
                     <li
-                        className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
+                        className="flex items-center gap-3 hover:bg-[#EB3678]/10 p-3 rounded-lg transition duration-300 cursor-pointer hover:text-[#FB773C] border-l-4 border-transparent hover:border-[#FB773C]"
                         onClick={handleChat}
                     >
-                        <FaComments /> Chat
+                        <FaComments className="text-[#FB773C]" /> Chat
                     </li>
-                    <li className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded-lg transition duration-300 cursor-pointer"
-                    onClick={handleProfile}
+                    <li
+                        className="flex items-center gap-3 hover:bg-[#EB3678]/10 p-3 rounded-lg transition duration-300 cursor-pointer hover:text-[#FB773C] border-l-4 border-transparent hover:border-[#FB773C]"
+                        onClick={handleProfile}
                     >
-                        <FaUser /> Profile
+                        <FaUser className="text-[#FB773C]" /> Profile
                     </li>
-                    
                 </ul>
             </div>
         </div>

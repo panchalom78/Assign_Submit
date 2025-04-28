@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 
 const Grade = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -14,9 +15,8 @@ const Grade = () => {
     useEffect(() => {
         const fetchAssignments = async () => {
             try {
-                const response = await axiosInstance.get(
-                    "/student/assignments"
-                );
+                setIsLoading(true);
+                const response = await axiosInstance.get("/student/assignments");
                 setAssignments(response.data.assignments);
             } catch (error) {
                 console.error("Error fetching assignments:", error);
@@ -32,27 +32,18 @@ const Grade = () => {
     // Filter assignments based on search query
     const filteredAssignments = assignments.filter(
         (assignment) =>
-            assignment.title
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase()) ||
-            assignment.description
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase())
+            assignment.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            assignment.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     // Sort assignments
     const sortedAssignments = React.useMemo(() => {
         if (sortConfig.key) {
             return [...filteredAssignments].sort((a, b) => {
-                if (
-                    sortConfig.key === "dueDate" ||
-                    sortConfig.key === "submittedOn"
-                ) {
+                if (sortConfig.key === "dueDate" || sortConfig.key === "submittedOn") {
                     const dateA = new Date(a[sortConfig.key] || 0);
                     const dateB = new Date(b[sortConfig.key] || 0);
-                    return sortConfig.direction === "asc"
-                        ? dateA - dateB
-                        : dateB - dateA;
+                    return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
                 }
                 if (a[sortConfig.key] < b[sortConfig.key]) {
                     return sortConfig.direction === "asc" ? -1 : 1;
@@ -82,8 +73,7 @@ const Grade = () => {
     };
 
     const getGrade = (assignment) => {
-        if (!assignment.submission || assignment.submission.marks === null)
-            return "-";
+        if (!assignment.submission || assignment.submission.marks === null) return "-";
         const marks = assignment.submission.marks;
         if (marks >= 9) return "A";
         if (marks >= 8) return "B+";
@@ -99,15 +89,20 @@ const Grade = () => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gray-50 p-4 md:p-6 flex justify-center items-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600"></div>
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex justify-center items-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#A560CF]"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-            <h1 className="text-2xl md:text-3xl font-bold text-purple-600 mb-6 text-center">
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="min-h-screen bg-black p-4 md:p-6"
+        >
+            <h1 className="text-2xl md:text-3xl font-bold bg-[#FB773C] bg-clip-text text-transparent mb-6 text-center">
                 Grades
             </h1>
 
@@ -118,101 +113,74 @@ const Grade = () => {
                     placeholder="Search assignments..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full p-3 bg-[#FAF9F6] border border-[#EB3678]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A560CF] text-white placeholder-gray-400"
                 />
             </div>
 
             {/* Grades Table */}
-            <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
+            <div className="overflow-x-auto rounded-xl shadow-lg border border-[#EB3678]/20">
                 <table className="w-full">
-                    <thead className="bg-gradient-to-r from-[#ED739F] to-[#A560CF] text-white">
+                    <thead className="bg-[#FB773C]">
                         <tr>
-                            <th
-                                className="px-4 py-3 cursor-pointer"
-                                onClick={() => requestSort("title")}
-                            >
-                                Title
-                            </th>
-                            <th
-                                className="px-4 py-3 cursor-pointer"
-                                onClick={() => requestSort("description")}
-                            >
-                                Description
-                            </th>
-                            <th
-                                className="px-4 py-3 cursor-pointer"
-                                onClick={() => requestSort("dueDate")}
-                            >
-                                Due Date
-                            </th>
-                            <th
-                                className="px-4 py-3 cursor-pointer"
-                                onClick={() => requestSort("submittedOn")}
-                            >
-                                Submitted On
-                            </th>
-                            <th className="px-4 py-3">Status</th>
-                            <th
-                                className="px-4 py-3 cursor-pointer"
-                                onClick={() => requestSort("submission.marks")}
-                            >
-                                Grade
-                            </th>
+                            {['Title', 'Description', 'Due Date', 'Submitted On', 'Status', 'Grade'].map((header) => (
+                                <th
+                                    key={header}
+                                    className="px-4 py-3 text-left text-white font-semibold cursor-pointer hover:bg-[#EB3678]/80 transition-colors"
+                                    onClick={() => requestSort(header.toLowerCase().replace(' ', ''))}
+                                >
+                                    {header}
+                                </th>
+                            ))}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
-                        {sortedAssignments.map((assignment) => (
-                            <tr
-                                key={assignment.assignmentId}
-                                className="hover:bg-gray-50 transition-colors"
-                            >
-                                <td className="px-4 py-3 text-center">
-                                    {assignment.title}
-                                </td>
-                                <td className="px-4 py-3 text-center">
-                                    {assignment.description}
-                                </td>
-                                <td className="px-4 py-3 text-center">
-                                    {formatDate(assignment.dueDate)}
-                                </td>
-                                <td className="px-4 py-3 text-center">
-                                    {formatDate(
-                                        assignment.submission?.submissionDate
-                                    )}
-                                </td>
-                                <td className="px-4 py-3 text-center">
-                                    <span
-                                        className={`px-3 py-1 rounded-full text-sm ${
+                    <tbody className="bg-gray-800 divide-y divide-[#EB3678]/10">
+                        {sortedAssignments.length > 0 ? (
+                            sortedAssignments.map((assignment) => (
+                                <motion.tr
+                                    key={assignment.assignmentId}
+                                    whileHover={{ backgroundColor: '#2D374850' }}
+                                    className="transition-colors duration-200"
+                                >
+                                    <td className="px-4 py-3 text-[#E5E5E5]">{assignment.title}</td>
+                                    <td className="px-4 py-3 text-[#E5E5E5]">{assignment.description}</td>
+                                    <td className="px-4 py-3 text-[#E5E5E5]">{formatDate(assignment.dueDate)}</td>
+                                    <td className="px-4 py-3 text-[#E5E5E5]">
+                                        {formatDate(assignment.submission?.submissionDate)}
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                                             getStatus(assignment) === "Graded"
-                                                ? "bg-green-100 text-green-600"
-                                                : getStatus(assignment) ===
-                                                  "Submitted"
-                                                ? "bg-yellow-100 text-yellow-600"
-                                                : "bg-gray-100 text-gray-600"
-                                        }`}
-                                    >
-                                        {getStatus(assignment)}
-                                    </span>
-                                </td>
-                                <td className="px-4 py-3 text-center">
-                                    <span
-                                        className={`font-semibold ${
-                                            getGrade(assignment) === "A"
-                                                ? "text-green-600"
-                                                : getGrade(assignment) === "B+"
-                                                ? "text-blue-600"
-                                                : "text-gray-600"
-                                        }`}
-                                    >
-                                        {getGrade(assignment)}
-                                    </span>
+                                                ? "bg-[#10B981]/20 text-[#10B981]"
+                                                : getStatus(assignment) === "Submitted"
+                                                ? "bg-[#F59E0B]/20 text-[#F59E0B]"
+                                                : "bg-gray-700 text-gray-400"
+                                        }`}>
+                                            {getStatus(assignment)}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <span className={`font-semibold ${
+                                            getGrade(assignment) === "A" ? "text-[#10B981]" :
+                                            getGrade(assignment) === "B+" ? "text-[#3B82F6]" :
+                                            getGrade(assignment) === "B" ? "text-[#A560CF]" :
+                                            "text-gray-400"
+                                        }`}>
+                                            {getGrade(assignment)}
+                                        </span>
+                                    </td>
+                                </motion.tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="6" className="px-4 py-6 text-center text-[#E5E5E5]">
+                                    No assignments found
                                 </td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

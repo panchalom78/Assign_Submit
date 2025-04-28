@@ -21,11 +21,11 @@ const Remark = () => {
     const fetchRemarks = async () => {
         try {
             const response = await axiosInstance.get("/remark");
-            console.log("Remarks response:", response.data); // Debug log
+            console.log("Remarks response:", response.data);
             setRemarks(response.data);
             setLoading(false);
         } catch (err) {
-            console.error("Error fetching remarks:", err); // Debug log
+            console.error("Error fetching remarks:", err);
             setError("Failed to fetch remarks. Please try again later.");
             setLoading(false);
             if (err.response?.status === 401) {
@@ -48,7 +48,6 @@ const Remark = () => {
                 },
             });
 
-            // Refresh remarks after resubmission
             fetchRemarks();
             setSelectedRemark(null);
             setFile(null);
@@ -64,8 +63,8 @@ const Remark = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6 flex items-center justify-center">
-                <div className="text-purple-600 text-xl">
+            <div className="min-h-screen bg-gradient-to-br from-[#000000] to-[#160209] p-6 flex items-center justify-center">
+                <div className="text-transparent bg-clip-text bg-gradient-to-r from-[#FBC740] to-[#EB3678] text-xl">
                     Loading remarks...
                 </div>
             </div>
@@ -74,30 +73,61 @@ const Remark = () => {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6 flex items-center justify-center">
-                <div className="text-red-600 text-xl">{error}</div>
+            <div className="min-h-screen bg-gradient-to-br from-[#000000] to-[#160209] p-6 flex items-center justify-center">
+                <div className="text-red-500 text-xl">{error}</div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6">
-            <div className="max-w-7xl mx-auto">
-                <h1 className="text-3xl font-bold text-purple-600 mb-6 text-center">
-                    Remarks
-                </h1>
+        <div className=" min-h-screen  p-6 overflow-hidden">
+            {/* Animated background elements */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {[...Array(5)].map((_, i) => (
+                    <div 
+                        key={`circle-${i}`}
+                        className='absolute rounded-full opacity-10 animate-float'
+                        style={{
+                            background: `radial-gradient(circle, ${i % 2 === 0 ? '#EB3678' : '#FB773C'}, transparent)`,
+                            width: `${Math.random() * 400 + 200}px`,
+                            height: `${Math.random() * 400 + 200}px`,
+                            top: `${Math.random() * 100}%`,
+                            left: `${Math.random() * 100}%`,
+                            animationDuration: `${Math.random() * 30 + 30}s`,
+                            animationDelay: `${Math.random() * 5}s`
+                        }}
+                    />
+                ))}
+
+                {[...Array(20)].map((_, i) => (
+                    <div
+                        key={`particle-${i}`}
+                        className='absolute rounded-full bg-white/5 animate-float'
+                        style={{
+                            width: `${Math.random() * 10 + 2}px`,
+                            height: `${Math.random() * 10 + 2}px`,
+                            top: `${Math.random() * 100}%`,
+                            left: `${Math.random() * 100}%`,
+                            animationDuration: `${Math.random() * 20 + 10}s`,
+                            animationDelay: `${Math.random() * 5}s`
+                        }}
+                    />
+                ))}
+            </div>
+
+            <div className="max-w-7xl mx-auto relative z-10 ">
+                
 
                 {remarks.length === 0 ? (
-                    <div className="text-center text-gray-600 mt-10">
-                        No remarks found. Your submissions haven't received any
-                        feedback yet.
+                    <div className="text-center text-gray-400 mt-10 text-lg">
+                        No remarks found. Your submissions haven't received any feedback yet.
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {remarks.map((remark) => (
                             <div
                                 key={remark.id}
-                                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+                                className="bg-[#FAF9F6] text-black rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800 hover:border-[#EB3678]/50"
                                 onClick={() => setSelectedRemark(remark)}
                             >
                                 <div className="p-6">
@@ -105,34 +135,33 @@ const Remark = () => {
                                         <span
                                             className={`px-3 py-1 rounded-full text-sm ${
                                                 remark.status === "Resubmit"
-                                                    ? "bg-red-100 text-red-600"
-                                                    : remark.status ===
-                                                      "Approved"
-                                                    ? "bg-green-100 text-green-600"
-                                                    : "bg-yellow-100 text-yellow-600"
+                                                    ? "bg-[#FB773C] text-black border border-red-500/30"
+                                                    : remark.status === "Approved"
+                                                    ? "bg-green-900/30 text-green-400 border border-green-500/30"
+                                                    : "bg-yellow-900/30 text-yellow-400 border border-yellow-500/30"
                                             }`}
                                         >
                                             {remark.status}
                                         </span>
-                                        <FaComment className="text-gray-400" />
+                                        <FaComment className="text-white" />
                                     </div>
 
-                                    <h3 className="text-xl font-semibold mb-2 text-gray-800">
+                                    <h3 className="text-xl font-semibold mb-2 text-black">
                                         {remark.assignmentTitle}
                                     </h3>
-                                    <p className="text-gray-600 mb-4">
+                                    <p className="text-gray-400 mb-4">
                                         {remark.subject}
                                     </p>
 
-                                    <div className="flex items-center text-sm text-gray-500">
+                                    <div className="flex items-center text-sm text-black">
                                         <span className="mr-2">Teacher:</span>
-                                        <span className="font-semibold">
+                                        <span className="font-semibold text-black">
                                             {remark.teacherName}
                                         </span>
                                     </div>
 
                                     {remark.submissionDate && (
-                                        <div className="text-xs text-gray-400 mt-2">
+                                        <div className="text-xs text-black mt-2">
                                             Submitted:{" "}
                                             {new Date(
                                                 remark.submissionDate
@@ -147,38 +176,38 @@ const Remark = () => {
 
                 {/* Remark Details Modal */}
                 {selectedRemark && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-                        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+                    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
+                        <div className="bg-[#FAF9F6] rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-800">
                             <div className="flex justify-between items-start mb-6">
-                                <h2 className="text-2xl font-bold text-gray-800">
+                                <h2 className="text-2xl font-bold text-black">
                                     {selectedRemark.assignmentTitle}
                                 </h2>
                                 <button
                                     onClick={() => setSelectedRemark(null)}
-                                    className="text-gray-500 hover:text-gray-700"
+                                    className="text-black hover:text-[#EB3678] transition-colors"
                                 >
                                     ✕
                                 </button>
                             </div>
 
                             <div className="mb-6">
-                                <p className="text-gray-600 mb-4">
+                                <p className="text-black mb-4">
                                     {selectedRemark.message}
                                 </p>
-                                <div className="flex items-center text-sm text-gray-500 mb-4">
+                                <div className="flex items-center text-sm text-black mb-4">
                                     <span className="mr-2">Teacher:</span>
-                                    <span className="font-semibold">
+                                    <span className="font-semibold text-black">
                                         {selectedRemark.teacherName}
                                     </span>
                                 </div>
                                 {selectedRemark.feedback && (
-                                    <div className="text-sm text-gray-600">
-                                        <strong>Feedback:</strong>{" "}
+                                    <div className="text-sm text-black bg-gray-800/50 p-3 rounded-lg">
+                                        <strong className="text-[#FBC740]">Feedback:</strong>{" "}
                                         {selectedRemark.feedback}
                                     </div>
                                 )}
                                 {selectedRemark.resubmissionDeadline && (
-                                    <div className="mt-3 text-sm text-red-500">
+                                    <div className="mt-3 text-sm text-[#FB773C] bg-gray-800 p-3 rounded-lg">
                                         <strong>Resubmission Deadline:</strong>{" "}
                                         {new Date(
                                             selectedRemark.resubmissionDeadline
@@ -193,9 +222,9 @@ const Remark = () => {
                                     <div
                                         className={`border-2 border-dashed rounded-xl p-8 text-center mb-6 ${
                                             file
-                                                ? "border-purple-500 bg-purple-50"
-                                                : "border-gray-300 hover:border-purple-300"
-                                        }`}
+                                                ? "border-[#FB773C] bg-[#160209]/50"
+                                                : "border-gray-700 hover:border-[#EB3678]/50"
+                                        } transition-colors`}
                                         onDragOver={(e) => e.preventDefault()}
                                         onDrop={(e) => {
                                             e.preventDefault();
@@ -205,17 +234,17 @@ const Remark = () => {
                                                 setFile(droppedFile);
                                         }}
                                     >
-                                        <FaUpload className="text-3xl text-purple-500 mx-auto mb-4" />
+                                        <FaUpload className="text-3xl text-[#FB773C] mx-auto mb-4" />
                                         {file ? (
-                                            <p className="text-purple-600">
+                                            <p className="text-[#FB773C]">
                                                 {file.name}
                                             </p>
                                         ) : (
                                             <>
-                                                <p className="text-gray-600">
+                                                <p className="text-black">
                                                     Drag & drop files here
                                                 </p>
-                                                <p className="text-gray-400 text-sm mt-2">
+                                                <p className="text-black text-sm mt-2">
                                                     or click to select files
                                                     (PDF, DOCX)
                                                 </p>
@@ -232,7 +261,7 @@ const Remark = () => {
                                                 />
                                                 <label
                                                     htmlFor="file-upload"
-                                                    className="inline-block mt-4 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 cursor-pointer"
+                                                    className="inline-block mt-4 px-4 py-2 bg-[#FB773C] text-black rounded-lg hover:opacity-90 cursor-pointer transition-opacity"
                                                 >
                                                     Choose File
                                                 </label>
@@ -244,10 +273,10 @@ const Remark = () => {
                                         onClick={() =>
                                             handleResubmit(selectedRemark.id)
                                         }
-                                        className={`w-full py-3 rounded-lg font-semibold transition-colors ${
+                                        className={`w-full py-3 text-white bg-[#FB773C] rounded-lg font-semibold transition-all ${
                                             file
-                                                ? "bg-purple-500 hover:bg-purple-600 text-white"
-                                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                                                ? "bg-[#FB773C] hover:opacity-90 text-black"
+                                                : "bg-gray-800 text-black cursor-not-allowed"
                                         }`}
                                         disabled={!file}
                                     >

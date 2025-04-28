@@ -11,7 +11,7 @@ const Home = () => {
         getUserDetails();
     }, []);
     return (
-        <div className="h-auto w-full bg-black">
+        <div className="h-full w-full bg-black">
             <Navbar />
 
             <div className="flex flex-wrap items-start gap-4 px-4">
