@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import TeacherNavbar from "../components/TeacherNavbar";
 import TeacherMenu from "../components/TeacherMenu";
 import SideMenu from "../components/SideMenu";
+import Navbar from "../components/Navbar";
 function TeacherAssignments() {
     const [assignments, setAssignments] = useState([]); // State to hold assignments
     const navigate = useNavigate();
@@ -70,8 +71,8 @@ function TeacherAssignments() {
     return (
         <>
             {/* <TeacherNavbar /> */}
-            <div className="min-h-screen bg-gray-50">
-                <TeacherNavbar />
+            <div className="min-h-screen bg-gray-50 mt-15">
+                <Navbar title="Assignments" />
                 <div className="flex">
                     <SideMenu />
                     <div className="flex-1 p-8 justify-self-end md:ml-64">

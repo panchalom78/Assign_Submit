@@ -11,6 +11,7 @@ import { useNavigate } from "react-router";
 import TeacherNavbar from "./TeacherNavbar";
 import TeacherMenu from "./TeacherMenu";
 import SideMenu from "./SideMenu";
+import Navbar from "./Navbar";
 
 function CreateAssignment() {
     const [formData, setFormData] = useState({
@@ -93,7 +94,7 @@ function CreateAssignment() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <TeacherNavbar />
+            <Navbar title="Create Assignmnets" />
             <div className="flex">
                 <SideMenu />
                 <div className="flex-1 p-8 justify-self-end md:ml-64">

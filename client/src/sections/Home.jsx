@@ -12,9 +12,9 @@ const Home = () => {
     }, []);
     return (
         <div className="h-full w-full bg-black">
-            <Navbar />
+            <Navbar title="Dashboard" />
 
-            <div className="flex flex-wrap items-start gap-4 px-4">
+            <div className="flex flex-wrap items-start gap-4 px-4 mt-15">
                 <SideMenu />
                 <div className="md:ml-80 h-auto md:mt-0 w-full md:w-auto flex flex-wrap space-y-0">
                     <Card />

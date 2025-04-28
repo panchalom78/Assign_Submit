@@ -11,8 +11,8 @@ const TeacherHome = () => {
         getUserDetails();
     }, []);
     return (
-        <div className="h-auto w-full bg-black">
-            <Navbar />
+        <div className="h-auto w-full bg-black mt-15">
+            <Navbar title="Dashboard" />
 
             <div className="flex flex-wrap items-start gap-4 px-4">
                 <SideMenu />
