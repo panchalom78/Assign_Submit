@@ -6,7 +6,8 @@ import {
     FaCalendarCheck,
     FaCheckCircle,
     FaFilePdf,
-    FaTimes
+    FaTimes,
+    FaSpinner,
 } from "react-icons/fa";
 import axiosInstance from "../utils/axiosInstance";
 import { motion } from "framer-motion";
@@ -18,11 +19,14 @@ const AssignmentSubmission = () => {
     const [feedback, setFeedback] = useState("");
     const [pendingAssignments, setPendingAssignments] = useState([]);
     const [submittedAssignments, setSubmittedAssignments] = useState([]);
+    const [isUploading, setIsUploading] = useState(false);
 
     useEffect(() => {
         const fetchAssignments = async () => {
             try {
-                const response = await axiosInstance.get("/student/assignments");
+                const response = await axiosInstance.get(
+                    "/student/assignments"
+                );
                 const assignments = response.data.assignments;
 
                 const pending = assignments.filter((a) => !a.isSubmitted);
@@ -44,6 +48,7 @@ const AssignmentSubmission = () => {
             return;
         }
 
+        setIsUploading(true);
         const formData = new FormData();
         formData.append("assignmentId", assignmentId);
         formData.append("file", file);
@@ -72,6 +77,8 @@ const AssignmentSubmission = () => {
                 "Submission failed:",
                 error.response?.data || error.message
             );
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -85,8 +92,8 @@ const AssignmentSubmission = () => {
             year: "numeric",
             month: "short",
             day: "numeric",
-            hour: '2-digit',
-            minute: '2-digit'
+            hour: "2-digit",
+            minute: "2-digit",
         });
     };
 
@@ -94,7 +101,6 @@ const AssignmentSubmission = () => {
         <div className="min-h-screen  p-4 sm:p-8">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
-               
 
                 {/* Pending Assignments */}
                 <div className="mb-12">
@@ -103,7 +109,9 @@ const AssignmentSubmission = () => {
                     </h2>
                     {pendingAssignments.length === 0 ? (
                         <div className="bg-[#1F1F1F] rounded-xl p-6 text-center border border-gray-700">
-                            <p className="text-gray-400">No pending assignments</p>
+                            <p className="text-gray-400">
+                                No pending assignments
+                            </p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -112,7 +120,9 @@ const AssignmentSubmission = () => {
                                     key={assignment.assignmentId}
                                     whileHover={{ y: -5 }}
                                     className="bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-[#EB3678]/20"
-                                    onClick={() => setSelectedAssignment(assignment)}
+                                    onClick={() =>
+                                        setSelectedAssignment(assignment)
+                                    }
                                 >
                                     <div className="p-4 sm:p-6">
                                         <div className="flex justify-between items-start mb-3 sm:mb-4">
@@ -132,7 +142,12 @@ const AssignmentSubmission = () => {
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center text-[#FBC740] text-xs sm:text-sm">
                                                 <FaCalendarCheck className="mr-2" />
-                                                <span>Due: {formatDate(assignment.dueDate)}</span>
+                                                <span>
+                                                    Due:{" "}
+                                                    {formatDate(
+                                                        assignment.dueDate
+                                                    )}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -145,14 +160,17 @@ const AssignmentSubmission = () => {
                 {/* Submission History */}
                 <div className="mb-12">
                     <h2 className="text-xl sm:text-2xl font-bold text-[#FB773C] mb-4">
-                        Submission  <span className="text-[#FB773C]">History</span>
+                        Submission{" "}
+                        <span className="text-[#FB773C]">History</span>
                     </h2>
                     <div className="bg-[#1F1F1F] p-12 rounded-xl shadow-lg  sm:p-6 border border-gray-700  ">
                         {submittedAssignments.length > 0 ? (
                             submittedAssignments.map((submission) => (
                                 <motion.div
                                     key={submission.assignmentId}
-                                    whileHover={{ backgroundColor: "#2D374850" }}
+                                    whileHover={{
+                                        backgroundColor: "#2D374850",
+                                    }}
                                     className="border-b bg-[#FAF9F6] p-12 rounded-xl border-gray-700 py-3 sm:py-4 last:border-b-0 transition-colors duration-200"
                                 >
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0">
@@ -165,16 +183,27 @@ const AssignmentSubmission = () => {
                                             </p>
                                         </div>
                                         <div className="flex items-center space-x-2 sm:space-x-4">
-                                            <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm ${
-                                                submission.submission?.marks
-                                                    ? "bg-green-400 text-black"
-                                                    : "bg-orange-400 text-black"
-                                            }`}>
-                                                {submission.submission?.marks ? "Graded" : "Submitted"}
+                                            <span
+                                                className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm ${
+                                                    submission.submission?.marks
+                                                        ? "bg-green-400 text-black"
+                                                        : "bg-orange-400 text-black"
+                                                }`}
+                                            >
+                                                {submission.submission?.marks
+                                                    ? "Graded"
+                                                    : "Submitted"}
                                             </span>
-                                            {submission.submission?.feedback && (
+                                            {submission.submission
+                                                ?.feedback && (
                                                 <button
-                                                    onClick={() => handleViewFeedback(submission.submission.feedback)}
+                                                    onClick={() =>
+                                                        handleViewFeedback(
+                                                            submission
+                                                                .submission
+                                                                .feedback
+                                                        )
+                                                    }
                                                     className="text-black hover:text-gray-400 text-xs sm:text-sm transition-colors whitespace-nowrap"
                                                 >
                                                     View Feedback
@@ -183,10 +212,17 @@ const AssignmentSubmission = () => {
                                         </div>
                                     </div>
                                     <div className="mt-2 text-xs sm:text-sm text-gray-500">
-                                        <span>Submitted: {formatDate(submission.submission?.submissionDate)}</span>
+                                        <span>
+                                            Submitted:{" "}
+                                            {formatDate(
+                                                submission.submission
+                                                    ?.submissionDate
+                                            )}
+                                        </span>
                                         {submission.submission?.marks && (
                                             <span className="ml-2 sm:ml-4 font-semibold text-[#FBC740]">
-                                                | Marks: {submission.submission.marks}
+                                                | Marks:{" "}
+                                                {submission.submission.marks}
                                             </span>
                                         )}
                                     </div>
@@ -203,7 +239,7 @@ const AssignmentSubmission = () => {
                 {/* Assignment Submission Modal */}
                 {selectedAssignment && (
                     <div className="fixed inset-0  flex items-center justify-center p-4 z-50">
-                        <motion.div 
+                        <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             className="bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-4 sm:p-6 border border-[#EB3678]/30"
@@ -226,7 +262,10 @@ const AssignmentSubmission = () => {
                                 </p>
                                 <div className="flex items-center text-sm text-[#FBC740] mb-3 sm:mb-4">
                                     <FaCalendarCheck className="mr-2" />
-                                    <span>Deadline: {formatDate(selectedAssignment.dueDate)}</span>
+                                    <span>
+                                        Deadline:{" "}
+                                        {formatDate(selectedAssignment.dueDate)}
+                                    </span>
                                 </div>
                             </div>
 
@@ -249,7 +288,7 @@ const AssignmentSubmission = () => {
                                         <p className="text-[#FBC740] text-sm sm:text-base">
                                             {file.name}
                                         </p>
-                                        <button 
+                                        <button
                                             onClick={() => setFile(null)}
                                             className="text-xs text-[#EB3678] hover:underline mt-2"
                                         >
@@ -268,7 +307,9 @@ const AssignmentSubmission = () => {
                                             type="file"
                                             className="hidden"
                                             id="file-upload"
-                                            onChange={(e) => setFile(e.target.files[0])}
+                                            onChange={(e) =>
+                                                setFile(e.target.files[0])
+                                            }
                                         />
                                         <label
                                             htmlFor="file-upload"
@@ -281,15 +322,28 @@ const AssignmentSubmission = () => {
                             </div>
 
                             <button
-                                onClick={() => handleSubmit(selectedAssignment.assignmentId)}
+                                onClick={() =>
+                                    handleSubmit(
+                                        selectedAssignment.assignmentId
+                                    )
+                                }
                                 className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition-all text-sm sm:text-base ${
-                                    file 
+                                    file && !isUploading
                                         ? "bg-gradient-to-r from-[#EB3678] to-[#FB773C] hover:shadow-lg"
                                         : "bg-gray-700 text-gray-500 cursor-not-allowed"
                                 }`}
-                                disabled={!file}
+                                disabled={!file || isUploading}
                             >
-                                {file ? "Submit Assignment" : "Select File to Submit"}
+                                {isUploading ? (
+                                    <div className="flex items-center justify-center">
+                                        <FaSpinner className="animate-spin mr-2" />
+                                        Uploading...
+                                    </div>
+                                ) : file ? (
+                                    "Submit Assignment"
+                                ) : (
+                                    "Select File to Submit"
+                                )}
                             </button>
                         </motion.div>
                     </div>
@@ -298,7 +352,7 @@ const AssignmentSubmission = () => {
                 {/* Feedback Modal */}
                 {showFeedback && (
                     <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
-                        <motion.div 
+                        <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             className="bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-4 sm:p-6 border border-[#FBC740]/30"
