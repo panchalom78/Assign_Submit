@@ -119,7 +119,7 @@ const AssignmentSubmission = () => {
                                             <span className="px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm bg-[#EB3678]/20 text-[#FB773C]">
                                                 Pending
                                             </span>
-                                            <FaClock className="text-[#FBC740]" />
+                                            <FaClock className="text-[#FB773C]" />
                                         </div>
 
                                         <h3 className="text-lg sm:text-xl font-semibold mb-2 text-white line-clamp-2">
@@ -130,7 +130,7 @@ const AssignmentSubmission = () => {
                                         </p>
 
                                         <div className="flex items-center justify-between">
-                                            <div className="flex items-center text-[#FBC740] text-xs sm:text-sm">
+                                            <div className="flex items-center text-white text-xs sm:text-sm">
                                                 <FaCalendarCheck className="mr-2" />
                                                 <span>Due: {formatDate(assignment.dueDate)}</span>
                                             </div>
@@ -185,7 +185,7 @@ const AssignmentSubmission = () => {
                                     <div className="mt-2 text-xs sm:text-sm text-gray-500">
                                         <span>Submitted: {formatDate(submission.submission?.submissionDate)}</span>
                                         {submission.submission?.marks && (
-                                            <span className="ml-2 sm:ml-4 font-semibold text-[#FBC740]">
+                                            <span className="ml-2 sm:ml-4 font-semibold text-[#FB773C]">
                                                 | Marks: {submission.submission.marks}
                                             </span>
                                         )}
@@ -224,7 +224,7 @@ const AssignmentSubmission = () => {
                                 <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">
                                     {selectedAssignment.description}
                                 </p>
-                                <div className="flex items-center text-sm text-[#FBC740] mb-3 sm:mb-4">
+                                <div className="flex items-center text-sm text-[#FB773C] mb-3 sm:mb-4">
                                     <FaCalendarCheck className="mr-2" />
                                     <span>Deadline: {formatDate(selectedAssignment.dueDate)}</span>
                                 </div>
@@ -234,19 +234,19 @@ const AssignmentSubmission = () => {
                                 className={`border-2 border-dashed rounded-xl p-6 text-center mb-4 sm:mb-6 transition-colors ${
                                     file
                                         ? "border-[#FBC740] bg-[#FBC740]/10"
-                                        : "border-gray-700 hover:border-[#FBC740]"
+                                        : "border-gray-700 hover:border-[#FB773C]"
                                 }`}
-                                onDragOver={(e) => e.preventDefault()}
+                                onDragOver={(e) => e.preventDefault()}  
                                 onDrop={(e) => {
                                     e.preventDefault();
                                     const droppedFile = e.dataTransfer.files[0];
                                     if (droppedFile) setFile(droppedFile);
                                 }}
                             >
-                                <FaUpload className="text-3xl text-[#FBC740] mx-auto mb-3 sm:mb-4" />
+                                <FaUpload className="text-3xl text-[#FB773C] mx-auto mb-3 sm:mb-4" />
                                 {file ? (
                                     <div>
-                                        <p className="text-[#FBC740] text-sm sm:text-base">
+                                        <p className="text-[#FB773C] text-sm sm:text-base">
                                             {file.name}
                                         </p>
                                         <button 

@@ -176,11 +176,11 @@ function Login() {
                                 </label>
                             </div>
                             
-                            <div className="text-sm">
+                            {/* <div className="text-sm">
                                 <a href="#" className="font-medium text-[#FB773C] hover:text-[#EB3678]">
                                     Forgot password?
                                 </a>
-                            </div>
+                            </div> */}
                         </motion.div>
                         
                         <motion.button
