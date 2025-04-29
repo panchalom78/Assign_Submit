@@ -4,47 +4,73 @@ using Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Server.Token;
 using Server.DTOs;
+using System.Security.Claims;
 
 namespace Server.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
     public class RemarkController : ControllerBase
     {
         private readonly RemarkService _remarkService;
+        private readonly AuthService _authService;
 
-        public RemarkController(RemarkService remarkService)
+        public RemarkController(RemarkService remarkService, AuthService authService)
         {
             _remarkService = remarkService;
+            _authService = authService;
         }
 
         [HttpGet]
-        public IActionResult GetRemarks()
+        public async Task<IActionResult> GetRemarks()
         {
             try
             {
-                var remarks = _remarkService.GetRemarks();
+                var token = Request.Cookies["jwt"];
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { Error = "Token not found" });
+                }
+
+                var data = await _authService.VerifyToken(token);
+                if (data.user.Role != "student")
+                {
+                    return Unauthorized(new { Error = "Only students can view their remarks" });
+                }
+
+                var remarks = await _remarkService.GetRemarksByStudentId(data.user.UserId);
                 return Ok(remarks);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Error = ex.Message });
             }
         }
 
         [HttpPost("create")]
-        public IActionResult CreateRemark([FromBody] CreateRemarkRequest request, int userId)
+        public async Task<IActionResult> CreateRemark([FromBody] CreateRemarkRequest request)
         {
             try
             {
-                var remark = _remarkService.CreateRemark(request, userId);
+                var token = Request.Cookies["jwt"];
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized(new { Error = "Token not found" });
+                }
+
+                var data = await _authService.VerifyToken(token);
+                if (data.user.Role != "teacher")
+                {
+                    return Unauthorized(new { Error = "Only teachers can create remarks" });
+                }
+
+                var remark = _remarkService.CreateRemark(request, data.user.UserId);
                 return Ok(remark);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Error = ex.Message });
             }
         }
 

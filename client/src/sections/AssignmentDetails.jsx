@@ -231,9 +231,6 @@ const TeacherAssignmentDetails = () => {
                 throw new Error("Please set a deadline for resubmission");
             }
 
-            const userIdResponse = await axiosInstance.get("/auth/get-user-id");
-            const userId = userIdResponse.data.userId;
-
             const payload = {
                 submissionId,
                 message: message.trim(),
@@ -244,7 +241,7 @@ const TeacherAssignmentDetails = () => {
             };
 
             const response = await axiosInstance.post(
-                `/remark/create?userId=${userId}`,
+                `/remark/create`,
                 payload
             );
             console.log(response);
@@ -546,39 +543,33 @@ const TeacherAssignmentDetails = () => {
                                                 <Download className="w-4 h-4 mr-2" />
                                                 Download
                                             </button>
-                                            <button
-                                                onClick={() =>
-                                                    handleGradeClick(submission)
-                                                }
-                                                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white ${
-                                                    submission.graded
-                                                        ? "bg-yellow-600 hover:bg-yellow-700"
-                                                        : "bg-green-600 hover:bg-green-700"
-                                                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
-                                            >
-                                                {submission.graded ? (
-                                                    <>
-                                                        <Edit className="w-4 h-4 mr-2" />
-                                                        Regrade
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <CheckCircle className="w-4 h-4 mr-2" />
-                                                        Grade
-                                                    </>
-                                                )}
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    handleRemarkClick(
-                                                        submission
-                                                    )
-                                                }
-                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                                            >
-                                                <AlertCircle className="w-4 h-4 mr-2" />
-                                                Remark
-                                            </button>
+                                            {!submission.graded && (
+                                                <button
+                                                    onClick={() =>
+                                                        handleGradeClick(
+                                                            submission
+                                                        )
+                                                    }
+                                                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                                >
+                                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                                    Grade
+                                                </button>
+                                            )}
+                                            {!submission.remarks ||
+                                            submission.remarks.length === 0 ? (
+                                                <button
+                                                    onClick={() =>
+                                                        handleRemarkClick(
+                                                            submission
+                                                        )
+                                                    }
+                                                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                                >
+                                                    <AlertCircle className="w-4 h-4 mr-2" />
+                                                    Remark
+                                                </button>
+                                            ) : null}
                                         </div>
                                     </div>
 

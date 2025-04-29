@@ -67,31 +67,31 @@ namespace Server.DTOs
         public string? Message { get; set; }
     }
 
-    public class CreateRemarkRequest
-    {
-        public int SubmissionId { get; set; }
-        public string? Message { get; set; }
-        public bool ResubmissionRequired { get; set; }
-        public DateTime? ResubmissionDeadline { get; set; }
-        public int UserId { get; set; }
-    }
+    // public class CreateRemarkRequest
+    // {
+    //     public int SubmissionId { get; set; }
+    //     public string? Message { get; set; }
+    //     public bool ResubmissionRequired { get; set; }
+    //     public DateTime? ResubmissionDeadline { get; set; }
+    //     public int UserId { get; set; }
+    // }
 
-    public class RemarkDTO
-    {
-        public int Id { get; set; }
-        public int SubmissionId { get; set; }
-        public int UserId { get; set; }
-        public string? Message { get; set; }
-        public bool ResubmissionRequired { get; set; }
-        public DateTime? ResubmissionDeadline { get; set; }
-        public string? UserName { get; set; }
-        public string? AssignmentTitle { get; set; }
-        public string? Subject { get; set; }
-        public string Status => ResubmissionRequired ? "Resubmit" : "Approved";
-        public string? TeacherName { get; set; }
-        public string? Feedback { get; set; }
-        public DateTime? SubmissionDate { get; set; }
-    }
+    // public class RemarkDTO
+    // {
+    //     public int Id { get; set; }
+    //     public int SubmissionId { get; set; }
+    //     public int UserId { get; set; }
+    //     public string? Message { get; set; }
+    //     public bool ResubmissionRequired { get; set; }
+    //     public DateTime? ResubmissionDeadline { get; set; }
+    //     public string? UserName { get; set; }
+    //     public string? AssignmentTitle { get; set; }
+    //     public string? Subject { get; set; }
+    //     public string Status => ResubmissionRequired ? "Resubmit" : "Approved";
+    //     public string? TeacherName { get; set; }
+    //     public string? Feedback { get; set; }
+    //     public DateTime? SubmissionDate { get; set; }
+    // }
     public class SubmissionWithRemarkDTO
     {
         public Submission Submission { get; set; }
@@ -108,5 +108,5 @@ namespace Server.DTOs
         public int? ClassId { get; set; }
         public string? Prn { get; set; }
     }
-    
+
 }

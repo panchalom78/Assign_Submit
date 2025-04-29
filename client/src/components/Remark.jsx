@@ -6,6 +6,7 @@ import {
     FaExclamationCircle,
 } from "react-icons/fa";
 import axiosInstance from "../utils/axiosInstance";
+import { toast } from "react-toastify";
 
 const Remark = () => {
     const [selectedRemark, setSelectedRemark] = useState(null);
@@ -48,6 +49,7 @@ const Remark = () => {
                 },
             });
 
+            toast.success("Assignment resubmitted successfully");
             fetchRemarks();
             setSelectedRemark(null);
             setFile(null);
@@ -56,7 +58,10 @@ const Remark = () => {
             if (err.response?.status === 401) {
                 window.location.href = "/login";
             } else {
-                alert("Failed to resubmit. Please try again.");
+                toast.error(
+                    err.response?.data?.message ||
+                        "Failed to resubmit. Please try again."
+                );
             }
         }
     };
@@ -80,92 +85,61 @@ const Remark = () => {
     }
 
     return (
-        <div className=" min-h-screen  p-6 overflow-hidden">
-            {/* Animated background elements */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {[...Array(5)].map((_, i) => (
-                    <div 
-                        key={`circle-${i}`}
-                        className='absolute rounded-full opacity-10 animate-float'
-                        style={{
-                            background: `radial-gradient(circle, ${i % 2 === 0 ? '#EB3678' : '#FB773C'}, transparent)`,
-                            width: `${Math.random() * 400 + 200}px`,
-                            height: `${Math.random() * 400 + 200}px`,
-                            top: `${Math.random() * 100}%`,
-                            left: `${Math.random() * 100}%`,
-                            animationDuration: `${Math.random() * 30 + 30}s`,
-                            animationDelay: `${Math.random() * 5}s`
-                        }}
-                    />
-                ))}
-
-                {[...Array(20)].map((_, i) => (
-                    <div
-                        key={`particle-${i}`}
-                        className='absolute rounded-full bg-white/5 animate-float'
-                        style={{
-                            width: `${Math.random() * 10 + 2}px`,
-                            height: `${Math.random() * 10 + 2}px`,
-                            top: `${Math.random() * 100}%`,
-                            left: `${Math.random() * 100}%`,
-                            animationDuration: `${Math.random() * 20 + 10}s`,
-                            animationDelay: `${Math.random() * 5}s`
-                        }}
-                    />
-                ))}
-            </div>
-
-            <div className="max-w-7xl mx-auto relative z-10 ">
-                
+        <div className="min-h-screen bg-gradient-to-br from-[#000000] to-[#160209] p-6">
+            <div className="max-w-7xl mx-auto">
+                <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FBC740] to-[#EB3678] mb-8">
+                    Your Remarks
+                </h1>
 
                 {remarks.length === 0 ? (
                     <div className="text-center text-gray-400 mt-10 text-lg">
-                        No remarks found. Your submissions haven't received any feedback yet.
+                        No remarks found. Your submissions haven't received any
+                        feedback yet.
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {remarks.map((remark) => (
                             <div
                                 key={remark.id}
-                                className="bg-[#FAF9F6] text-black rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800 hover:border-[#EB3678]/50"
+                                className="bg-[#1a1a1a]/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-700"
                                 onClick={() => setSelectedRemark(remark)}
                             >
                                 <div className="p-6">
                                     <div className="flex justify-between items-start mb-4">
                                         <span
                                             className={`px-3 py-1 rounded-full text-sm ${
-                                                remark.status === "Resubmit"
-                                                    ? "bg-[#FB773C] text-black border border-red-500/30"
-                                                    : remark.status === "Approved"
-                                                    ? "bg-green-900/30 text-green-400 border border-green-500/30"
-                                                    : "bg-yellow-900/30 text-yellow-400 border border-yellow-500/30"
+                                                remark.resubmissionRequired
+                                                    ? "bg-[#FB773C] text-white"
+                                                    : "bg-green-500 text-white"
                                             }`}
                                         >
-                                            {remark.status}
+                                            {remark.resubmissionRequired
+                                                ? "Resubmit Required"
+                                                : "Feedback"}
                                         </span>
-                                        <FaComment className="text-white" />
+                                        <FaComment className="text-[#FB773C]" />
                                     </div>
 
-                                    <h3 className="text-xl font-semibold mb-2 text-black">
+                                    <h3 className="text-xl font-semibold mb-2 text-white">
                                         {remark.assignmentTitle}
                                     </h3>
                                     <p className="text-gray-400 mb-4">
-                                        {remark.subject}
+                                        {remark.message}
                                     </p>
 
-                                    <div className="flex items-center text-sm text-black">
-                                        <span className="mr-2">Teacher:</span>
-                                        <span className="font-semibold text-black">
-                                            {remark.teacherName}
+                                    <div className="flex items-center text-sm text-gray-400">
+                                        <span className="mr-2">From:</span>
+                                        <span className="font-semibold text-white">
+                                            {remark.userName}
                                         </span>
                                     </div>
 
-                                    {remark.submissionDate && (
-                                        <div className="text-xs text-black mt-2">
-                                            Submitted:{" "}
+                                    {remark.resubmissionDeadline && (
+                                        <div className="text-xs text-[#FB773C] mt-2">
+                                            Resubmission Deadline:{" "}
                                             {new Date(
-                                                remark.submissionDate
-                                            ).toLocaleDateString()}
+                                                remark.resubmissionDeadline
+                                            ).toLocaleString()}
                                         </div>
                                     )}
                                 </div>
@@ -177,53 +151,52 @@ const Remark = () => {
                 {/* Remark Details Modal */}
                 {selectedRemark && (
                     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
-                        <div className="bg-[#FAF9F6] rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-800">
+                        <div className="bg-[#1a1a1a] rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-700">
                             <div className="flex justify-between items-start mb-6">
-                                <h2 className="text-2xl font-bold text-black">
+                                <h2 className="text-2xl font-bold text-white">
                                     {selectedRemark.assignmentTitle}
                                 </h2>
                                 <button
                                     onClick={() => setSelectedRemark(null)}
-                                    className="text-black hover:text-[#EB3678] transition-colors"
+                                    className="text-white hover:text-[#FB773C] transition-colors"
                                 >
                                     ✕
                                 </button>
                             </div>
 
                             <div className="mb-6">
-                                <p className="text-black mb-4">
+                                <p className="text-gray-300 mb-4">
                                     {selectedRemark.message}
                                 </p>
-                                <div className="flex items-center text-sm text-black mb-4">
-                                    <span className="mr-2">Teacher:</span>
-                                    <span className="font-semibold text-black">
-                                        {selectedRemark.teacherName}
+                                <div className="flex items-center text-sm text-gray-400 mb-4">
+                                    <span className="mr-2">From:</span>
+                                    <span className="font-semibold text-white">
+                                        {selectedRemark.userName}
                                     </span>
                                 </div>
-                                {selectedRemark.feedback && (
-                                    <div className="text-sm text-black bg-gray-800/50 p-3 rounded-lg">
-                                        <strong className="text-[#FBC740]">Feedback:</strong>{" "}
-                                        {selectedRemark.feedback}
-                                    </div>
-                                )}
-                                {selectedRemark.resubmissionDeadline && (
+                                {selectedRemark.resubmissionRequired && (
                                     <div className="mt-3 text-sm text-[#FB773C] bg-gray-800 p-3 rounded-lg">
-                                        <strong>Resubmission Deadline:</strong>{" "}
-                                        {new Date(
-                                            selectedRemark.resubmissionDeadline
-                                        ).toLocaleString()}
+                                        <strong>Resubmission Required</strong>
+                                        {selectedRemark.resubmissionDeadline && (
+                                            <p className="mt-1">
+                                                Deadline:{" "}
+                                                {new Date(
+                                                    selectedRemark.resubmissionDeadline
+                                                ).toLocaleString()}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
                             </div>
 
                             {/* Resubmit Section */}
-                            {selectedRemark.status === "Resubmit" && (
+                            {selectedRemark.resubmissionRequired && (
                                 <div>
                                     <div
                                         className={`border-2 border-dashed rounded-xl p-8 text-center mb-6 ${
                                             file
-                                                ? "border-[#FB773C] bg-[#160209]/50"
-                                                : "border-gray-700 hover:border-[#EB3678]/50"
+                                                ? "border-[#FB773C] bg-gray-800/50"
+                                                : "border-gray-700 hover:border-[#FB773C]"
                                         } transition-colors`}
                                         onDragOver={(e) => e.preventDefault()}
                                         onDrop={(e) => {
@@ -241,10 +214,10 @@ const Remark = () => {
                                             </p>
                                         ) : (
                                             <>
-                                                <p className="text-black">
+                                                <p className="text-gray-300">
                                                     Drag & drop files here
                                                 </p>
-                                                <p className="text-black text-sm mt-2">
+                                                <p className="text-gray-400 text-sm mt-2">
                                                     or click to select files
                                                     (PDF, DOCX)
                                                 </p>
@@ -261,7 +234,7 @@ const Remark = () => {
                                                 />
                                                 <label
                                                     htmlFor="file-upload"
-                                                    className="inline-block mt-4 px-4 py-2 bg-[#FB773C] text-black rounded-lg hover:opacity-90 cursor-pointer transition-opacity"
+                                                    className="inline-block mt-4 px-4 py-2 bg-[#FB773C] text-white rounded-lg hover:opacity-90 cursor-pointer transition-opacity"
                                                 >
                                                     Choose File
                                                 </label>
@@ -273,10 +246,10 @@ const Remark = () => {
                                         onClick={() =>
                                             handleResubmit(selectedRemark.id)
                                         }
-                                        className={`w-full py-3 text-white bg-[#FB773C] rounded-lg font-semibold transition-all ${
+                                        className={`w-full py-3 text-white rounded-lg font-semibold transition-all ${
                                             file
-                                                ? "bg-[#FB773C] hover:opacity-90 text-black"
-                                                : "bg-gray-800 text-black cursor-not-allowed"
+                                                ? "bg-[#FB773C] hover:opacity-90"
+                                                : "bg-gray-700 cursor-not-allowed"
                                         }`}
                                         disabled={!file}
                                     >
