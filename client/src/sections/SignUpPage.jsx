@@ -3,7 +3,15 @@ import { useNavigate } from "react-router";
 import axiosInstance from "../utils/axiosInstance";
 import { useAuthStore } from "../store/useAuthStore";
 import { motion } from "framer-motion";
-import { FiUser, FiMail, FiLock, FiArrowRight, FiLoader, FiBook, FiAward } from "react-icons/fi";
+import {
+    FiUser,
+    FiMail,
+    FiLock,
+    FiArrowRight,
+    FiLoader,
+    FiBook,
+    FiAward,
+} from "react-icons/fi";
 
 function Signup() {
     const [formData, setFormData] = useState({
@@ -11,7 +19,6 @@ function Signup() {
         email: "",
         password: "",
         role: "student",
-        prn: ""
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +38,7 @@ function Signup() {
         e.preventDefault();
         setIsLoading(true);
         setError(null);
-        
+
         try {
             const response = await axiosInstance.post(
                 "/auth/register",
@@ -40,7 +47,6 @@ function Signup() {
                     email: formData.email,
                     password: formData.password,
                     role: formData.role,
-                    prn: formData.prn
                 },
                 { withCredentials: true }
             );
@@ -49,8 +55,14 @@ function Signup() {
             setUser(response.data.user);
             navigate("/select-affiliate");
         } catch (error) {
-            console.error("Signup failed:", error.response?.data || error.message);
-            setError(error.response?.data?.error || "Signup failed. Please try again.");
+            console.error(
+                "Signup failed:",
+                error.response?.data || error.message
+            );
+            setError(
+                error.response?.data?.error ||
+                    "Signup failed. Please try again."
+            );
         } finally {
             setIsLoading(false);
         }
@@ -63,9 +75,9 @@ function Signup() {
             opacity: 1,
             transition: {
                 staggerChildren: 0.1,
-                delayChildren: 0.3
-            }
-        }
+                delayChildren: 0.3,
+            },
+        },
     };
 
     const itemVariants = {
@@ -75,23 +87,23 @@ function Signup() {
             y: 0,
             transition: {
                 duration: 0.5,
-                ease: "easeOut"
-            }
-        }
+                ease: "easeOut",
+            },
+        },
     };
 
     const buttonHover = {
         scale: 1.02,
-        boxShadow: "0 5px 15px rgba(235, 54, 120, 0.4)"
+        boxShadow: "0 5px 15px rgba(235, 54, 120, 0.4)",
     };
 
     const buttonTap = {
-        scale: 0.98
+        scale: 0.98,
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
-            <motion.div 
+            <motion.div
                 initial="hidden"
                 animate="visible"
                 variants={containerVariants}
@@ -100,36 +112,48 @@ function Signup() {
                 <div className="bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl overflow-hidden border border-[#EB3678]/20">
                     {/* Header with gradient */}
                     <div className="bg-gradient-to-r from-[#EB3678] to-[#FB773C] p-6 text-center">
-                        <motion.h2 
+                        <motion.h2
                             variants={itemVariants}
                             className="text-3xl font-bold text-white"
                         >
                             Join AssignMate
                         </motion.h2>
-                        <motion.p 
+                        <motion.p
                             variants={itemVariants}
                             className="text-white/80 mt-2"
                         >
                             Create your account to get started
                         </motion.p>
                     </div>
-                    
+
                     <form onSubmit={handleSubmit} className="p-8 space-y-4">
                         {error && (
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 className="bg-red-900/20 text-red-300 border border-red-500/30 p-3 rounded-lg flex items-center"
                             >
-                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <svg
+                                    className="w-5 h-5 mr-2"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    ></path>
                                 </svg>
                                 {error}
                             </motion.div>
                         )}
-                        
+
                         <motion.div variants={itemVariants}>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">
+                                Full Name
+                            </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <FiUser className="h-5 w-5 text-gray-500" />
@@ -147,7 +171,9 @@ function Signup() {
                         </motion.div>
 
                         <motion.div variants={itemVariants}>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">
+                                Email
+                            </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <FiMail className="h-5 w-5 text-gray-500" />
@@ -165,7 +191,9 @@ function Signup() {
                         </motion.div>
 
                         <motion.div variants={itemVariants}>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">
+                                Password
+                            </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <FiLock className="h-5 w-5 text-gray-500" />
@@ -183,7 +211,9 @@ function Signup() {
                         </motion.div>
 
                         <motion.div variants={itemVariants}>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Role</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">
+                                Role
+                            </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     {formData.role === "student" ? (
@@ -199,41 +229,21 @@ function Signup() {
                                     className="w-full pl-10 pr-3 py-3 bg-gray-700/50 border border-gray-600/30 rounded-lg focus:ring-2 focus:ring-[#EB3678] focus:border-[#EB3678] text-white appearance-none"
                                     required
                                 >
-                                    <option value="student" className="bg-gray-800 hover:bg-gray-700">Student</option>
-                                    <option value="teacher" className="bg-gray-800 hover:bg-gray-700">Teacher</option>
+                                    <option
+                                        value="student"
+                                        className="bg-gray-800 hover:bg-gray-700"
+                                    >
+                                        Student
+                                    </option>
+                                    <option
+                                        value="teacher"
+                                        className="bg-gray-800 hover:bg-gray-700"
+                                    >
+                                        Teacher
+                                    </option>
                                 </select>
                             </div>
                         </motion.div>
-
-                        {formData.role === "student" && (
-                            <motion.div 
-                                variants={itemVariants}
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ 
-                                    opacity: 1, 
-                                    height: "auto",
-                                    transition: { duration: 0.3 }
-                                }}
-                            >
-                                <label className="block text-sm font-medium text-gray-300 mb-1">PRN Number</label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        name="prn"
-                                        value={formData.prn}
-                                        onChange={handleChange}
-                                        className="w-full pl-10 pr-3 py-3 bg-gray-700/50 border border-gray-600/30 rounded-lg focus:ring-2 focus:ring-[#EB3678] focus:border-[#EB3678] text-white placeholder-gray-400 transition"
-                                        placeholder="Enter your PRN"
-                                        required={formData.role === "student"}
-                                    />
-                                </div>
-                            </motion.div>
-                        )}
 
                         <motion.button
                             variants={itemVariants}
@@ -255,15 +265,15 @@ function Signup() {
                             )}
                         </motion.button>
                     </form>
-                    
-                    <motion.div 
+
+                    <motion.div
                         variants={itemVariants}
                         className="px-8 pb-6 text-center"
                     >
                         <p className="text-sm text-gray-400">
-                            Already have an account?{' '}
-                            <button 
-                                onClick={() => navigate('/login')}
+                            Already have an account?{" "}
+                            <button
+                                onClick={() => navigate("/login")}
                                 className="font-medium text-[#FB773C] hover:text-[#EB3678]"
                             >
                                 Sign in
@@ -271,12 +281,15 @@ function Signup() {
                         </p>
                     </motion.div>
                 </div>
-                
-                <motion.div 
+
+                <motion.div
                     variants={itemVariants}
                     className="mt-6 text-center text-sm text-gray-400"
                 >
-                    <p>© {new Date().getFullYear()} AssignMate. All rights reserved.</p>
+                    <p>
+                        © {new Date().getFullYear()} AssignMate. All rights
+                        reserved.
+                    </p>
                 </motion.div>
             </motion.div>
         </div>
