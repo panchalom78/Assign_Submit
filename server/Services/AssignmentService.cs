@@ -319,6 +319,29 @@ namespace Server.Services
             }
         }
 
+        public async Task<List<object>> GetTeacherDashboardAssignments(int teacherId)
+        {
+            try
+            {
+                var assignments = await _context.Assignments
+                    .Include(a => a.Submissions)
+                    .Where(a => a.UserId == teacherId)
+                    .Select(a => new
+                    {
+                        AssignmentId = a.AssignmentId,
+                        Title = a.Title,
+                        DueDate = a.DueDate,
+                        SubmissionCount = a.Submissions.Count
+                    })
+                    .ToListAsync();
+
+                return assignments.Cast<object>().ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to get teacher dashboard assignments: " + ex.Message);
+            }
+        }
 
     }
 }

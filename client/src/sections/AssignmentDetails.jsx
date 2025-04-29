@@ -327,7 +327,7 @@ const TeacherAssignmentDetails = () => {
                     <p className="text-gray-600 text-center mb-4">{error}</p>
                     <Link
                         to="/"
-                        className="flex items-center justify-center text-indigo-600 hover:underline"
+                        className="flex items-center justify-center text-[#FB773C] hover:underline"
                     >
                         <ArrowLeft className="w-5 h-5 mr-2" /> Back to
                         Assignments
@@ -338,23 +338,24 @@ const TeacherAssignmentDetails = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-black py-8 px-4 sm:px-6 lg:px-8 mt-15">
             <div className="max-w-7xl mx-auto">
                 <Link
-                    to="/"
-                    className="inline-flex items-center mb-6 text-indigo-600 hover:text-indigo-800 transition-colors"
+                    to="/teacher-assignments"
+                    className="inline-flex items-center mb-6 text-[#FB773C] hover:text-[#f0b295] transition-colors"
+                   
                 >
                     <ArrowLeft className="w-5 h-5 mr-2" />
                     <span
                         className="font-medium"
-                        onClick={() => navigate("/login")}
+                        
                     >
                         Back to Assignments
                     </span>
                 </Link>
 
                 {/* Assignment Header Card */}
-                <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                <div className="bg-[#FAF9F6] rounded-xl shadow-md overflow-hidden mb-8">
                     <div className="p-6">
                         <div className="flex justify-between items-start">
                             <div>
@@ -366,7 +367,7 @@ const TeacherAssignmentDetails = () => {
                                     <span>Created by {assignment.teacher}</span>
                                 </div>
                             </div>
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#FB773C] text-white">
                                 {assignment.className}
                             </span>
                         </div>
@@ -431,9 +432,9 @@ const TeacherAssignmentDetails = () => {
                 </div>
 
                 {/* Submissions Section */}
-                <div className="bg-white rounded-xl shadow-md overflow-hidden">
+                <div className="bg-[#FAF9F6] rounded-xl shadow-md overflow-hidden">
                     <div className="px-6 py-5 border-b border-gray-200">
-                        <h2 className="text-xl font-bold text-gray-900">
+                        <h2 className="text-xl font-bold text-[#FB773C]">
                             Student Submissions{" "}
                             <span className="text-gray-500">
                                 ({assignment.submissions.length})
@@ -465,8 +466,8 @@ const TeacherAssignmentDetails = () => {
                                         {/* Student Info */}
                                         <div className="mb-4 md:mb-0">
                                             <div className="flex items-center">
-                                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                                                    <span className="text-indigo-800 font-medium">
+                                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#FB773C] flex items-center justify-center">
+                                                    <span className="text-white font-medium">
                                                         {submission.studentName?.charAt(
                                                             0
                                                         ) || "S"}
@@ -541,7 +542,7 @@ const TeacherAssignmentDetails = () => {
                                                         submission.submissionId
                                                     )
                                                 }
-                                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-[#FB773C] hover:bg-[#f0b295] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                             >
                                                 <Download className="w-4 h-4 mr-2" />
                                                 Download

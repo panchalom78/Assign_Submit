@@ -317,9 +317,9 @@ const ProfileSection = () => {
         <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
-                    <div className="text-center sm:text-left">
+                    <div className="text-center sm:text-left flex flex-col items-start p-4 rounded-lg justify-center bg-[#FAF9F6] ">
                         <h1 className="text-3xl font-extrabold text-[#FB773C]">Profile</h1>
-                        <p className="mt-2 text-sm text-gray-200">
+                        <p className="mt-2 text-sm text-gray-800">
                             View and manage your profile information
                         </p>
                     </div>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import Menu from "../components/Menu";
 import CalendarView from "../components/CelenderView";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
+import SideMenu from "../components/SideMenu";
 
 const Calendar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage menu visibility
@@ -29,16 +29,16 @@ const Calendar = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-black">
+        <div className="min-h-screen bg-black mt-15">
             {/* Navbar */}
-            <Navbar />
+            <Navbar title="Calender View" />
 
             {/* Main Layout */}
             <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto p-4 gap-6 z-0">
                 {/* Sidebar Menu (Sticky on Desktop) */}
                 <div className="w-full md:w-64 lg:w-72">
-                    <div className="sticky top-20 z-10">
-                        <Menu />
+                    <div className="sticky top-20 z-50">
+                        <SideMenu />
                     </div>
                 </div>
 

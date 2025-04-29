@@ -236,7 +236,7 @@ namespace Server.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
-                return Unauthorized(new { Error = "User ID not found in token" });  
+                return Unauthorized(new { Error = "User ID not found in token" });
             }
             return Ok(new { UserId = userId });
         }
@@ -247,7 +247,7 @@ namespace Server.Controllers
             var token = Request.Cookies["jwt"];
             if (string.IsNullOrEmpty(token))
             {
-                return Unauthorized(new { Error = "Token not found" }); 
+                return Unauthorized(new { Error = "Token not found" });
             }
             try
             {
@@ -256,25 +256,25 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { Error = ex.Message });    
+                return Unauthorized(new { Error = ex.Message });
 
             }
 
         }
         [HttpGet("college-name")]
-        public async Task<IActionResult> CollegeName( int collegeId)
+        public async Task<IActionResult> CollegeName(int collegeId)
         {
             var data = await _authService.CollegeName(collegeId);
             return Ok(data);
         }
         [HttpGet("faculty-name")]
-        public async Task<IActionResult> FacultyName( int facultyId)
+        public async Task<IActionResult> FacultyName(int facultyId)
         {
             var data = await _authService.FacultyName(facultyId);
             return Ok(data);
         }
         [HttpGet("course-name")]
-        public async Task<IActionResult> CourseName( int courseId)
+        public async Task<IActionResult> CourseName(int courseId)
         {
             var data = await _authService.CourseName(courseId);
             return Ok(data);
@@ -287,14 +287,14 @@ namespace Server.Controllers
         }
         [HttpPut("update-profile")]
         [Authorize]
-        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request )
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
         {
             var token = Request.Cookies["jwt"];
             Console.WriteLine(token);
             if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized(new { Error = "Token not found" });
-           }
+            }
             var data = await _authService.UpdateProfile(token, request);
             return Ok(data);
         }
@@ -305,6 +305,46 @@ namespace Server.Controllers
             Response.Cookies.Delete("jwt");
             return Ok(new { Message = "Logged out successfully" });
         }
-    
+
+        [HttpGet("teacher/stats")]
+        [Authorize]
+        public async Task<IActionResult> GetTeacherStats()
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+                {
+                    return Unauthorized(new { Error = "User ID not found in token" });
+                }
+
+                var stats = await _authService.GetTeacherStats(userId);
+                return Ok(stats);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUserDetails()
+        {
+            try
+            {
+                var cookie = Request.Cookies["jwt"];
+                if (string.IsNullOrEmpty(cookie))
+                {
+                    return Unauthorized(new { Error = "Token not found" });
+                }
+
+                var userDetails = await _authService.GetUserDetails(cookie);
+                return Ok(userDetails);
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { Error = ex.Message });
+            }
+        }
     }
 }

@@ -14,26 +14,28 @@ import AssignmentDetails from "../sections/AssignmentDetails";
 import { useAuthStore } from "../store/useAuthStore";
 import ProfileSection from "../sections/profile";
 import HomePage from "../sections/HomePage";
+import TeacherHome from "../sections/TeacherHome";
+import About from "../sections/About";
 const Routers = () => {
     const { user } = useAuthStore();
     return (
         <div>
             <Router>
                 <Routes>
-                    {/* <Route
-                        path="/login"
+                    <Route
+                        path="/home"
                         element={
                             user ? (
                                 user.role == "student" ? (
                                     <Home />
                                 ) : (
-                                    <TeacherAssignments />
+                                    <TeacherHome />
                                 )
                             ) : (
                                 <Navigate to="/login" />
                             )
                         }
-                    /> */}
+                    />
                     <Route path="/" element={<HomePage />} />
                     <Route path="/create-assignment" element={<Assignment />} />
                     <Route path="/calendar-view" element={<Calendar />} />
@@ -42,7 +44,16 @@ const Routers = () => {
                     <Route path="/chat" element={<Chatpage />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/dashboard" element={<Home />} />
+                    <Route
+                        path="/dashboard"
+                        element={
+                            user?.role === "student" ? (
+                                <Home />
+                            ) : (
+                                <TeacherHome />
+                            )
+                        }
+                    />
                     <Route
                         path="/select-affiliate"
                         element={<SelectAffiliation />}
@@ -60,6 +71,7 @@ const Routers = () => {
                         element={<AssignmentDetails />}
                     />
                     <Route path="/profile" element={<ProfileSection />} />
+                    <Route path="/about" element={<About />} />
                 </Routes>
             </Router>
         </div>

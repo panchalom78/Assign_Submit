@@ -240,9 +240,6 @@ namespace Server.Services
             }
         }
 
-
-
-
         public async Task DeleteUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -282,12 +279,12 @@ namespace Server.Services
             var user = await _context.Users.FindAsync(int.Parse(userId));
             return new { Message = "Token verified successfully", user };
         }
-       
+
         public async Task<dynamic> Profile(string jwt)
         {
             var deCodedToken = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
             var userId = deCodedToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            
+
             var user = await _context.Users.FindAsync(int.Parse(userId));
             return new { Message = "Profile fetched successfully", user };
         }
@@ -323,61 +320,149 @@ namespace Server.Services
         }
         public async Task<dynamic> ClassName(int classId)
         {
-            var classEntity = await _context.Classes.FindAsync(classId);                
+            var classEntity = await _context.Classes.FindAsync(classId);
             if (classEntity == null)
             {
-                throw new Exception("Class not found"); 
+                throw new Exception("Class not found");
             }
             var className = classEntity.ClassName;
             return new { Message = "Class name fetched successfully", className };
-        }   
-       public async Task<dynamic> UpdateProfile(string jwt, UpdateProfileRequest request)
-{
-    var deCodedToken = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
-    var userId = deCodedToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-    var user = await _context.Users.FindAsync(int.Parse(userId));
-    var college = await _context.Colleges.FindAsync(request.CollegeId);
-    var faculty = await _context.Faculties.FindAsync(request.FacultyId);
-    var course = await _context.Courses.FindAsync(request.CourseId);
-    var classEntity = await _context.Classes.FindAsync(request.ClassId);
+        }
+        public async Task<dynamic> UpdateProfile(string jwt, UpdateProfileRequest request)
+        {
+            var deCodedToken = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
+            var userId = deCodedToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var user = await _context.Users.FindAsync(int.Parse(userId));
+            var college = await _context.Colleges.FindAsync(request.CollegeId);
+            var faculty = await _context.Faculties.FindAsync(request.FacultyId);
+            var course = await _context.Courses.FindAsync(request.CourseId);
+            var classEntity = await _context.Classes.FindAsync(request.ClassId);
 
-    if (user == null)
-    {
-        throw new Exception("User not found");
-    }
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
 
-    user.FullName = request.FullName;
-    user.Email = request.Email;
+            user.FullName = request.FullName;
+            user.Email = request.Email;
 
-    if (!string.IsNullOrWhiteSpace(request.Password))
-    {
-        user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
-    }
+            if (!string.IsNullOrWhiteSpace(request.Password))
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            }
 
-    user.CollegeId = request.CollegeId;
-    user.FacultyId = request.FacultyId;
-    user.CourseId = request.CourseId;
-    user.ClassId = request.ClassId;
-    user.Prn = request.Prn;
+            user.CollegeId = request.CollegeId;
+            user.FacultyId = request.FacultyId;
+            user.CourseId = request.CourseId;
+            user.ClassId = request.ClassId;
+            user.Prn = request.Prn;
 
-    await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-    return new
-    {
-        Message = "Profile updated successfully",
-        user.FullName,
-        user.Email,
-        user.CollegeId,
-        user.FacultyId,
-        user.CourseId,
-        user.ClassId,
-        user.Prn
-    };
-}
+            return new
+            {
+                Message = "Profile updated successfully",
+                user.FullName,
+                user.Email,
+                user.CollegeId,
+                user.FacultyId,
+                user.CourseId,
+                user.ClassId,
+                user.Prn
+            };
+        }
 
-  
-       
+        public async Task<object> GetTeacherStats(int teacherId)
+        {
+            try
+            {
+                var teacher = await _context.Users
+                    .Include(u => u.Faculty)
+                    .FirstOrDefaultAsync(u => u.UserId == teacherId && u.Role == "teacher")
+                    ?? throw new Exception("Teacher not found");
 
+                // Get all assignments by this teacher
+                var assignments = await _context.Assignments
+                    .Include(a => a.Submissions)
+                    .Where(a => a.UserId == teacherId)
+                    .ToListAsync();
+
+                // Get all classes in teacher's faculty
+                var classesInFaculty = await _context.Classes
+                    .Where(c => c.FacultyId == teacher.FacultyId)
+                    .ToListAsync();
+
+                // Get all students in these classes
+                var studentsInFaculty = await _context.Users
+                    .Where(u => u.Role == "student" && u.FacultyId == teacher.FacultyId)
+                    .ToListAsync();
+
+                // Calculate statistics
+                var totalAssignments = assignments.Count;
+                var totalSubmissions = assignments.Sum(a => a.Submissions?.Count ?? 0);
+                var pendingGrading = assignments.Sum(a =>
+                    a.Submissions?.Count(s => s.Marks == null) ?? 0);
+                var totalStudents = studentsInFaculty.Count;
+
+                return new
+                {
+                    TotalAssignments = totalAssignments,
+                    TotalSubmissions = totalSubmissions,
+                    PendingGrading = pendingGrading,
+                    TotalStudents = totalStudents
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to get teacher statistics: {ex.Message}");
+            }
+        }
+
+        public async Task<object> GetUserDetails(string jwt)
+        {
+            try
+            {
+                var decodedToken = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
+                var userId = decodedToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new Exception("Invalid token");
+                }
+
+                var user = await _context.Users
+                    .Include(u => u.College)
+                    .Include(u => u.Faculty)
+                    .Include(u => u.Course)
+                    .Include(u => u.Class)
+                    .FirstOrDefaultAsync(u => u.UserId == int.Parse(userId));
+
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+
+                return new
+                {
+                    userId = user.UserId,
+                    fullName = user.FullName,
+                    email = user.Email,
+                    role = user.Role,
+                    affiliations = new
+                    {
+                        college = user.College?.CollegeName,
+                        faculty = user.Faculty?.FacultyName,
+                        course = user.Course?.CourseName,
+                        className = user.Class?.ClassName,
+                        prn = user.Role?.ToLower() == "student" ? user.Prn : null
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to get user details: {ex.Message}");
+            }
+        }
     }
 }
 
