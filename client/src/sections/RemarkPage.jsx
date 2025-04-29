@@ -1,7 +1,7 @@
 import React from "react";
 import Remark from "../components/Remark";
 import Navbar from "../components/Navbar";
-import Menu from "../components/Menu";
+
 import SideMenu from "../components/SideMenu";
 
 const RemarkPage = () => {

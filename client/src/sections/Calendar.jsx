@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import Menu from "../components/Menu";
 import CalendarView from "../components/CelenderView";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";

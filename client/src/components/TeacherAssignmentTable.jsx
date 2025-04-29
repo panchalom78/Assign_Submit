@@ -59,12 +59,12 @@ const TeacherAssignmentTable = () => {
 
     return (
         <div className="h-auto w-full p-6">
-            <h1 className="text-3xl font-bold mb-6 text-center text-[#A560CF]">
+            <h1 className="text-2xl font-bold mb-6 text-center text-white">
                 Assignment Table
             </h1>
             <div className="overflow-x-auto px-4 rounded-lg shadow-xl">
                 <table className="w-full rounded-lg overflow-hidden">
-                    <thead className="bg-gradient-to-r from-[#ED739F] to-[#A560CF] text-white">
+                    <thead className="bg-gradient-to-r bg-[#FB773C] text-black">
                         <tr>
                             <th className="px-6 py-4 text-left">No</th>
                             <th className="px-6 py-4 text-left">Title</th>

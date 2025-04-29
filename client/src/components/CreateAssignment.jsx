@@ -93,18 +93,18 @@ function CreateAssignment() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-black">
             <Navbar title="Create Assignmnets" />
             <div className="flex">
                 <SideMenu />
                 <div className="flex-1 p-8 justify-self-end md:ml-64">
                     <div className="max-w-6xl mx-auto">
-                        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+                        <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
                             <div className="max-w-2xl mx-auto">
-                                <div className="bg-white rounded-xl shadow-lg p-8">
+                                <div className="bg-[#FAF9F6] rounded-xl shadow-lg p-8">
                                     <div className="flex items-center justify-center mb-8">
-                                        <ClipboardList className="h-10 w-10 text-indigo-600" />
-                                        <h1 className="ml-3 text-3xl font-bold text-gray-900">
+                                        <ClipboardList className="h-10 w-10 text-black" />
+                                        <h1 className="ml-3 text-3xl font-bold text-black">
                                             Assignment Submission
                                         </h1>
                                     </div>
@@ -123,7 +123,7 @@ function CreateAssignment() {
                                                     name="course"
                                                     value={selectedCourse}
                                                     onChange={handleChange}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#FB773C] focus:border-[#FB773C]"
                                                     required
                                                 >
                                                     <option value="">
@@ -153,7 +153,7 @@ function CreateAssignment() {
                                                     name="classId"
                                                     value={formData.classId}
                                                     onChange={handleChange}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#FB773C] focus:border-[#FB773C]"
                                                     required
                                                     disabled={!selectedCourse}
                                                 >
@@ -182,7 +182,7 @@ function CreateAssignment() {
                                                 name="title"
                                                 value={formData.title}
                                                 onChange={handleChange}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#FB773C] focus:border-[#FB773C]"
                                                 placeholder="Enter assignment title"
                                                 required
                                             />
@@ -197,7 +197,7 @@ function CreateAssignment() {
                                                 value={formData.description}
                                                 onChange={handleChange}
                                                 rows={4}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#FB773C] focus:border-[#FB773C]"
                                                 placeholder="Enter assignment description"
                                                 required
                                             />
@@ -213,7 +213,7 @@ function CreateAssignment() {
                                                 name="dueDate"
                                                 value={formData.dueDate}
                                                 onChange={handleChange}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#FB773C] focus:border-[#FB773C]"
                                                 required
                                             />
                                         </div>
@@ -221,7 +221,7 @@ function CreateAssignment() {
                                         <div>
                                             <button
                                                 type="submit"
-                                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#FB773C] hover:bg-[#f0b295] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
                                             >
                                                 Submit Assignment
                                             </button>

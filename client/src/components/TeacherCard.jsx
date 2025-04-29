@@ -32,35 +32,35 @@ const TeacherCard = () => {
             id: 1,
             cname: "Total Assignments",
             number: stats.totalAssignments,
-            color: "from-pink-500 to-rose-500",
+            color: "bg-[#FAF9F6]",
         },
         {
             id: 2,
             cname: "Total Submissions",
             number: stats.totalSubmissions,
-            color: "from-purple-500 to-indigo-500",
+            color: "bg-[#FAF9F6]",
         },
         {
             id: 3,
             cname: "Pending Grading",
             number: stats.pendingGrading,
-            color: "from-yellow-500 to-orange-500",
+            color: "bg-[#FAF9F6]",
         },
         {
             id: 4,
             cname: "Total Students",
             number: stats.totalStudents,
-            color: "from-green-500 to-teal-500",
+            color: "bg-[#FAF9F6]",
         },
     ];
 
     return (
-        <div className="flex flex-wrap justify-center items-center px-4 py-6 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 w-full h-auto">
+        <div className="flex flex-wrap justify-center items-center px-4 py-6 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 w-full h-auto ">
             {cardTypes.map((card) => (
                 <div
                     key={card.id}
                     className={`h-32 w-40 sm:h-36 sm:w-44 md:h-40 md:w-48 lg:h-44 lg:w-52 xl:h-48 xl:w-56 
-                        bg-gradient-to-r ${card.color} text-white 
+                        bg-gradient-to-r ${card.color} text-black 
                         flex flex-col justify-center items-center rounded-lg shadow-lg 
                         transition-all duration-300 transform hover:scale-105 hover:shadow-xl`}
                 >

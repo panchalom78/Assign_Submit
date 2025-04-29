@@ -1,12 +1,12 @@
 import React from "react";
 import Navbar from "../components/Navbar";
-import Menu from "../components/Menu";
+
 import Grade from "../components/Grade";
 import SideMenu from "../components/SideMenu";
 
 const GradesPage = () => {
     return (
-        <div className="min-h-screen bg-gray-50 mt-15">
+        <div className="min-h-screen bg-black mt-15">
             {/* Navbar */}
             <Navbar title="Grades" />
 

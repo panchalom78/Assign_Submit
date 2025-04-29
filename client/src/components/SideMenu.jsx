@@ -11,6 +11,7 @@ import {
     FaCalendar,
     FaSignOutAlt,
 } from "react-icons/fa";
+
 import { useNavigate } from "react-router";
 import useAuthStore from "../utils/AuthStore";
 
@@ -33,6 +34,8 @@ const SideMenu = () => {
             console.error("Logout failed:", error);
         }
     };
+    
+
 
     // Common menu items for both roles
     const commonMenuItems = [
@@ -95,16 +98,11 @@ const SideMenu = () => {
     const menuItems = [
         ...commonMenuItems,
         ...(isTeacher ? teacherMenuItems : studentMenuItems),
-        {
-            label: "Logout",
-            icon: <FaSignOutAlt className="text-[#FB773C]" />,
-            onClick: handleLogout,
-            className: "mt-auto text-red-400 hover:text-red-300",
-        },
+        
     ];
 
     return (
-        <div className="fixed top-0 left-0 z-40">
+        <div className="fixed top-0 left-0 z-40 ">
             {/* Toggle Button for Mobile */}
             <button
                 onClick={toggleMenu}
@@ -119,17 +117,8 @@ const SideMenu = () => {
                     isMenuOpen ? "translate-x-0" : "-translate-x-full"
                 } md:translate-x-0 md:relative md:w-64 border-r border-[#EB3678]/20`}
             >
-                {/* User Info Section */}
-                <div className="mb-8 text-center">
-                    <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-[#EB3678] to-[#FB773C] flex items-center justify-center mb-4">
-                        <FaUser className="text-white" size={24} />
-                    </div>
-                    <h2 className="text-xl font-semibold text-white">
-                        {user?.fullName}
-                    </h2>
-                    <p className="text-gray-400 capitalize">{user?.role}</p>
-                </div>
-
+                
+                
                 {/* Menu Items */}
                 <ul className="flex flex-col gap-2 h-[calc(100%-12rem)]">
                     {menuItems.map((item, index) => (
@@ -144,7 +133,34 @@ const SideMenu = () => {
                         </li>
                     ))}
                 </ul>
+                <div className="flex items-center gap-4">
+                    {/* Notifications */}
+
+                    {/* User Profile */}
+
+                    <div
+                        className="flex items-center gap-2"
+                        onClick={() => {
+                            navigate("/profile");
+                        }}
+                    >
+                        <div className="flex items-center top-52 bg-[#1F1F1F] h-auto p-3 w-auto gap-3 rounded-lg hover:bg-[#2A2A2A] transition-colors duration-200 cursor-pointer">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#EB3678] to-[#FB773C] flex items-center justify-center shadow-lg">
+                                <FaUser className="text-white" size={18} />
+                            </div>
+                            <div className="flex flex-col">
+                                <p className="text-white text-sm font-medium tracking-wide">
+                                    {user?.fullName}
+                                </p>
+                                <p className="text-gray-400 text-xs capitalize tracking-wide">
+                                    {user?.role}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+            
         </div>
     );
 };

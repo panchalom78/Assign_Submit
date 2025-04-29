@@ -84,7 +84,7 @@ const HomeNavbar = () => {
                     <div className="hidden md:block">
                         <ul className="ml-10 flex items-center space-x-6">
                             {[
-                                { name: 'About', path: '#about' },
+                                { name: 'About', path: '/about' },
                               
                                 { name: 'Login', path: '/login', action: () => navigate('/login') },
                             ].map((item, i) => (

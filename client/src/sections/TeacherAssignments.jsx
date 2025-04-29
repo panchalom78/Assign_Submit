@@ -71,14 +71,14 @@ function TeacherAssignments() {
     return (
         <>
             {/* <TeacherNavbar /> */}
-            <div className="min-h-screen bg-gray-50 mt-15">
+            <div className="min-h-screen bg-black mt-15">
                 <Navbar title="Assignments" />
                 <div className="flex">
                     <SideMenu />
                     <div className="flex-1 p-8 justify-self-end md:ml-64">
                         <div className="max-w-6xl mx-auto">
-                            {/* Header Section */}
-                            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                         
+                            {/* <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                                 <div className="flex justify-between items-center">
                                     <div>
                                         <h1 className="text-3xl font-bold text-gray-800">
@@ -99,12 +99,12 @@ function TeacherAssignments() {
                                         Assignment
                                     </Link>
                                 </div>
-                            </div>
+                            </div> */}
 
                             {/* Assignments Grid */}
                             <div className="grid gap-6">
                                 {assignments.length === 0 ? (
-                                    <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+                                    <div className=" rounded-lg shadow-sm p-8 text-center">
                                         <p className="text-gray-600 text-lg">
                                             No assignments available.
                                         </p>
@@ -113,7 +113,7 @@ function TeacherAssignments() {
                                     assignments.map((assignment) => (
                                         <div
                                             key={assignment.id}
-                                            className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
+                                            className="bg-[#FAF9F6] rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
                                         >
                                             <div className="p-6">
                                                 <div className="flex justify-between items-start mb-4">
@@ -137,25 +137,25 @@ function TeacherAssignments() {
 
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                                                     <div className="flex items-center text-gray-600 bg-gray-50 rounded-md p-2">
-                                                        <Book className="h-5 w-5 mr-2 text-indigo-500" />
+                                                        <Book className="h-5 w-5 mr-2 text-[#FB773C]" />
                                                         <span>
                                                             {assignment.course}
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center text-gray-600 bg-gray-50 rounded-md p-2">
-                                                        <GraduationCap className="h-5 w-5 mr-2 text-indigo-500" />
+                                                        <GraduationCap className="h-5 w-5 mr-2 text-[#FB773C]" />
                                                         <span>
                                                             {assignment.class}
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center text-gray-600 bg-gray-50 rounded-md p-2">
-                                                        <User className="h-5 w-5 mr-2 text-indigo-500" />
+                                                        <User className="h-5 w-5 mr-2 text-[#FB773C]" />
                                                         <span>
                                                             {assignment.teacher}
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center text-gray-600 bg-gray-50 rounded-md p-2">
-                                                        <Calendar className="h-5 w-5 mr-2 text-indigo-500" />
+                                                        <Calendar className="h-5 w-5 mr-2 text-[#FB773C]" />
                                                         <span>
                                                             Due:{" "}
                                                             {formatDate(
@@ -171,7 +171,7 @@ function TeacherAssignments() {
 
                                                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                                                     <div className="flex items-center text-gray-500">
-                                                        <Clock className="h-4 w-4 mr-1 text-indigo-500" />
+                                                        <Clock className="h-4 w-4 mr-1 text-[#FB773C]" />
                                                         <span className="text-sm">
                                                             Created:{" "}
                                                             {formatDate(
@@ -185,7 +185,7 @@ function TeacherAssignments() {
                                                                 `/assignment-details/${assignment.id}`
                                                             )
                                                         }
-                                                        className="px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors duration-200 flex items-center gap-2"
+                                                        className="px-4 py-2  bg-[#FB773C] text-white hover:bg-[#f0b295] rounded-md transition-colors duration-200 flex items-center gap-2"
                                                     >
                                                         View Details
                                                         <span className="text-xl">

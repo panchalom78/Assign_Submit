@@ -34,8 +34,8 @@ const CalendarView = ({ assignments }) => {
             <div className="text-2xs md:text-xs">{eventInfo.timeText}</div>
           </div>
         )}
-        dayHeaderClassNames="text-purple-600 font-bold text-sm md:text-base"
-        dayCellClassNames="hover:bg-purple-50 transition-colors duration-200"
+        dayHeaderClassNames="text-[#FB773C] font-bold text-sm md:text-base"
+        dayCellClassNames="hover:bg-gray-700 transition-colors duration-200"
         height="auto"
         contentHeight="auto"
         aspectRatio={1.5} // Adjust aspect ratio for better responsiveness

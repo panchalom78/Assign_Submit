@@ -44,7 +44,7 @@ const TeacherMenu = () => {
     };
     return (
         <div className="fixed top-0 left-0 z-40">
-            {/* Toggle Button for Mobile */}
+            Toggle Button for Mobile
             <button
                 onClick={toggleMenu}
                 className="fixed top-4 left-4 p-3 bg-gray-800 text-white rounded-lg md:hidden z-50"

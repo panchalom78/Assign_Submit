@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import AssignmentSubmission from "../components/Submition";
 import Navbar from "../components/Navbar";
-import Menu from "../components/Menu";
+
 import SideMenu from "../components/SideMenu";
 
 const Assignment = () => {
