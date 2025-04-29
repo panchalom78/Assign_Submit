@@ -25,15 +25,7 @@ const Routers = () => {
                     <Route
                         path="/home"
                         element={
-                            user ? (
-                                user.role == "student" ? (
-                                    <Home />
-                                ) : (
-                                    <TeacherHome />
-                                )
-                            ) : (
-                                <Navigate to="/login" />
-                            )
+                            user?.role == "student" ? <Home /> : <TeacherHome />
                         }
                     />
                     <Route path="/" element={<HomePage />} />
