@@ -1,19 +1,19 @@
 # --- Build Stage ---
-    FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-    WORKDIR /src
-    
-    COPY . .
-    RUN dotnet restore
-    RUN dotnet publish -c Release -o /app/publish
-    
-    # --- Runtime Stage ---
-    FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-    WORKDIR /app
-    COPY --from=build /app/publish .
-    
-    # Expose the port for Render
-    ENV ASPNETCORE_URLS=http://+:10000
-    EXPOSE 10000
-    
-    ENTRYPOINT ["dotnet", "server.dll"]
-    
+FROM mcr.microsoft.com/dotnet/sdk:9.0-preview AS build
+WORKDIR /src
+
+COPY *.csproj ./
+RUN dotnet restore
+
+COPY . ./
+RUN dotnet publish -c Release -o /publish
+
+# --- Runtime Stage ---
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-preview
+WORKDIR /app
+COPY --from=build /publish .
+
+ENV ASPNETCORE_URLS=http://+:10000
+EXPOSE 10000
+
+ENTRYPOINT ["dotnet", "server.dll"]
