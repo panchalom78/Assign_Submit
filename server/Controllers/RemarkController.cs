@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Server.Services;
-using Server.Models;
 using Microsoft.AspNetCore.Authorization;
-using Server.Token;
 using Server.DTOs;
-using System.Security.Claims;
 
 namespace Server.Controllers
 {

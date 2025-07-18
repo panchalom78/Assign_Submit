@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Server.Models;
 using Server.Services;
 using Server.Token;
 using Server.DTOs;
-using System.Threading.Tasks;
 
 namespace Server.Controllers
 {

@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Server.Services; // Ensure this is included
-using Server.Models;
-using Microsoft.AspNetCore.Authorization;
 using Server.DTOs;
 using Server.Token;
 
@@ -11,7 +9,7 @@ namespace Server.Controllers
     [ApiController]
     public class AssignmentController : ControllerBase
     {
-        private readonly AssignmentService _assignmentService; // Use concrete AuthService, not IAuthService
+        private readonly AssignmentService _assignmentService;
 
         public AssignmentController(AssignmentService assignmentService)
         {

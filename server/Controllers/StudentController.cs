@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Server.Services;
-using Server.Models;
-using Microsoft.AspNetCore.Authorization;
 using Server.Token;
 
 namespace Server.Controllers
