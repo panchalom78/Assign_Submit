@@ -4,10 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using Server.Data;
 using Server.Services;
 using System.Text;
-// Host=localhost;Database=Assignment;Username=postgres;Password=Ompan@78
-// Host=ep-steep-brook-a4wkb1tt-pooler.us-east-1.aws.neon.tech;Database=verceldb;Username=default;Password=AriMpDv16Rel
-var builder = WebApplication.CreateBuilder(args);
 
+var builder = WebApplication.CreateBuilder(args);
 
 // ✅ Add Controllers
 builder.Services.AddControllers();

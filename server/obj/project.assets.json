@@ -9224,12 +9224,17 @@
     ]
   },
   "packageFolders": {
+<<<<<<< HEAD
     "C:\\Users\\Dhaval\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+=======
+    "C:\\Users\\Om Panchal\\.nuget\\packages\\": {}
+>>>>>>> eaffe57 (changes the sql server link)
   },
   "project": {
     "version": "1.0.0",
     "restore": {
+<<<<<<< HEAD
       "projectUniqueName": "C:\\Users\\Dhaval\\OneDrive\\Desktop\\DataDack\\server\\server.csproj",
       "projectName": "server",
       "projectPath": "C:\\Users\\Dhaval\\OneDrive\\Desktop\\DataDack\\server\\server.csproj",
@@ -9243,13 +9248,26 @@
         "C:\\Users\\Dhaval\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+=======
+      "projectUniqueName": "C:\\Users\\Om Panchal\\OneDrive\\Desktop\\assign-submit\\server\\server.csproj",
+      "projectName": "server",
+      "projectPath": "C:\\Users\\Om Panchal\\OneDrive\\Desktop\\assign-submit\\server\\server.csproj",
+      "packagesPath": "C:\\Users\\Om Panchal\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Om Panchal\\OneDrive\\Desktop\\assign-submit\\server\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\Om Panchal\\AppData\\Roaming\\NuGet\\NuGet.Config"
+>>>>>>> eaffe57 (changes the sql server link)
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+<<<<<<< HEAD
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "C:\\Program Files\\dotnet\\library-packs": {},
+=======
+>>>>>>> eaffe57 (changes the sql server link)
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

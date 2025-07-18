@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Server.Services;
+<<<<<<< HEAD
 using Server.Models;
 using Microsoft.AspNetCore.Authorization;
+=======
+>>>>>>> eaffe57 (changes the sql server link)
 using Server.Token;
 
 namespace Server.Controllers

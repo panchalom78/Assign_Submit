@@ -1,10 +1,15 @@
 using Server.Data;
 using Server.Models;
+<<<<<<< HEAD
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using Server.DTOs;
 using System.Collections.Generic;
+=======
+using Microsoft.EntityFrameworkCore;
+using Server.DTOs;
+>>>>>>> eaffe57 (changes the sql server link)
 namespace Server.Services
 {
     public class AssignmentService
