@@ -495,3 +495,4 @@ C:\Users\Om Panchal\OneDrive\Desktop\assign-submit\server\obj\Debug\net9.0\serve
 C:\Users\Om Panchal\OneDrive\Desktop\assign-submit\server\obj\Debug\net9.0\server.genruntimeconfig.cache
 C:\Users\Om Panchal\OneDrive\Desktop\assign-submit\server\obj\Debug\net9.0\ref\server.dll
 >>>>>>> eaffe57 (changes the sql server link)
+C:\Users\Om Panchal\OneDrive\Desktop\assign-submit\server\obj\Debug\net9.0\server.sourcelink.json
