@@ -39,7 +39,7 @@ namespace Server.Controllers
                 {
                     HttpOnly = true,
                     Secure = true, // Enable in production
-                    SameSite = SameSiteMode.Lax, // More permissive for mobile browsers
+                    SameSite = SameSiteMode.None, // More permissive for mobile browsers
                     Expires = DateTime.UtcNow.AddDays(1),
                     Path = "/" // Ensure cookie is available across all paths
                 });
@@ -73,7 +73,7 @@ namespace Server.Controllers
                 {
                     HttpOnly = true,
                     Secure = true, // Enable in production
-                    SameSite = SameSiteMode.Lax, // More permissive for mobile browsers
+                    SameSite = SameSiteMode.None, // More permissive for mobile browsers
                     Expires = DateTime.UtcNow.AddDays(1),
                     Path = "/" // Ensure cookie is available across all paths
                 });

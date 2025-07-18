@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import Select from "react-select";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../store/useAuthStore";
@@ -63,8 +63,8 @@ const AffiliationForm = () => {
     };
 
     useEffect(() => {
-        axios
-            .get("http://localhost:5134/api/auth/colleges", {
+        axiosInstance
+            .get("/auth/colleges", {
                 withCredentials: true,
             })
             .then((res) => setColleges(res.data))
@@ -72,31 +72,28 @@ const AffiliationForm = () => {
     }, []);
 
     const fetchFaculties = (collegeId) => {
-        axios
-            .get(
-                `http://localhost:5134/api/auth/faculties?collegeId=${collegeId}`,
-                { withCredentials: true }
-            )
+        axiosInstance
+            .get(`/auth/faculties?collegeId=${collegeId}`, {
+                withCredentials: true,
+            })
             .then((res) => setFaculties(res.data))
             .catch((err) => console.error("Error fetching faculties", err));
     };
 
     const fetchCourses = (facultyId) => {
-        axios
-            .get(
-                `http://localhost:5134/api/auth/courses?facultyId=${facultyId}`,
-                { withCredentials: true }
-            )
+        axiosInstance
+            .get(`/auth/courses?facultyId=${facultyId}`, {
+                withCredentials: true,
+            })
             .then((res) => setCourses(res.data))
             .catch((err) => console.error("Error fetching courses", err));
     };
 
     const fetchClasses = (courseId) => {
-        axios
-            .get(
-                `http://localhost:5134/api/auth/classes?courseId=${courseId}`,
-                { withCredentials: true }
-            )
+        axiosInstance
+            .get(`/auth/classes?courseId=${courseId}`, {
+                withCredentials: true,
+            })
             .then((res) => setClasses(res.data))
             .catch((err) => console.error("Error fetching classes", err));
     };
@@ -128,8 +125,8 @@ const AffiliationForm = () => {
         };
 
         try {
-            const res = await axios.post(
-                "http://localhost:5134/api/auth/select-affiliation",
+            const res = await axiosInstance.post(
+                "/auth/select-affiliation",
                 affiliationData,
                 {
                     headers: { "Content-Type": "application/json" },
