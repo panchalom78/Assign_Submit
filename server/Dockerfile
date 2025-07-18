@@ -1,19 +1,14 @@
-# --- Build Stage ---
-FROM mcr.microsoft.com/dotnet/sdk:9.0-preview AS build
-WORKDIR /src
-
-COPY *.csproj ./
-RUN dotnet restore
+# https://hub.docker.com/_/microsoft-dotnet
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /App
 
 COPY . ./
-RUN dotnet publish -c Release -o /publish
+RUN dotnet restore
+RUN dotnet publish -c Release -o out
 
-# --- Runtime Stage ---
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-preview
-WORKDIR /app
-COPY --from=build /publish .
 
-ENV ASPNETCORE_URLS=http://+:10000
-EXPOSE 10000
-
-ENTRYPOINT ["dotnet", "server.dll"]
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+WORKDIR /App
+COPY --from=build /App/out .
+EXPOSE 8080
+ENTRYPOINT [ "dotnet" ,"server.dll"]
