@@ -1,15 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-<<<<<<< HEAD
-using Server.Models;
 using Server.Services;
 using Server.Token;
 using Server.DTOs;
-using System.Threading.Tasks;
-=======
-using Server.Services;
-using Server.Token;
-using Server.DTOs;
->>>>>>> eaffe57 (changes the sql server link)
 
 namespace Server.Controllers
 {

@@ -1,15 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Server.Services;
-<<<<<<< HEAD
-using Server.Models;
-using Microsoft.AspNetCore.Authorization;
-using Server.Token;
-using Server.DTOs;
-using System.Security.Claims;
-=======
 using Microsoft.AspNetCore.Authorization;
 using Server.DTOs;
->>>>>>> eaffe57 (changes the sql server link)
 
 namespace Server.Controllers
 {

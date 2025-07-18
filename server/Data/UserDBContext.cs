@@ -1,8 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-<<<<<<< HEAD
-using Microsoft.Extensions.Configuration;
-=======
->>>>>>> eaffe57 (changes the sql server link)
 using Server.Models;
 
 namespace Server.Data
