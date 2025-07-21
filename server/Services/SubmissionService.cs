@@ -49,39 +49,78 @@ namespace Server.Services
 
             // Save file (local or MEGA)
             string filePath;
+            // Inside UploadSubmissionAsync method, replace the try block with:
+
             try
             {
-                // Option 1: Save locally (temporary)
-                filePath = Path.Combine(Path.GetTempPath(), file.FileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                // Initialize Appwrite client with proper formatting
+                var client = new Client();
+                client.SetEndpoint("https://fra.cloud.appwrite.io/v1");
+                client.SetProject("687b8d560014af25c5ef");
+                client.SetKey("standard_62253218b6dc8e310a6980094e0da7024c8293e880a5c840c9314a9cb84acff1a531a7d68ec879641739e12471e4f258c8f813847359fe520c495c820a6a770b182ef533b941b851475a196a5e7ab0e0817c0a1ca5c7d027d9ecc2191980d4f5fed8106824222e4201c6e3c74d90ae8b7f76fa7adbfaca4cf66b49d84dbd6b1d");
+
+                // Verify client initialization
+                if (client == null)
+                {
+                    throw new Exception("Failed to initialize Appwrite client");
+                }
+
+                var storage = new Storage(client) ?? throw new Exception("Failed to initialize Appwrite storage");
+
+                // Create a temporary file path with unique name
+                string tempDirectory = Path.Combine(Directory.GetCurrentDirectory(), "temp");
+                Directory.CreateDirectory(tempDirectory);
+                string uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
+                string tempFilePath = Path.Combine(tempDirectory, uniqueFileName);
+                using (var stream = new FileStream(tempFilePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
 
-                var client = new Client().SetEndpoint("https://fra.cloud.appwrite.io/v1") // Your API Endpoint
-                                        .SetProject("687b8d560014af25c5ef") // Your project ID
-                                        .SetKey("standard_62253218b6dc8e310a6980094e0da7024c8293e880a5c840c9314a9cb84acff1a531a7d68ec879641739e12471e4f258c8f813847359fe520c495c820a6a770b182ef533b941b851475a196a5e7ab0e0817c0a1ca5c7d027d9ecc2191980d4f5fed8106824222e4201c6e3c74d90ae8b7f76fa7adbfaca4cf66b49d84dbd6b1d"); // Your secret API key
+                try
+                {
+                    // Save file temporarily
 
-                var storage = new Storage(client);
-                var result = await storage.CreateFile("687b9034000772929340", ID.Unique(), InputFile.FromPath(filePath));
-                Console.WriteLine(result);
-                // Option 2: Upload to MEGA (uncomment to use)
+                    // Ensure file exists before upload
+                    if (!System.IO.File.Exists(tempFilePath))
+                    {
+                        throw new Exception("Failed to save temporary file");
+                    }
 
-                // string megaEmail = "panchalom787@gmail.com";
-                // string megaPassword = "Ompan@78";
-                // string megaFileId = await MegaUploader.UploadPdfToMegaAsync(megaEmail, megaPassword, filePath);
+                    // Upload to Appwrite
+                    var uploadedFile = await storage.CreateFile(
+                        bucketId: "687b9034000772929340",
+                        fileId: ID.Unique(),
+                        file: InputFile.FromPath(tempFilePath)
+                    );
 
-                // if (megaFileId == null)
-                // {
-                //     throw new Exception("Failed to upload file to MEGA.");
-                // }
-                // filePath = megaFileId; // Store MEGA file ID or URL
+                    if (uploadedFile == null)
+                    {
+                        throw new Exception("File upload to Appwrite failed");
+                    }
 
+                    // Store the Appwrite file ID
+                    filePath = uploadedFile.Id;
 
+                    // Clean up temporary file
+                    // if (File.Exists(tempFilePath))
+                    // {
+                    //     File.Delete(tempFilePath);
+                    // }
+                }
+                finally
+                {
+                    // Ensure temporary file is cleaned up even if upload fails
+                    // if (File.Exists(tempFilePath))
+                    // {
+                    //     File.Delete(tempFilePath);
+                    // }
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine($"Upload error: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 throw new Exception($"File upload failed: {ex.Message}");
             }
 
