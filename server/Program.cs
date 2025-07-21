@@ -78,7 +78,7 @@ builder.Services.AddCors(options =>
                 "http://localhost:3000",
                 "http://localhost:5000",
                 "http://localhost:80",
-                "https://assign-mate-azure.vercel.app",
+                 "https://assign-mate-azure.vercel.app",
                 "https://assign-submit.vercel.app"
             )
             .AllowCredentials()
