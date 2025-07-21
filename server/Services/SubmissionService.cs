@@ -5,8 +5,13 @@ using Server.Models;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Appwrite;
+using Appwrite.Services;
+using Appwrite.Models;
 using Server.DTOs;
+
 namespace Server.Services
+
 {
     public class SubmissionService
     {
@@ -53,20 +58,30 @@ namespace Server.Services
                     await file.CopyToAsync(stream);
                 }
 
+                var client = new Client().SetEndpoint("https://fra.cloud.appwrite.io/v1") // Your API Endpoint
+                                        .SetProject("687b8d560014af25c5ef") // Your project ID
+                                        .SetKey("standard_62253218b6dc8e310a6980094e0da7024c8293e880a5c840c9314a9cb84acff1a531a7d68ec879641739e12471e4f258c8f813847359fe520c495c820a6a770b182ef533b941b851475a196a5e7ab0e0817c0a1ca5c7d027d9ecc2191980d4f5fed8106824222e4201c6e3c74d90ae8b7f76fa7adbfaca4cf66b49d84dbd6b1d"); // Your secret API key
+
+                var storage = new Storage(client);
+                var result = await storage.CreateFile("687b9034000772929340", ID.Unique(), InputFile.FromPath(filePath));
+                Console.WriteLine(result);
                 // Option 2: Upload to MEGA (uncomment to use)
 
-                string megaEmail = "panchalom787@gmail.com";
-                string megaPassword = "Ompan@78";
-                string megaFileId = await MegaUploader.UploadPdfToMegaAsync(megaEmail, megaPassword, filePath);
-                if (megaFileId == null)
-                {
-                    throw new Exception("Failed to upload file to MEGA.");
-                }
-                filePath = megaFileId; // Store MEGA file ID or URL
+                // string megaEmail = "panchalom787@gmail.com";
+                // string megaPassword = "Ompan@78";
+                // string megaFileId = await MegaUploader.UploadPdfToMegaAsync(megaEmail, megaPassword, filePath);
+
+                // if (megaFileId == null)
+                // {
+                //     throw new Exception("Failed to upload file to MEGA.");
+                // }
+                // filePath = megaFileId; // Store MEGA file ID or URL
+
 
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 throw new Exception($"File upload failed: {ex.Message}");
             }
 
@@ -86,10 +101,10 @@ namespace Server.Services
             await _context.SaveChangesAsync();
 
             // Clean up temporary file (if not using MEGA)
-            if (filePath.StartsWith(Path.GetTempPath()) && File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
+            // if (filePath.StartsWith(Path.GetTempPath()) && File.Exists(filePath))
+            // {
+            //     File.Delete(filePath);
+            // }
 
             return submission;
         }
@@ -273,10 +288,10 @@ namespace Server.Services
                 await _context.SaveChangesAsync();
 
                 // Clean up temp file
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+                // if (File.Exists(filePath))
+                // {
+                //     File.Delete(filePath);
+                // }
 
                 return oldSubmission;
             }
