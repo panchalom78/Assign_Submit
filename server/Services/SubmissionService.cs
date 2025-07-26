@@ -2,13 +2,12 @@ using CG.Web.MegaApiClient;
 using Microsoft.EntityFrameworkCore;
 using Server.Data; // Assuming AppDbContext is here
 using Server.Models;
+using Server.DTOs;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Appwrite;
-using Appwrite.Services;
-using Appwrite.Models;
-using Server.DTOs;
+using Dropbox.Api;
+using Dropbox.Api.Files;
 
 namespace Server.Services
 
@@ -16,10 +15,12 @@ namespace Server.Services
     public class SubmissionService
     {
         private readonly UserDBContext _context;
+        private readonly string _dropboxToken;
 
-        public SubmissionService(UserDBContext context)
+        public SubmissionService(UserDBContext context, IConfiguration config)
         {
             _context = context;
+            _dropboxToken = config["Dropbox:AccessToken"];
         }
 
         public async Task<Submission> UploadSubmissionAsync(int assignmentId, int studentId, IFormFile file)
@@ -54,18 +55,18 @@ namespace Server.Services
             try
             {
                 // Initialize Appwrite client with proper formatting
-                var client = new Client();
-                client.SetEndpoint("https://fra.cloud.appwrite.io/v1");
-                client.SetProject("687b8d560014af25c5ef");
-                client.SetKey("standard_62253218b6dc8e310a6980094e0da7024c8293e880a5c840c9314a9cb84acff1a531a7d68ec879641739e12471e4f258c8f813847359fe520c495c820a6a770b182ef533b941b851475a196a5e7ab0e0817c0a1ca5c7d027d9ecc2191980d4f5fed8106824222e4201c6e3c74d90ae8b7f76fa7adbfaca4cf66b49d84dbd6b1d");
+                // var client = new Client();
+                // client.SetEndpoint("https://fra.cloud.appwrite.io/v1");
+                // client.SetProject("687b8d560014af25c5ef");
+                // client.SetKey("standard_62253218b6dc8e310a6980094e0da7024c8293e880a5c840c9314a9cb84acff1a531a7d68ec879641739e12471e4f258c8f813847359fe520c495c820a6a770b182ef533b941b851475a196a5e7ab0e0817c0a1ca5c7d027d9ecc2191980d4f5fed8106824222e4201c6e3c74d90ae8b7f76fa7adbfaca4cf66b49d84dbd6b1d");
 
-                // Verify client initialization
-                if (client == null)
-                {
-                    throw new Exception("Failed to initialize Appwrite client");
-                }
+                // // Verify client initialization
+                // if (client == null)
+                // {
+                //     throw new Exception("Failed to initialize Appwrite client");
+                // }
 
-                var storage = new Storage(client) ?? throw new Exception("Failed to initialize Appwrite storage");
+                // var storage = new Storage(client) ?? throw new Exception("Failed to initialize Appwrite storage");
 
                 // Create a temporary file path with unique name
                 string tempDirectory = Path.Combine(Directory.GetCurrentDirectory(), "temp");
@@ -79,42 +80,28 @@ namespace Server.Services
 
                 try
                 {
-                    // Save file temporarily
-
-                    // Ensure file exists before upload
-                    if (!System.IO.File.Exists(tempFilePath))
+                    using (var dbx = new DropboxClient(_dropboxToken))
                     {
-                        throw new Exception("Failed to save temporary file");
+                        // ✅ Upload a file
+                        using (var fileStream = File.Open(tempFilePath, FileMode.Open))
+                        {
+                            var uploaded = await dbx.Files.UploadAsync(
+                                "/" + uniqueFileName,
+                                WriteMode.Overwrite.Instance,
+                                body: fileStream
+                            );
+                            Console.WriteLine($"Uploaded: {uploaded.Name}");
+                            filePath = uploaded.Name;
+                        }
                     }
-
-                    // Upload to Appwrite
-                    var uploadedFile = await storage.CreateFile(
-                        bucketId: "687b9034000772929340",
-                        fileId: ID.Unique(),
-                        file: InputFile.FromPath(tempFilePath)
-                    );
-
-                    if (uploadedFile == null)
-                    {
-                        throw new Exception("File upload to Appwrite failed");
-                    }
-
-                    // Store the Appwrite file ID
-                    filePath = uploadedFile.Id;
-
-                    // Clean up temporary file
-                    // if (File.Exists(tempFilePath))
-                    // {
-                    //     File.Delete(tempFilePath);
-                    // }
                 }
                 finally
                 {
                     // Ensure temporary file is cleaned up even if upload fails
-                    // if (File.Exists(tempFilePath))
-                    // {
-                    //     File.Delete(tempFilePath);
-                    // }
+                    if (File.Exists(tempFilePath))
+                    {
+                        File.Delete(tempFilePath);
+                    }
                 }
             }
             catch (Exception ex)
@@ -139,12 +126,6 @@ namespace Server.Services
             _context.Submissions.Add(submission);
             await _context.SaveChangesAsync();
 
-            // Clean up temporary file (if not using MEGA)
-            // if (filePath.StartsWith(Path.GetTempPath()) && File.Exists(filePath))
-            // {
-            //     File.Delete(filePath);
-            // }
-
             return submission;
         }
 
@@ -152,46 +133,38 @@ namespace Server.Services
         {
             var submission = await _context.Submissions
                 .FirstOrDefaultAsync(s => s.SubmissionId == submissionId);
+
             if (submission == null)
-            {
                 throw new ArgumentException("Submission not found.");
-            }
 
             if (string.IsNullOrEmpty(submission.FilePath))
-            {
                 throw new ArgumentException("No file associated with this submission.");
-            }
 
-            var client = new MegaApiClient();
             try
             {
-                string megaEmail = "panchalom787@gmail.com";
-                string megaPassword = "Ompan@78";
-                await client.LoginAsync(megaEmail, megaPassword);
-
-                var nodes = await client.GetNodesAsync();
-                var fileNode = nodes.FirstOrDefault(n => n.Id == submission.FilePath && n.Type == NodeType.File);
-                if (fileNode == null)
+                using (var dbx = new DropboxClient(_dropboxToken))
                 {
-                    throw new ArgumentException("File not found in MEGA.");
-                }
+                    // Ensure path starts with "/"
+                    string dropboxPath = submission.FilePath.StartsWith("/")
+                        ? submission.FilePath
+                        : "/" + submission.FilePath;
 
-                // Download directly to a Stream
-                var fileStream = await client.DownloadAsync(fileNode);
-                return (fileStream, fileNode.Name);
+                    // Download file
+                    var response = await dbx.Files.DownloadAsync(dropboxPath);
+                    Stream fileStream = await response.GetContentAsStreamAsync();
+
+                    // Extract just the filename
+                    string fileName = Path.GetFileName(dropboxPath);
+
+                    return (fileStream, fileName);
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to download file from MEGA: {ex.Message}");
-            }
-            finally
-            {
-                if (client.IsLoggedIn)
-                {
-                    await client.LogoutAsync();
-                }
+                throw new Exception($"Failed to download file from Dropbox: {ex.Message}");
             }
         }
+
 
         public async Task<SubmissionResponseDTO> GradeSubmission(int submissionId, int? marks, string? feedback)
         {
