@@ -498,3 +498,5 @@ C:\Users\Om Panchal\OneDrive\Desktop\assign-submit\server\obj\Debug\net9.0\ref\s
 C:\Users\Om Panchal\OneDrive\Desktop\assign-submit\server\obj\Debug\net9.0\server.sourcelink.json
 C:\Users\Om Panchal\OneDrive\Desktop\assign-submit\server\bin\Debug\net9.0\Appwrite.dll
 C:\Users\Om Panchal\OneDrive\Desktop\assign-submit\server\bin\Debug\net9.0\Dropbox.Api.dll
+C:\Users\Om Panchal\OneDrive\Desktop\assign-submit\server\bin\Debug\net9.0\DotNetEnv.dll
+C:\Users\Om Panchal\OneDrive\Desktop\assign-submit\server\bin\Debug\net9.0\Sprache.dll

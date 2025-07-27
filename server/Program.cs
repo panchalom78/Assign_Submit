@@ -4,17 +4,16 @@ using Microsoft.IdentityModel.Tokens;
 using Server.Data;
 using Server.Services;
 using System.Text;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
+Env.Load();
 
-// ✅ Add Controllers
 builder.Services.AddControllers();
 
-// ✅ Add Database Context
 builder.Services.AddDbContext<UserDBContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
+    options.UseNpgsql(Environment.GetEnvironmentVariable("ConnectionStrings__PostgresConnection")));
 
-// ✅ Register Auth Service
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AssignmentService>();
 builder.Services.AddScoped<SubmissionService>();
@@ -23,7 +22,6 @@ builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<RemarkService>();
 
 
-// ✅ Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -33,10 +31,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidIssuer = Environment.GetEnvironmentVariable("Jwt__Issuer"),
+            ValidAudience = Environment.GetEnvironmentVariable("Jwt__Audience"),
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "default-secret-key")),
+                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("Jwt__Key") ?? "default-secret-key")),
             ClockSkew = TimeSpan.Zero // Enforce strict expiration
         };
 
@@ -69,7 +67,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// ✅ Enable CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -88,7 +85,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ✅ Add Logging (Optional but recommended for debugging)
 builder.Services.AddLogging(logging =>
 {
     logging.AddConsole();
@@ -96,9 +92,10 @@ builder.Services.AddLogging(logging =>
     logging.SetMinimumLevel(LogLevel.Information);
 });
 
+builder.Configuration.AddEnvironmentVariables();
+
 var app = builder.Build();
 
-// ✅ Apply Migrations & Seed Data
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<UserDBContext>();
