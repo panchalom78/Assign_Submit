@@ -1,0 +1,52 @@
+# Build results
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+.vs/
+
+# Rider
+.idea/
+
+# Mac
+.DS_Store
+
+# Logs
+*.log
+
+# Generated files
+Generated\ Files/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+# Uncomment if using NuGet's local cache
+# *.nuget
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Publish output
+publish/
+*.Publish.xml
+
+# Configuration files containing secrets
+*.env
+*.secret
+appsettings.Development.json
+appsettings.Local.json
+
+# Docker
+*.pid
+docker-compose.override.yml
+
+# Others
+Thumbs.db
