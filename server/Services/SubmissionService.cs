@@ -3,11 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Server.Data; // Assuming AppDbContext is here
 using Server.Models;
 using Server.DTOs;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Dropbox.Api;
 using Dropbox.Api.Files;
+using System.Text.Json;
 
 namespace Server.Services
 
@@ -15,13 +13,50 @@ namespace Server.Services
     public class SubmissionService
     {
         private readonly UserDBContext _context;
-        private readonly string _dropboxToken;
+        private readonly string _clientId;
+        private readonly string _clientSecret;
+        private readonly string _refreshToken;
+        private string? _cachedAccessToken;
+        private DateTime _tokenExpiry;
 
         public SubmissionService(UserDBContext context, IConfiguration config)
         {
             _context = context;
-            _dropboxToken = config["Dropbox:AccessToken"];
+            _clientId = config["Dropbox:ClientId"] ?? throw new ArgumentNullException("Dropbox:ClientId configuration is missing.");
+            _clientSecret = config["Dropbox:ClientSecret"] ?? throw new ArgumentNullException("Dropbox:ClientSecret configuration is missing.");
+            _refreshToken = config["Dropbox:RefreshToken"] ?? throw new ArgumentNullException("Dropbox:RefreshToken configuration is missing.");
         }
+
+        private async Task<string> GetValidDropboxTokenAsync()
+        {
+            if (!string.IsNullOrEmpty(_cachedAccessToken) && DateTime.UtcNow < _tokenExpiry)
+            {
+                return _cachedAccessToken;
+            }
+
+            using var httpClient = new HttpClient();
+            var content = new FormUrlEncodedContent(new Dictionary<string, string>
+    {
+        { "grant_type", "refresh_token" },
+        { "refresh_token", _refreshToken },
+        { "client_id", _clientId },
+        { "client_secret", _clientSecret }
+    });
+
+            var response = await httpClient.PostAsync("https://api.dropboxapi.com/oauth2/token", content);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+            var data = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+
+            _cachedAccessToken = data["access_token"].GetString();
+            var expiresIn = data["expires_in"].GetInt32();
+            _tokenExpiry = DateTime.UtcNow.AddSeconds(expiresIn - 60); // refresh 1 min early
+
+            return _cachedAccessToken!;
+        }
+
+
 
         public async Task<Submission> UploadSubmissionAsync(int assignmentId, int studentId, IFormFile file)
         {
@@ -54,20 +89,6 @@ namespace Server.Services
 
             try
             {
-                // Initialize Appwrite client with proper formatting
-                // var client = new Client();
-                // client.SetEndpoint("https://fra.cloud.appwrite.io/v1");
-                // client.SetProject("687b8d560014af25c5ef");
-                // client.SetKey("standard_62253218b6dc8e310a6980094e0da7024c8293e880a5c840c9314a9cb84acff1a531a7d68ec879641739e12471e4f258c8f813847359fe520c495c820a6a770b182ef533b941b851475a196a5e7ab0e0817c0a1ca5c7d027d9ecc2191980d4f5fed8106824222e4201c6e3c74d90ae8b7f76fa7adbfaca4cf66b49d84dbd6b1d");
-
-                // // Verify client initialization
-                // if (client == null)
-                // {
-                //     throw new Exception("Failed to initialize Appwrite client");
-                // }
-
-                // var storage = new Storage(client) ?? throw new Exception("Failed to initialize Appwrite storage");
-
                 // Create a temporary file path with unique name
                 string tempDirectory = Path.Combine(Directory.GetCurrentDirectory(), "temp");
                 Directory.CreateDirectory(tempDirectory);
@@ -80,7 +101,8 @@ namespace Server.Services
 
                 try
                 {
-                    using (var dbx = new DropboxClient(_dropboxToken))
+                    var token = await GetValidDropboxTokenAsync();
+                    using (var dbx = new DropboxClient(token))
                     {
                         // ✅ Upload a file
                         using (var fileStream = File.Open(tempFilePath, FileMode.Open))
@@ -142,7 +164,8 @@ namespace Server.Services
 
             try
             {
-                using (var dbx = new DropboxClient(_dropboxToken))
+                var token = await GetValidDropboxTokenAsync();
+                using (var dbx = new DropboxClient(token))
                 {
                     // Ensure path starts with "/"
                     string dropboxPath = submission.FilePath.StartsWith("/")
