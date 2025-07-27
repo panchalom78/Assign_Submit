@@ -231,7 +231,7 @@ namespace Server.Controllers
         }
         [HttpGet("get-user-id")]
         [Authorize]
-        public async Task<IActionResult> GetUserId()
+        public IActionResult GetUserId()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
@@ -300,7 +300,7 @@ namespace Server.Controllers
         }
         [HttpPost("logout")]
         [Authorize]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
             Response.Cookies.Delete("jwt");
             return Ok(new { Message = "Logged out successfully" });
