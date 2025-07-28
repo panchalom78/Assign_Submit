@@ -20,6 +20,8 @@ import {
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Navbar from "../components/Navbar";
+import SideMenu from "../components/SideMenu";
 
 const TeacherAssignmentDetails = () => {
     const { assignmentId } = useParams();
@@ -335,301 +337,303 @@ const TeacherAssignmentDetails = () => {
     }
 
     return (
-        <div className="min-h-screen bg-black py-8 px-4 sm:px-6 lg:px-8 mt-15">
-            <div className="max-w-7xl mx-auto">
-                <Link
-                    to="/teacher-assignments"
-                    className="inline-flex items-center mb-6 text-[#FB773C] hover:text-[#f0b295] transition-colors"
-                   
-                >
-                    <ArrowLeft className="w-5 h-5 mr-2" />
-                    <span
-                        className="font-medium"
-                        
-                    >
-                        Back to Assignments
-                    </span>
-                </Link>
+        <div className="min-h-screen bg-black">
+            <Navbar title="Assignment Details" />
 
+            <div className="flex">
+                <SideMenu />
                 {/* Assignment Header Card */}
-                <div className="bg-[#FAF9F6] rounded-xl shadow-md overflow-hidden mb-8">
-                    <div className="p-6">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                                    {assignment.title}
-                                </h1>
-                                <div className="flex items-center text-sm text-gray-500 mb-4">
-                                    <User className="w-4 h-4 mr-1.5" />
-                                    <span>Created by {assignment.teacher}</span>
-                                </div>
-                            </div>
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#FB773C] text-white">
-                                {assignment.className}
-                            </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                            <div className="bg-gray-50 p-4 rounded-lg">
-                                <div className="flex items-center">
-                                    <Calendar className="w-5 h-5 text-gray-400 mr-2" />
-                                    <div>
-                                        <p className="text-xs text-gray-500">
-                                            Due Date
-                                        </p>
-                                        <p className="font-medium">
-                                            {formatDate(assignment.dueDate)}
-                                        </p>
+                <div className="flex-1 p-8 justify-self-end md:ml-64 mt-15">
+                    <div className="bg-[#FAF9F6] rounded-xl shadow-md overflow-hidden mb-8">
+                        <div className="p-6">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                                        {assignment.title}
+                                    </h1>
+                                    <div className="flex items-center text-sm text-gray-500 mb-4">
+                                        <User className="w-4 h-4 mr-1.5" />
+                                        <span>
+                                            Created by {assignment.teacher}
+                                        </span>
                                     </div>
                                 </div>
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#FB773C] text-white">
+                                    {assignment.className}
+                                </span>
                             </div>
-                            <div className="bg-gray-50 p-4 rounded-lg">
-                                <div className="flex items-center">
-                                    <FileText className="w-5 h-5 text-gray-400 mr-2" />
-                                    <div>
-                                        <p className="text-xs text-gray-500">
-                                            Submissions
-                                        </p>
-                                        <p className="font-medium">
-                                            {assignment.submissions.length}{" "}
-                                            students
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="bg-gray-50 p-4 rounded-lg">
-                                <div className="flex items-center">
-                                    <RefreshCw className="w-5 h-5 text-gray-400 mr-2" />
-                                    <div>
-                                        <p className="text-xs text-gray-500">
-                                            Last Updated
-                                        </p>
-                                        <p className="font-medium">
-                                            {formatDate(assignment.submittedOn)}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div className="border-t border-gray-200 pt-4">
-                            <h3 className="flex items-center text-lg font-semibold text-gray-900 mb-3">
-                                <BookOpen className="w-5 h-5 text-gray-400 mr-2" />
-                                Description
-                            </h3>
-                            <div className="prose prose-sm max-w-none text-gray-700">
-                                {assignment.description
-                                    .split("\n")
-                                    .map((paragraph, i) => (
-                                        <p key={i}>{paragraph}</p>
-                                    ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Submissions Section */}
-                <div className="bg-[#FAF9F6] rounded-xl shadow-md overflow-hidden">
-                    <div className="px-6 py-5 border-b border-gray-200">
-                        <h2 className="text-xl font-bold text-[#FB773C]">
-                            Student Submissions{" "}
-                            <span className="text-gray-500">
-                                ({assignment.submissions.length})
-                            </span>
-                        </h2>
-                    </div>
-
-                    {assignment.submissions.length === 0 ? (
-                        <div className="p-8 text-center">
-                            <div className="mx-auto h-24 w-24 text-gray-400">
-                                <FileText className="w-full h-full" />
-                            </div>
-                            <h3 className="mt-4 text-lg font-medium text-gray-900">
-                                No submissions yet
-                            </h3>
-                            <p className="mt-1 text-gray-500">
-                                Students haven't submitted their work for this
-                                assignment.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="divide-y divide-gray-200">
-                            {assignment.submissions.map((submission) => (
-                                <div
-                                    key={submission.submissionId}
-                                    className="p-6 hover:bg-gray-50 transition-colors"
-                                >
-                                    <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-                                        {/* Student Info */}
-                                        <div className="mb-4 md:mb-0">
-                                            <div className="flex items-center">
-                                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#FB773C] flex items-center justify-center">
-                                                    <span className="text-white font-medium">
-                                                        {submission.studentName?.charAt(
-                                                            0
-                                                        ) || "S"}
-                                                    </span>
-                                                </div>
-                                                <div className="ml-4">
-                                                    <h3 className="text-lg font-medium text-gray-900">
-                                                        {submission.studentName ||
-                                                            `Student ${submission.studentId}`}
-                                                    </h3>
-                                                    <p className="text-sm text-gray-500">
-                                                        {submission.email ||
-                                                            "No email provided"}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Submission Details */}
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <div>
-                                                <p className="text-sm text-gray-500">
-                                                    Submitted
-                                                </p>
-                                                <p className="font-medium">
-                                                    {formatDate(
-                                                        submission.submissionDate
-                                                    )}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <p className="text-sm text-gray-500">
-                                                    Status
-                                                </p>
-                                                <div className="flex items-center">
-                                                    <span
-                                                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                            statusColors[
-                                                                submission
-                                                                    .status
-                                                            ]
-                                                        }`}
-                                                    >
-                                                        {
-                                                            statusIcons[
-                                                                submission
-                                                                    .status
-                                                            ]
-                                                        }
-                                                        <span className="ml-1.5">
-                                                            {submission.status}
-                                                        </span>
-                                                    </span>
-                                                    {submission.graded && (
-                                                        <span className="ml-2 text-sm font-medium text-gray-900">
-                                                            ({submission.marks}/
-                                                            {
-                                                                gradingData.totalMarks
-                                                            }
-                                                            )
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Action Buttons */}
-                                        <div className="mt-4 md:mt-0 flex space-x-3">
-                                            <button
-                                                onClick={() =>
-                                                    handleDownload(
-                                                        submission.submissionId
-                                                    )
-                                                }
-                                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-[#FB773C] hover:bg-[#f0b295] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                            >
-                                                <Download className="w-4 h-4 mr-2" />
-                                                Download
-                                            </button>
-                                            {!submission.graded && (
-                                                <button
-                                                    onClick={() =>
-                                                        handleGradeClick(
-                                                            submission
-                                                        )
-                                                    }
-                                                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                                                >
-                                                    <CheckCircle className="w-4 h-4 mr-2" />
-                                                    Grade
-                                                </button>
-                                            )}
-                                            {!submission.remarks ||
-                                            submission.remarks.length === 0 ? (
-                                                <button
-                                                    onClick={() =>
-                                                        handleRemarkClick(
-                                                            submission
-                                                        )
-                                                    }
-                                                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                                                >
-                                                    <AlertCircle className="w-4 h-4 mr-2" />
-                                                    Remark
-                                                </button>
-                                            ) : null}
-                                        </div>
-                                    </div>
-
-                                    {submission.feedback && (
-                                        <div className="mt-4 pt-4 border-t border-gray-200">
-                                            <h4 className="text-sm font-medium text-gray-500 mb-1">
-                                                Feedback
-                                            </h4>
-                                            <p className="text-gray-700">
-                                                {submission.feedback}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                <div className="bg-gray-50 p-4 rounded-lg">
+                                    <div className="flex items-center">
+                                        <Calendar className="w-5 h-5 text-gray-400 mr-2" />
+                                        <div>
+                                            <p className="text-xs text-gray-500">
+                                                Due Date
+                                            </p>
+                                            <p className="font-medium">
+                                                {formatDate(assignment.dueDate)}
                                             </p>
                                         </div>
-                                    )}
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-4 rounded-lg">
+                                    <div className="flex items-center">
+                                        <FileText className="w-5 h-5 text-gray-400 mr-2" />
+                                        <div>
+                                            <p className="text-xs text-gray-500">
+                                                Submissions
+                                            </p>
+                                            <p className="font-medium">
+                                                {assignment.submissions.length}{" "}
+                                                students
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-4 rounded-lg">
+                                    <div className="flex items-center">
+                                        <RefreshCw className="w-5 h-5 text-gray-400 mr-2" />
+                                        <div>
+                                            <p className="text-xs text-gray-500">
+                                                Last Updated
+                                            </p>
+                                            <p className="font-medium">
+                                                {formatDate(
+                                                    assignment.submittedOn
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                                    {submission.remarks &&
-                                        submission.remarks.length > 0 && (
-                                            <div className="mt-4 pt-4 border-t border-gray-200">
-                                                <h4 className="text-sm font-medium text-gray-500 mb-2">
-                                                    Remarks
-                                                </h4>
-                                                <div className="space-y-3">
-                                                    {submission.remarks.map(
-                                                        (remark, index) => (
-                                                            <div
-                                                                key={index}
-                                                                className="bg-gray-50 p-3 rounded-lg"
-                                                            >
-                                                                <div className="flex justify-between items-start">
-                                                                    <p className="text-gray-700">
-                                                                        {
-                                                                            remark.message
-                                                                        }
-                                                                    </p>
-                                                                    {remark.resubmissionRequired && (
-                                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                                                                            <AlertTriangle className="w-3 h-3 mr-1" />
-                                                                            Resubmission
-                                                                            Required
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                                {remark.resubmissionDeadline && (
-                                                                    <p className="text-xs text-gray-500 mt-2">
-                                                                        Deadline:{" "}
-                                                                        {new Date(
-                                                                            remark.resubmissionDeadline
-                                                                        ).toLocaleString()}
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                        )
-                                                    )}
+                            <div className="border-t border-gray-200 pt-4">
+                                <h3 className="flex items-center text-lg font-semibold text-gray-900 mb-3">
+                                    <BookOpen className="w-5 h-5 text-gray-400 mr-2" />
+                                    Description
+                                </h3>
+                                <div className="prose prose-sm max-w-none text-gray-700">
+                                    {assignment.description
+                                        .split("\n")
+                                        .map((paragraph, i) => (
+                                            <p key={i}>{paragraph}</p>
+                                        ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Submissions Section */}
+                    <div className="bg-[#FAF9F6] rounded-xl shadow-md overflow-hidden">
+                        <div className="px-6 py-5 border-b border-gray-200">
+                            <h2 className="text-xl font-bold text-[#FB773C]">
+                                Student Submissions{" "}
+                                <span className="text-gray-500">
+                                    ({assignment.submissions.length})
+                                </span>
+                            </h2>
+                        </div>
+
+                        {assignment.submissions.length === 0 ? (
+                            <div className="p-8 text-center">
+                                <div className="mx-auto h-24 w-24 text-gray-400">
+                                    <FileText className="w-full h-full" />
+                                </div>
+                                <h3 className="mt-4 text-lg font-medium text-gray-900">
+                                    No submissions yet
+                                </h3>
+                                <p className="mt-1 text-gray-500">
+                                    Students haven't submitted their work for
+                                    this assignment.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="divide-y divide-gray-200">
+                                {assignment.submissions.map((submission) => (
+                                    <div
+                                        key={submission.submissionId}
+                                        className="p-6 hover:bg-gray-50 transition-colors"
+                                    >
+                                        <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                                            {/* Student Info */}
+                                            <div className="mb-4 md:mb-0">
+                                                <div className="flex items-center">
+                                                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#FB773C] flex items-center justify-center">
+                                                        <span className="text-white font-medium">
+                                                            {submission.studentName?.charAt(
+                                                                0
+                                                            ) || "S"}
+                                                        </span>
+                                                    </div>
+                                                    <div className="ml-4">
+                                                        <h3 className="text-lg font-medium text-gray-900">
+                                                            {submission.studentName ||
+                                                                `Student ${submission.studentId}`}
+                                                        </h3>
+                                                        <p className="text-sm text-gray-500">
+                                                            {submission.email ||
+                                                                "No email provided"}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
+
+                                            {/* Submission Details */}
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <div>
+                                                    <p className="text-sm text-gray-500">
+                                                        Submitted
+                                                    </p>
+                                                    <p className="font-medium">
+                                                        {formatDate(
+                                                            submission.submissionDate
+                                                        )}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">
+                                                        Status
+                                                    </p>
+                                                    <div className="flex items-center">
+                                                        <span
+                                                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                                statusColors[
+                                                                    submission
+                                                                        .status
+                                                                ]
+                                                            }`}
+                                                        >
+                                                            {
+                                                                statusIcons[
+                                                                    submission
+                                                                        .status
+                                                                ]
+                                                            }
+                                                            <span className="ml-1.5">
+                                                                {
+                                                                    submission.status
+                                                                }
+                                                            </span>
+                                                        </span>
+                                                        {submission.graded && (
+                                                            <span className="ml-2 text-sm font-medium text-gray-900">
+                                                                (
+                                                                {
+                                                                    submission.marks
+                                                                }
+                                                                /
+                                                                {
+                                                                    gradingData.totalMarks
+                                                                }
+                                                                )
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Action Buttons */}
+                                            <div className="mt-4 md:mt-0 flex space-x-3">
+                                                <button
+                                                    onClick={() =>
+                                                        handleDownload(
+                                                            submission.submissionId
+                                                        )
+                                                    }
+                                                    className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-[#FB773C] hover:bg-[#f0b295] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                                >
+                                                    <Download className="w-4 h-4 mr-2" />
+                                                    Download
+                                                </button>
+                                                {!submission.graded && (
+                                                    <button
+                                                        onClick={() =>
+                                                            handleGradeClick(
+                                                                submission
+                                                            )
+                                                        }
+                                                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                                    >
+                                                        <CheckCircle className="w-4 h-4 mr-2" />
+                                                        Grade
+                                                    </button>
+                                                )}
+                                                {!submission.remarks ||
+                                                submission.remarks.length ===
+                                                    0 ? (
+                                                    <button
+                                                        onClick={() =>
+                                                            handleRemarkClick(
+                                                                submission
+                                                            )
+                                                        }
+                                                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                                    >
+                                                        <AlertCircle className="w-4 h-4 mr-2" />
+                                                        Remark
+                                                    </button>
+                                                ) : null}
+                                            </div>
+                                        </div>
+
+                                        {submission.feedback && (
+                                            <div className="mt-4 pt-4 border-t border-gray-200">
+                                                <h4 className="text-sm font-medium text-gray-500 mb-1">
+                                                    Feedback
+                                                </h4>
+                                                <p className="text-gray-700">
+                                                    {submission.feedback}
+                                                </p>
+                                            </div>
                                         )}
-                                </div>
-                            ))}
-                        </div>
-                    )}
+
+                                        {submission.remarks &&
+                                            submission.remarks.length > 0 && (
+                                                <div className="mt-4 pt-4 border-t border-gray-200">
+                                                    <h4 className="text-sm font-medium text-gray-500 mb-2">
+                                                        Remarks
+                                                    </h4>
+                                                    <div className="space-y-3">
+                                                        {submission.remarks.map(
+                                                            (remark, index) => (
+                                                                <div
+                                                                    key={index}
+                                                                    className="bg-gray-50 p-3 rounded-lg"
+                                                                >
+                                                                    <div className="flex justify-between items-start">
+                                                                        <p className="text-gray-700">
+                                                                            {
+                                                                                remark.message
+                                                                            }
+                                                                        </p>
+                                                                        {remark.resubmissionRequired && (
+                                                                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                                                                <AlertTriangle className="w-3 h-3 mr-1" />
+                                                                                Resubmission
+                                                                                Required
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                    {remark.resubmissionDeadline && (
+                                                                        <p className="text-xs text-gray-500 mt-2">
+                                                                            Deadline:{" "}
+                                                                            {new Date(
+                                                                                remark.resubmissionDeadline
+                                                                            ).toLocaleString()}
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
